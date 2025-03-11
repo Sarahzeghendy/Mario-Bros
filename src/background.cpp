@@ -22,7 +22,7 @@ Background::Background()
     {
         throw std::runtime_error("Erreur : Impossible de charger coin.png");
     }
-    if (!pipeTexture.loadFromFile("images/pipe.png"))
+    if (!pipeTexture.loadFromFile("images/pipes.png"))
     {
         throw std::runtime_error("Erreur : Impossible de charger pipe.png");
     }
