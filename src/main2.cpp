@@ -102,7 +102,6 @@ int main()
     // Initialisation de la caméra qui suit les joueurs
     Camera camera(800, 600);
 
-    // Boucle principale du jeu
     while (window.isOpen())
     {
         sf::Event event;
@@ -241,15 +240,11 @@ int main()
             }
         }
 
-    }
-     
-    
         game.drawResult(window);
 
-
-
         window.display();
+    }
 
-        return 0;
+    return 0;
 }
 
