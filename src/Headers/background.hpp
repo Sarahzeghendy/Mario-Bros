@@ -20,8 +20,7 @@ public:
 
 private:
     sf::RectangleShape sky;
-    sf::Texture groundTexture;
-    sf::Texture brickTexture;
+    sf::Texture groundBlock;
     sf::Texture questionBlockTexture;
     sf::Texture pipeTexture;
     sf::Texture cloudTexture;

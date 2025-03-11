@@ -10,11 +10,7 @@ Background::Background()
     sky.setSize(sf::Vector2f(1280, 720));
     sky.setFillColor(sf::Color(135, 206, 250)); // Bleu ciel
 
-    if (!groundTexture.loadFromFile("images/block.png"))
-    {
-        throw std::runtime_error("Erreur : Impossible de charger block.png");
-    }
-    if (!brickTexture.loadFromFile("images/block.png"))
+    if (!groundBlock.loadFromFile("images/block.png"))
     {
         throw std::runtime_error("Erreur : Impossible de charger block.png");
     }
@@ -46,6 +42,7 @@ Background::Background()
 void Background::loadMap(const std::string &filePath)
 {
     std::ifstream file(filePath);
+
     if (!file.is_open())
     {
         std::cerr << "Erreur : Impossible de lire le fichier " << filePath << std::endl;
@@ -62,9 +59,9 @@ void Background::loadMap(const std::string &filePath)
     file.close();
 
     const float TILE_SIZE = 40.0f;
-
     float windowHeight = 720.0f;
     float verticalOffset = 50.0f;
+
     if (verticalOffset < 0)
         verticalOffset = 0;
 
@@ -78,7 +75,7 @@ void Background::loadMap(const std::string &filePath)
 
             if (tile == '#')
             {
-                sf::Sprite ground(groundTexture);
+                sf::Sprite ground(groundBlock);
                 ground.setPosition(x, y);
                 ground.setScale(0.043f, 0.043f);
                 groundTiles.push_back(ground);
