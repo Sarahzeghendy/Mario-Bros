@@ -23,6 +23,7 @@ SRCS = $(SRC_DIR)/main2.cpp \
        $(SRC_DIR)/enemy.cpp \
        $(SRC_DIR)/friendlymushroom.cpp \
        $(SRC_DIR)/menu.cpp \
+       $(SRC_DIR)/game.cpp \
 
 # Générer les fichiers objets correspondants
 OBJS = $(SRCS:.cpp=.o)

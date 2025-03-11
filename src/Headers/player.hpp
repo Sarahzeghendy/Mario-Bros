@@ -58,6 +58,7 @@ public:
 
     bool loadTexture();
     void checkForGaps(const std::vector<sf::FloatRect> &gaps);
+    bool checkWin(const sf::Sprite& flag);
 };
 
 #endif 

@@ -7,9 +7,53 @@
 #include "Headers/enemy.hpp"
 #include "Headers/menu.hpp"
 #include "Headers/friendlymushroom.hpp"
+#include "Headers/game.hpp"
+
 
 int main()
 {
+    // Menu window
+    sf::RenderWindow menuWindow(sf::VideoMode(800, 600), "Mario Bros - Menu");
+    Menu menu(800, 600);
+    bool startGame = false;
+    
+    // Menu loop
+    while (menuWindow.isOpen() && !startGame) {
+        sf::Event event;
+        while (menuWindow.pollEvent(event)) {
+            if (event.type == sf::Event::Closed)
+                menuWindow.close();
+
+            if (event.type == sf::Event::KeyPressed) {
+                if (event.key.code == sf::Keyboard::Up) {
+                    menu.moveUp();
+                } else if (event.key.code == sf::Keyboard::Down) {
+                    menu.moveDown();
+                } else if (event.key.code == sf::Keyboard::Enter) {
+                    int choice = menu.getSelectedIndex();
+                    if (choice == 0) {
+                        startGame = true;
+                        menuWindow.close();
+                    } else if (choice == 1) {
+                        std::cout << "Options à implémenter..." << std::endl;
+                    } else if (choice == 2) {
+                        menuWindow.close();
+                        return 0;
+                    }
+                }
+            }
+        }
+
+        menuWindow.clear();
+        menu.draw(menuWindow);
+        menuWindow.display();
+    }
+
+    // Only start the game if menu option was selected
+    if (!startGame) {
+        return 0;
+    }
+
     /**
      * Création de la fenêtre
      */
@@ -18,7 +62,7 @@ int main()
     // Create background
     Background background;
 
-   
+    Game game;
 
    
 
@@ -193,11 +237,22 @@ int main()
 
         // Mise à jour des joueurs
         window.setView(camera.getView());
-        mario.update(background.getGroundTiles(), background.getPipes());
-        luigi.update(background.getGroundTiles(), background.getPipes());
-        mario.applyGravity(background.getGroundTiles(), background.getPipes());
-        luigi.applyGravity(background.getGroundTiles(), background.getPipes());
-      
+        if (!game.isGameOver()) {
+            mario.update(background.getGroundTiles(), background.getPipes());
+            luigi.update(background.getGroundTiles(), background.getPipes());
+        
+            mario.applyGravity(background.getGroundTiles(), background.getPipes());
+            luigi.applyGravity(background.getGroundTiles(), background.getPipes());
+        
+            if (mario.checkWin(background.getFlag()) && !game.isGameOver()) {
+                game.handleWin(1); // Mario gagne
+            }
+        
+            if (luigi.checkWin(background.getFlag()) && !game.isGameOver()) {
+                game.handleWin(2); // Luigi gagne
+            }
+        }
+        
 
         // Effacer l'écran
         window.clear();
@@ -249,6 +304,9 @@ int main()
     }
         // Dessin du champignon gentil
         bonus.render(window);
+     
+        game.drawResult(window);
+
 
         window.display();
     }

@@ -17,6 +17,8 @@ public:
     const std::vector<sf::Sprite>& getPipes() const {
         return pipes;
     }
+    const sf::Sprite& getFlag() const;
+
 
 private:
     sf::RectangleShape sky;
@@ -33,6 +35,9 @@ private:
     std::vector<sf::Sprite> clouds;
 
     std::vector<sf::FloatRect> gaps;
+    sf::Texture flagTexture;
+    sf::Sprite flag;
+    bool flagPlaced = false;
 
     void loadMap(const std::string &filePath);
 };

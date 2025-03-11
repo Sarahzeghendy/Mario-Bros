@@ -1,12 +1,14 @@
-#ifndef GAME_HPP
-#define GAME_HPP
-
+#pragma once
 #include <SFML/Graphics.hpp>
 
+class Game {
+private:
+    bool gameOver = false;
+    int winner = -1;
 
-void begin(const sf::Window& window);
-void update(float deltaTime);
-void render(sf::RenderWindow& window);
+public:
+    void handleWin(int playerId);
+    void drawResult(sf::RenderWindow& window);
 
-
-#endif
+    bool isGameOver() const { return gameOver; }
+};
