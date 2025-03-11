@@ -12,7 +12,7 @@
 
 int main()
 {
-<<<<<<< HEAD
+
     // Menu window
     sf::RenderWindow menuWindow(sf::VideoMode(800, 600), "Mario Bros - Menu");
     Menu menu(800, 600);
@@ -55,16 +55,11 @@ int main()
         return 0;
     }
 
-    /**
-     * Création de la fenêtre
-     */
-=======
-    // Création de la fenêtre de jeu
->>>>>>> f2bc8db77b9aa470d2967fbbbf9d9eb61b682097
+
     sf::RenderWindow window(sf::VideoMode(1280, 720), "Mario Bros");
     Background background;
 
-<<<<<<< HEAD
+
     Game game;
 
    
@@ -76,9 +71,9 @@ int main()
      * Mario est contrôlé par les touches fléchées
      * Luigi est contrôlé par les touches M : Move et J : Jump
      */
-=======
+
     // Initialisation des joueurs
->>>>>>> f2bc8db77b9aa470d2967fbbbf9d9eb61b682097
+
     Player mario("images/mario_resized.png", 100, 483, 0.07f, sf::Keyboard::Right, sf::Keyboard::Left, sf::Keyboard::Up);
     Player luigi("images/luigi.png", 200, 480, 0.07f, sf::Keyboard::M, sf::Keyboard::A, sf::Keyboard::J);
 
@@ -189,7 +184,7 @@ int main()
         }
 
         window.setView(camera.getView());
-<<<<<<< HEAD
+
         if (!game.isGameOver()) {
             mario.update(background.getGroundTiles(), background.getPipes());
             luigi.update(background.getGroundTiles(), background.getPipes());
@@ -206,12 +201,7 @@ int main()
             }
         }
         
-=======
-        mario.update(background.getGroundTiles(), background.getPipes());
-        luigi.update(background.getGroundTiles(), background.getPipes());
-        mario.applyGravity(background.getGroundTiles(), background.getPipes());
-        luigi.applyGravity(background.getGroundTiles(), background.getPipes());
->>>>>>> f2bc8db77b9aa470d2967fbbbf9d9eb61b682097
+
 
         // Affichage de tous les éléments du jeu
         window.clear();
@@ -250,18 +240,16 @@ int main()
                 enemy->render(window);
             }
         }
-<<<<<<< HEAD
+
     }
-        // Dessin du champignon gentil
-        bonus.render(window);
      
+    
         game.drawResult(window);
 
-=======
->>>>>>> f2bc8db77b9aa470d2967fbbbf9d9eb61b682097
+
 
         window.display();
-    }
 
-    return 0;
+        return 0;
 }
+
