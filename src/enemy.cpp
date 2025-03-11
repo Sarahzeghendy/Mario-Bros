@@ -3,53 +3,24 @@
 #include "Headers/player.hpp"
 #include <iostream>
 
-Enemy::Enemy(const std::string& imagePath,float x, float y,  float leftLim, float rightLim) : alive(true), movingRight(true),leftLimit(leftLim), rightLimit(rightLim), mouvement(sprite, 0.3f) 
+Enemy::Enemy(const std::string& imagePath, float x, float y, float leftLim, float rightLim) 
+    : alive(true), movingRight(true), leftLimit(leftLim), rightLimit(rightLim), 
+      mouvement(sprite, 0.03f) // Change 0.3f to adjust speed for all enemies
 {
-    if (!texture.loadFromFile("images/mushroom.png")) 
+    if (!texture.loadFromFile(imagePath)) 
     {
-        std::cerr << "Erreur: Impossible de charger l'image du champignon\n";
+        std::cerr << "Erreur: Impossible de charger l'image " << imagePath << "\n";
     }
     sprite.setTexture(texture);
     sprite.setPosition(x, y);
-    sprite.setScale(0.1f,0.1f); //remise à l'échelle
-}
-
-void Enemy::update() 
-{
-
-    // Déplacement vers la droite ou la gauche
-    if (movingRight)
-    {
-        mouvement.moveRight();  // Déplacement vers la droite
-        if (sprite.getPosition().x >= rightLimit) // Si on atteint la limite droite
-        {
-            movingRight = false;  // Inverser la direction
-        }
-    }
-    else
-    {
-        mouvement.moveLeft();  // Déplacement vers la gauche
-        if (sprite.getPosition().x <= leftLimit) // Si on atteint la limite gauche
-        {
-            movingRight = true;  // Inverser la direction
-        }
-    }
+    sprite.setScale(0.1f, 0.1f);
 }
 
 void Enemy::render(sf::RenderWindow& window) 
 {
-    if (alive) //dessine seulement si encore vivant
-    {
+    if (alive) {
         window.draw(sprite);
     }
-
-}
-
-void Enemy::onJumpedOn() 
-{
-    alive = false;  // L'ennemi est écrasé
-    sprite.setScale(0.1f, 0.1f);  // Effet visuel : il est écrasé
-    std::cout << "Champignon écrasé !" << std::endl; 
 }
 
 bool Enemy::isAlive() const 
@@ -64,25 +35,5 @@ sf::FloatRect Enemy::getBounds() const
 
 void Enemy::draw(sf::RenderWindow& window) 
 {
-    window.draw(sprite);  // Dessine le sprite de l'ennemi sur la fenêtre
-}
-
-void Enemy::interactWithPlayer(Player& player) 
-{
-    // Vérifie si le joueur touche l'ennemi (collision)
-    if (sprite.getGlobalBounds().intersects(player.getbounds())) 
-    {
-        if (!player.isBig()) 
-        {
-            // Si le joueur est petit, il est tué
-            std::cout << "Le joueur est tué par le champignon!" << std::endl;
-            player.die();  // Appel à la méthode die() pour marquer la mort
-        } 
-        else 
-        {
-            // Si le joueur est grand, il devient petit
-            player.shrink();
-            std::cout << "Le joueur devient petit après avoir touché le champignon!" << std::endl;
-        }
-    }
+    window.draw(sprite);
 }

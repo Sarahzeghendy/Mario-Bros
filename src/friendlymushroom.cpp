@@ -5,26 +5,40 @@
 #include <iostream>
 
 
-FriendlyMushroom::FriendlyMushroom(const std::string& imagePath, float x, float y, float leftLim, float rightLim)
-    : Enemy(imagePath, x, y, leftLim, rightLim) 
+FriendlyMushroom::FriendlyMushroom(float x, float y, float leftLim, float rightLim)
+    : Enemy("images/champignon.png", x, y, leftLim, rightLim) 
 {
-
-    if (!texture.loadFromFile("images/champignon.png")) 
-    {
-        std::cerr << "Erreur: Impossible de charger l'image du champignon gentil\n";
-    }
-    sprite.setTexture(texture);
     sprite.setScale(0.1f, 0.1f);
+}
+
+void FriendlyMushroom::update() 
+{
+    if (movingRight)
+    {
+        mouvement.moveRight();
+        if (sprite.getPosition().x >= rightLimit) {
+            movingRight = false;
+        }
+    }
+    else
+    {
+        mouvement.moveLeft();
+        if (sprite.getPosition().x <= leftLimit) {
+            movingRight = true;
+        }
+    }
 }
 
 void FriendlyMushroom::interactWithPlayer(Player& player) 
 {
-    if (sprite.getGlobalBounds().intersects(player.getbounds())) 
+    if (alive && sprite.getGlobalBounds().intersects(player.getbounds())) 
     {
         if (!player.isBig()) 
         {
             player.grow();
             std::cout << "Le joueur devient grand grâce au champignon gentil!" << std::endl;
+            alive = false; // Disparait après avoir été collecté
         }
     }
 }
+

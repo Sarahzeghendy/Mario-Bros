@@ -12,6 +12,7 @@
 
 int main()
 {
+<<<<<<< HEAD
     // Menu window
     sf::RenderWindow menuWindow(sf::VideoMode(800, 600), "Mario Bros - Menu");
     Menu menu(800, 600);
@@ -57,11 +58,13 @@ int main()
     /**
      * Création de la fenêtre
      */
+=======
+    // Création de la fenêtre de jeu
+>>>>>>> f2bc8db77b9aa470d2967fbbbf9d9eb61b682097
     sf::RenderWindow window(sf::VideoMode(1280, 720), "Mario Bros");
-
-    // Create background
     Background background;
 
+<<<<<<< HEAD
     Game game;
 
    
@@ -73,38 +76,38 @@ int main()
      * Mario est contrôlé par les touches fléchées
      * Luigi est contrôlé par les touches M : Move et J : Jump
      */
+=======
+    // Initialisation des joueurs
+>>>>>>> f2bc8db77b9aa470d2967fbbbf9d9eb61b682097
     Player mario("images/mario_resized.png", 100, 483, 0.07f, sf::Keyboard::Right, sf::Keyboard::Left, sf::Keyboard::Up);
     Player luigi("images/luigi.png", 200, 480, 0.07f, sf::Keyboard::M, sf::Keyboard::A, sf::Keyboard::J);
 
-    /**
-     * Création des ennemis
-     */
-    Enemy mushroom1("images/mushroom.png", 700, 545, 0, 1000);//position 100 en horizontale et 515 en verticale
-    Enemy mushroom2("images/mushroom.png", 450, 545,0, 1000);
-    Enemy mushroom3("images/mushroom.png", 600, 545,0,1000);
+    // Création des différents types d'ennemis et leur zone de patrouille
+    std::vector<std::unique_ptr<Enemy>> enemies;
 
-    /**
-     * Création des gentils champignons
-     */
+    // // Goombas
+    // enemies.push_back(std::make_unique<Goomba>(300, 545, 200, 400));
+    // enemies.push_back(std::make_unique<Goomba>(500, 545, 450, 600));     
 
-    FriendlyMushroom bonus("images/champignon.png", 700, 545, 0, 1000);//position 100 en horizontale et 515 en verticale
+    // // Koopas
+    enemies.push_back(std::make_unique<KoopaTroopa>(700, 545, 650, 850));
+    // enemies.push_back(std::make_unique<KoopaTroopa>(900, 545, 800, 1000));
 
-    /**
-     * Création des pièces individuellement (sans `for`)
-     */
+    // // Champignons gentils
+    // enemies.push_back(std::make_unique<FriendlyMushroom>(400, 545, 350, 500));
+    // enemies.push_back(std::make_unique<FriendlyMushroom>(800, 545, 750, 900));
+
+    // Placement des pièces dans le niveau
     Coin coin1(300, 500);
     Coin coin2(400, 500);
     Coin coin3(500, 500);
     Coin coin4(600, 500);
     Coin coin5(700, 500);
 
-    // Camera
+    // Initialisation de la caméra qui suit les joueurs
     Camera camera(800, 600);
 
-    /**
-     * Boucle principale
-     * Gestion des événements, mise à jour et affichage des joueurs et des pièces
-     */
+    // Boucle principale du jeu
     while (window.isOpen())
     {
         sf::Event event;
@@ -116,28 +119,6 @@ int main()
                 camera.update({event.size.width, event.size.height});
         }
 
-        // Menu
-        // if (event.type == sf::Event::KeyPressed) {
-        //     if (event.key.code == sf::Keyboard::Up) {
-        //         menu.moveUp();
-        //     } else if (event.key.code == sf::Keyboard::Down) {
-        //         menu.moveDown();
-        //     } else if (event.key.code == sf::Keyboard::Enter) {
-        //         int choice = menu.getSelectedIndex();
-        //         if (choice == 0) {
-        //             // Lancer le jeu
-        //             std::cout << "Lancement du jeu !" << std::endl;
-        //         } else if (choice == 1) {
-        //             std::cout << "Options à implémenter..." << std::endl;
-        //         } else if (choice == 2) {
-        //             window.close();
-        //         }
-        //     }
-        // }
-
-        /**
-         * Vérifier si Mario ou Luigi touche une pièce
-         */
         Coin *coins[] = {&coin1, &coin2, &coin3, &coin4, &coin5};
         for (Coin *coin : coins)
         {
@@ -158,85 +139,57 @@ int main()
             }
         }
 
-        // Calculate the average position of both players
+        // Calcul des limites de l'écran visible
+        sf::Vector2f viewCenter = window.getView().getCenter();
+        float viewWidth = window.getView().getSize().x;
+        float screenLeft = viewCenter.x - (viewWidth / 2);
+        float screenRight = viewCenter.x + (viewWidth / 2);
+
+        // Obtenir les positions actuelles
         sf::Vector2f marioPos = mario.getPosition();
         sf::Vector2f luigiPos = luigi.getPosition();
-        sf::Vector2f marioCurrentPos = marioPos;  // Add this line
-        sf::Vector2f luigiCurrentPos = luigiPos;  // Add this line
 
-        // Calcul de la position de la camera en fonction de la position moyenne des joueurs
+        // Marge de sécurité depuis les bords de l'écran
+        float margin = 80.0f;
+
+        // Empêcher Mario de sortir de l'écran
+        if (marioPos.x < screenLeft + margin) {
+            mario.setPosition(screenLeft + margin, marioPos.y);
+        }
+        if (marioPos.x > screenRight - margin) {
+            mario.setPosition(screenRight - margin, marioPos.y);
+        }
+
+        // Empêcher Luigi de sortir de l'écran
+        if (luigiPos.x < screenLeft + margin) {
+            luigi.setPosition(screenLeft + margin, luigiPos.y);
+        }
+        if (luigiPos.x > screenRight - margin) {
+            luigi.setPosition(screenRight - margin, luigiPos.y);
+        }
+
+        // Calcul du point central entre les joueurs pour la caméra
         float camX = (marioPos.x + luigiPos.x) / 2.0f;
-        float camY = 350.0f; // Position Y fixe
+        float camY = 350.0f;
 
-        // Update camera position based on average player position
-        camera.setCenter(camX, camY);
-
-        window.setView(camera.getView());
-
-        // Calculate camera boundaries and maximum separation distance
-        float maxPlayerSeparation = window.getSize().x * 0.8f; // 80% of screen width
-        float currentSeparation = std::abs(marioCurrentPos.x - luigiCurrentPos.x);
-
-        // Check if players are too far apart
-        if (currentSeparation > maxPlayerSeparation) {
-            // If Mario is on the right
-            if (marioCurrentPos.x > luigiCurrentPos.x) {
-                if (mario.isMovingRight()) {
-                    mario.setPosition(luigiCurrentPos.x + maxPlayerSeparation, marioCurrentPos.y);
-                }
-                if (luigi.isMovingLeft()) {
-                    luigi.setPosition(marioCurrentPos.x - maxPlayerSeparation, luigiCurrentPos.y);
-                }
-            }
-            // If Luigi is on the right
-            else {
-                if (luigi.isMovingRight()) {
-                    luigi.setPosition(marioCurrentPos.x + maxPlayerSeparation, luigiCurrentPos.y);
-                }
-                if (mario.isMovingLeft()) {
-                    mario.setPosition(luigiCurrentPos.x - maxPlayerSeparation, marioCurrentPos.y);
-                }
-            }
+        // Déplacer la caméra seulement si les deux joueurs sont assez proches
+        float playerDistance = std::abs(marioPos.x - luigiPos.x);
+        if (playerDistance < viewWidth * 0.8f) {  // 80% de la largeur de l'écran
+            camera.setCenter(camX, camY);
+            window.setView(camera.getView());
         }
 
-        /**
-         * Vérifier si Mario ou Luigi touche un ennemi
-         */
-
-        // Enemy* enemies[] = {&mushroom1, &mushroom2, &mushroom3};
-        // for (Enemy* enemy : enemies)
-        // {
-        //     if (enemy->isAlive()) // Vérifie si l'ennemi est encore vivant
-        //     {
-        //         mario.checkCollision(*enemy);
-        //         luigi.checkCollision(*enemy);
-        //     }
-        // }
-
-        /**
-         * Vérifier si Mario ou Luigi touche un ennemi
-         */
-        Enemy* enemies[] = {&mushroom1, &mushroom2, &mushroom3};
-        for (Enemy* enemy : enemies)
+        for (auto& enemy : enemies)
         {
-            if (enemy->isAlive()) // Vérifie si l'ennemi est encore vivant
+            if (enemy->isAlive())
             {
-                
-                enemy->interactWithPlayer(mario);  // Passe l'objet mario
-                enemy->interactWithPlayer(luigi);  // Passe l'objet luigi
+                enemy->interactWithPlayer(mario);
+                enemy->interactWithPlayer(luigi);
             }
         }
 
-        /**
-         * Interaction avec le champignon gentil
-         */
-        bonus.update(); // Ajout de la mise à jour du champignon gentil
-        bonus.interactWithPlayer(mario); 
-        bonus.interactWithPlayer(luigi);
-
-
-        // Mise à jour des joueurs
         window.setView(camera.getView());
+<<<<<<< HEAD
         if (!game.isGameOver()) {
             mario.update(background.getGroundTiles(), background.getPipes());
             luigi.update(background.getGroundTiles(), background.getPipes());
@@ -253,66 +206,62 @@ int main()
             }
         }
         
+=======
+        mario.update(background.getGroundTiles(), background.getPipes());
+        luigi.update(background.getGroundTiles(), background.getPipes());
+        mario.applyGravity(background.getGroundTiles(), background.getPipes());
+        luigi.applyGravity(background.getGroundTiles(), background.getPipes());
+>>>>>>> f2bc8db77b9aa470d2967fbbbf9d9eb61b682097
 
-        // Effacer l'écran
+        // Affichage de tous les éléments du jeu
         window.clear();
-        //menu.draw(window);
         background.draw(window);
         mario.draw(window);
         luigi.draw(window);
-        //mushroom1.draw(window);
 
-        /**
-         * Dessiner chaque pièce individuellement
-         */
         for (Coin *coin : coins)
         {
             coin->draw(window);
         }
 
-    /**
-     * Dessiner les ennemis
-     */
-    //Enemy* enemies[] = {&mushroom1, &mushroom2, &mushroom3};
-    for (Enemy* enemy : enemies)
-    {
-        enemy->update();
-
-        // Tableau des joueurs (Mario et Luigi)
-        sf::FloatRect players[] = {mario.getbounds(), luigi.getbounds()};
-
-        // Vérifier si l'un des deux joueurs écrase l'ennemi
-        for (const auto& playerBounds : players)
+        // Mise à jour de la physique et des collisions
+        for (auto& enemy : enemies)
         {
-            if (enemy->isAlive() && playerBounds.intersects(enemy->getBounds()))
+            enemy->update();
+            
+            // Vérification si un joueur saute sur un ennemi
+            sf::FloatRect players[] = {mario.getbounds(), luigi.getbounds()};
+
+            for (const auto& playerBounds : players)
             {
-                // Vérifier si le joueur atterrit sur le dessus de l'ennemi
-                if (playerBounds.top + playerBounds.height <= enemy->getBounds().top + 10) //décalage de 10 unités 
+                if (enemy->isAlive() && playerBounds.intersects(enemy->getBounds()))
                 {
-                    enemy->onJumpedOn();
-                    break; // Pas besoin de vérifier l'autre joueur si l'ennemi est déjà écrasé
+                    // Le joueur doit être au-dessus de l'ennemi pour l'écraser
+                    if (playerBounds.top + playerBounds.height <= enemy->getBounds().top + 10)
+                    {
+                        enemy->onJumpedOn();
+                        break;
+                    }
                 }
             }
-        }
 
-
-        // Dessiner l'ennemi seulement s'il est encore en vie
-        if (enemy->isAlive())
-        {
-            enemy->render(window);
+            if (enemy->isAlive())
+            {
+                enemy->render(window);
+            }
         }
+<<<<<<< HEAD
     }
         // Dessin du champignon gentil
         bonus.render(window);
      
         game.drawResult(window);
 
+=======
+>>>>>>> f2bc8db77b9aa470d2967fbbbf9d9eb61b682097
 
         window.display();
     }
-
-
-    
 
     return 0;
 }
