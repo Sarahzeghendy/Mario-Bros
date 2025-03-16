@@ -73,7 +73,7 @@ bool Mouvement::checkCollision(const sf::Sprite &object)
  */
 void Mouvement::applyGravity(const std::vector<sf::Sprite> &blocks, const std::vector<sf::Sprite> &pipes)
 {
-    // ✅ Applique la gravité (comme dans le saut)
+    
     if (velocityY < 0)
     {
         velocityY += gravity * 0.5f;
@@ -168,8 +168,8 @@ std::pair<bool, bool> Mouvement::blockMovement(const std::vector<sf::Sprite> &ob
 
     sf::FloatRect nextPositionRight = sprite.getGlobalBounds();
     sf::FloatRect nextPositionLeft = sprite.getGlobalBounds();
-    nextPositionRight.left += speed + 10;
-    nextPositionLeft.left -= speed + 10;
+    nextPositionRight.left += speed;
+    nextPositionLeft.left -= speed;
 
     for (const auto &obstacle : obstacles)
     {

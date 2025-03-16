@@ -8,6 +8,14 @@ Goomba::Goomba(float x, float y, float leftLim, float rightLim)
 
 void Goomba::update() 
 {
+    if (!alive) return;
+    
+    if (isFalling)
+    {
+        fall();
+        return;
+    }
+
     if (movingRight)
     {
         mouvement.moveRight();
@@ -28,15 +36,19 @@ void Goomba::interactWithPlayer(Player& player)
 {
     if (sprite.getGlobalBounds().intersects(player.getbounds())) 
     {
-        if (!player.isBig()) 
-        {
-            std::cout << "Le joueur est tué par le Goomba!" << std::endl;
-            player.die();
-        } 
-        else 
-        {
+
+
+        if (player.hasFirePowerActive()) {
             player.shrink();
-            std::cout << "Le joueur devient petit après avoir touché le Goomba!" << std::endl;
+            std::cout << "Mario a perdu son pouvoir de feu en touchant un Goomba!" << std::endl;
+        }
+        else if (player.isBig()) {
+            player.shrink();
+            std::cout << "Mario devient petit après avoir touché un Goomba!" << std::endl;
+        } 
+        else {
+            player.die();
+            std::cout << "Mario est tué par le Goomba!" << std::endl;
         }
     }
 }
@@ -46,4 +58,12 @@ void Goomba::onJumpedOn()
     alive = false;
     sprite.setScale(0.1f, 0.05f);  // Écrasé plus plat que les autres ennemis
     std::cout << "Goomba écrasé !" << std::endl;
+}
+
+void Goomba::onFireballHit() 
+{
+    alive = false;
+    // Add a special death animation when hit by fireball
+    sprite.setScale(0.1f, -0.1f);  // Flip upside down
+    std::cout << "Goomba touché par une boule de feu et vaincu!" << std::endl;
 }

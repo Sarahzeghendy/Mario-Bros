@@ -12,12 +12,20 @@ KoopaTroopa::KoopaTroopa(float x, float y, float leftLim, float rightLim)
 
 void KoopaTroopa::update() 
 {
+    if (!alive) return;
+  
+    if (isFalling)
+    {
+        fall();
+        return;
+    }
+
     if (movingRight)
     {
         mouvement.moveRight();
         if (sprite.getPosition().x >= rightLimit) {
             movingRight = false;
-            sprite.setScale(-0.15f, 0.15f);  // On flip le sprite
+            sprite.setScale(-0.15f, 0.15f);  
         }
     }
     else
@@ -25,7 +33,7 @@ void KoopaTroopa::update()
         mouvement.moveLeft();
         if (sprite.getPosition().x <= leftLimit) {
             movingRight = true;
-            sprite.setScale(0.15f, 0.15f);  // On remet le sprite à l'endroit
+            sprite.setScale(0.15f, 0.15f);  
         }
     }
 }
@@ -34,21 +42,51 @@ void KoopaTroopa::interactWithPlayer(Player& player)
 {
     if (sprite.getGlobalBounds().intersects(player.getbounds())) 
     {
-        if (!player.isBig()) 
-        {
-            std::cout << "Le joueur est tué par le Koopa!" << std::endl;
-            player.die();
-        } 
-        else 
-        {
+        
+        if (inShellState) {
+            std::cout << "Le joueur touche la carapace sans danger" << std::endl;
+            return;
+        }
+
+        else if (player.isBig()) {
+            
             player.shrink();
-            std::cout << "Le joueur devient petit après avoir touché le Koopa!" << std::endl;
+            std::cout << "Mario devient petit après avoir touché un Koopa!" << std::endl;
+        } 
+        else {
+           
+            player.die();
+            std::cout << "Mario est tué par le Koopa!" << std::endl;
         }
     }
 }
 
 void KoopaTroopa::onJumpedOn() 
 {
-    sprite.setTexture(koopaShell);
+
+    inShellState = true;
+
+    sf::Vector2f originalPosition = sprite.getPosition();
+    
+    sprite.setTexture(koopaShell, true);  
+
+    sf::Vector2u textureSize = koopaShell.getSize();
+    sprite.setTextureRect(sf::IntRect(0, 0, textureSize.x, textureSize.y));
+    
+    sprite.setPosition(originalPosition);
+    sprite.setScale(0.15f, 0.15f);
+    
+    movingRight = (rand() % 2 == 0);  
+    mouvement.setSpeed(0.06f);  
+    
     std::cout << "Koopa dans sa carapace!" << std::endl;
+}
+
+void KoopaTroopa::onFireballHit()
+{
+   
+    alive = false;
+    std::cout << "Koopa defeated by fireball!" << std::endl;
+    
+    sprite.setScale(0.15f, -0.15f);  
 }

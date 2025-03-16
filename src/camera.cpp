@@ -11,7 +11,6 @@ Camera::Camera(float width, float height) : defaultWidth(width), defaultHeight(h
 }
 
 
-//lorsqu'on redimensionne la fenêtre, la caméra ajuste sa largeur pour respecter ratio d'aspect
 void Camera::update(const sf::Vector2u& windowSize) 
 {
     float aspectRatio = static_cast<float>(windowSize.x) / static_cast<float>(windowSize.y);
@@ -24,9 +23,7 @@ const sf::View& Camera::getView() const
 }
 
 void Camera::clampPosition(float& x, float& y) {
-    float halfWidth = view.getSize().x / 2.0f;
-    float halfHeight = view.getSize().y / 2.0f;
-    
+
     x = std::max(minX, std::min(x, maxX));
     y = std::max(minY, std::min(y, maxY));
 }

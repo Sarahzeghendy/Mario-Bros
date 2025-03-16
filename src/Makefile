@@ -14,7 +14,7 @@ CXXFLAGS = -Wall -Wextra -std=c++17 -I$(HEADERS_DIR)
 SFML_LIBS = -lsfml-graphics -lsfml-window -lsfml-system
 
 # Liste des fichiers source à compiler
-SRCS = $(SRC_DIR)/main2.cpp \
+SRCS = $(SRC_DIR)/main.cpp \
        $(SRC_DIR)/background.cpp \
        $(SRC_DIR)/player.cpp \
        $(SRC_DIR)/mouvement.cpp \
@@ -26,6 +26,8 @@ SRCS = $(SRC_DIR)/main2.cpp \
        $(SRC_DIR)/game.cpp \
        $(SRC_DIR)/goomba.cpp \
        $(SRC_DIR)/koopa.cpp \
+       $(SRC_DIR)/fireflower.cpp \
+       $(SRC_DIR)/fireball.cpp \
 
 
 # Générer les fichiers objets correspondants

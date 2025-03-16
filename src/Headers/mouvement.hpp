@@ -30,6 +30,14 @@ public:
     void applyGravity(const std::vector<sf::Sprite>& blocks, const std::vector<sf::Sprite>& pipes);
     std::pair<bool, bool> blockMovement(const std::vector<sf::Sprite> &obstacles, const std::vector<sf::Sprite> &pipes);
     void checkForGaps(const std::vector<sf::FloatRect> &gaps);
+    void setSpeed(float newSpeed) {
+        speed = newSpeed;
+    }
+
+    void bounce() {
+        velocityY = jumpStrength * 0.6f; 
+        isJumping = true;
+    }
 };
 
 #endif

@@ -10,7 +10,7 @@ Background::Background()
     sky.setSize(sf::Vector2f(1280, 720));
     sky.setFillColor(sf::Color(135, 206, 250)); 
 
-    if (!groundBlock.loadFromFile("images/block.png"))
+    if (!groundBlock.loadFromFile("images/blocks.png"))
     {
         throw std::runtime_error("Erreur : Impossible de charger block.png");
     }
@@ -61,7 +61,7 @@ void Background::loadMap(const std::string &filePath)
     file.close();
 
     const float TILE_SIZE = 40.0f;
-    float windowHeight = 720.0f;
+
     float verticalOffset = 50.0f;
 
     if (verticalOffset < 0)
@@ -79,7 +79,7 @@ void Background::loadMap(const std::string &filePath)
             {
                 sf::Sprite ground(groundBlock);
                 ground.setPosition(x, y);
-                ground.setScale(0.043f, 0.043f);
+                //ground.setScale(0.043f, 0.043f);
                 groundTiles.push_back(ground);
             }
             else if (tile == 'P' || tile == 'p')
@@ -153,4 +153,8 @@ void Background::draw(sf::RenderWindow &window)
 
 const sf::Sprite& Background::getFlag() const {
     return flag;
+}
+std::vector<sf::FloatRect> Background::getGaps() const
+{
+    return gaps;
 }

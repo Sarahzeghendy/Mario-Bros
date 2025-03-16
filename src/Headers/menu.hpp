@@ -40,6 +40,8 @@ public:
      */
     int getSelectedIndex() const;
 
+    void showRules();
+
 private:
     sf::Font font;                              
     std::vector<sf::Text> menuOptions;          

@@ -12,15 +12,50 @@
  * @param left Touche pour déplacer le joueur vers la gauche.
  * @param jump Touche pour faire sauter le joueur.
  */
-Player::Player(const std::string& texturePath, float x, float y, float speed, sf::Keyboard::Key right,sf::Keyboard::Key left, sf::Keyboard::Key jump) 
-    : mouvement(sprite, speed), rightKey(right), leftKey(left), jumpKey(jump), lives(3), coins(0), big(true), isDead(false), movingRight(false), movingLeft(false) 
+Player::Player(const std::string& texturePath, const std::string& name, float x, float y, float speed, 
+               sf::Keyboard::Key right, sf::Keyboard::Key left, sf::Keyboard::Key jump) 
+    : normalTexture(),
+      fireTexture(),
+      sprite(),
+      characterName(name),
+      mouvement(sprite, speed), 
+      rightKey(right),
+      leftKey(left),
+      jumpKey(jump),
+      big(true),
+      isDead(false),
+      movingRight(false),
+      movingLeft(false),
+      hasFirePower(false),
+      lives(3),
+      coins(0),
+      fireballCooldown(0),
+      fireballs()
 {
-   
-    if (!texture.loadFromFile(texturePath)) 
+ 
+    if (!normalTexture.loadFromFile(texturePath)) 
     {
         std::cerr << "Erreur : Impossible de charger " << texturePath << std::endl;
     }
-    sprite.setTexture(texture);
+    
+
+    std::string fireTexturePath;
+    if (characterName == "Mario") {
+        fireTexturePath = "images/mario_fire.png";
+    } else if (characterName == "Luigi") {
+        fireTexturePath = "images/luigi_fire.png"; 
+    } else {
+        
+        fireTexturePath = "images/mario_fire.png";
+    }
+    
+    if (!fireTexture.loadFromFile(fireTexturePath)) 
+    {
+        std::cerr << "Erreur : Impossible de charger " << fireTexturePath << std::endl;
+        fireTexture = normalTexture; 
+    }
+    
+    sprite.setTexture(normalTexture);
     sprite.setScale(0.15f, 0.15f);
     sprite.setPosition(x, y);
 }
@@ -39,6 +74,15 @@ bool Player::loadTexture() {
  */
 void Player::update(const std::vector<sf::Sprite>& blocks, const std::vector<sf::Sprite>& pipes) {
     if (isDead) return;
+
+    if (fireballCooldown > 0) {
+        fireballCooldown--;
+    }
+
+    movingRight = sf::Keyboard::isKeyPressed(rightKey);
+    movingLeft = sf::Keyboard::isKeyPressed(leftKey);
+
+    updateFireballs(blocks);
 
     auto [canMoveRight, canMoveLeft] = mouvement.blockMovement(blocks, pipes);
 
@@ -91,7 +135,8 @@ void Player::draw(sf::RenderWindow& window)
 {
     if (!isDead) 
     {
-    window.draw(sprite);
+        window.draw(sprite);
+       
     }
 }
 
@@ -170,9 +215,15 @@ void Player::grow()
  */
 void Player::shrink() 
 {
-    big = false;  
-    sprite.setScale(0.1f, 0.1f); 
-    sprite.setPosition(sprite.getPosition().x, 500.0f);
+    
+    if (big) {
+        big = false;
+        sprite.setScale(0.1f, 0.1f); 
+        sprite.setPosition(sprite.getPosition().x, 500.0f);
+        std::cout << "Mario devient petit!" << std::endl;
+    } else {
+        die();
+    }
 }
 
 /**
@@ -202,3 +253,70 @@ bool Player::checkWin(const sf::Sprite& flag) {
 
     return false;
 }
+
+void Player::collectFireFlower()
+{
+    hasFirePower = true;
+    big = true;
+    sprite.setTexture(fireTexture);
+    
+    sprite.setScale(0.15f, 0.15f);
+    std::cout << characterName << " est maintenant en mode de feu !" << std::endl;
+}
+
+void Player::shootFireball()
+{
+    if (hasFirePower && fireballCooldown == 0) 
+    {
+        float direction = movingLeft ? -1.0f : 1.0f;
+        
+        float offsetX = (direction > 0) ? sprite.getGlobalBounds().width : 0;
+        float offsetY = sprite.getGlobalBounds().height / 3;
+        
+        fireballs.emplace_back(sprite.getPosition().x + offsetX, 
+                              sprite.getPosition().y + offsetY, 
+                              direction);
+        
+        fireballCooldown = 15;
+        std::cout << characterName << " lance une boule de feu!" << std::endl;
+    }
+    else if (!hasFirePower)
+    {
+        std::cout << characterName << " a besoin d'une Fleur de Feu pour lancer des boules de feu!" << std::endl;
+    }
+}
+
+void Player::updateFireballs(const std::vector<sf::Sprite>& blocks)
+{
+    for (auto &fireball : fireballs) {
+        fireball.update(blocks);
+    }
+
+    fireballs.erase(
+        std::remove_if(fireballs.begin(), fireballs.end(),
+                       [](const Fireball &fireball) { return !fireball.isActive(); }),
+        fireballs.end());
+}
+
+void Player::drawFireballs(sf::RenderWindow &window)
+{
+    for (auto &fireball : fireballs) {
+        fireball.draw(window);
+    }
+}
+
+void Player::loseFirePower()
+{
+    if (hasFirePower) {
+        hasFirePower = false;
+        sprite.setTexture(normalTexture);
+        std::cout << characterName << " a perdu son pouvoir de feu!" << std::endl;
+
+        if (big) {
+            sprite.setScale(0.15f, 0.15f);
+        } else {
+            sprite.setScale(0.1f, 0.1f);
+        }
+    }
+}
+
