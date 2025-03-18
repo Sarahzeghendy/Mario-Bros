@@ -268,24 +268,12 @@ void Player::animate()
     }
 
     if (characterName == "Mario") {
-        if (hasFirePower) {
-            // Fire Mario animation coordinates
-            if (movingRight) {
-                sprite.setTextureRect(sf::IntRect(8 + currentFrame * 28, 139, 28, 47)); 
-            } else if (movingLeft) {
-                sprite.setTextureRect(sf::IntRect(202 + currentFrame * 28, 191, 33, 47));
-            } else {
-                sprite.setTextureRect(sf::IntRect(8, 139, 28, 47));
-            }
-        } else {
-            // Regular Mario animation coordinates
-            if (movingRight) {
-                sprite.setTextureRect(sf::IntRect(8 + currentFrame * 28, 139, 28, 47));
-            } else if (movingLeft) {
-                sprite.setTextureRect(sf::IntRect(202 + currentFrame * 28, 191, 33, 47));
-            } else {
-                sprite.setTextureRect(sf::IntRect(8, 139, 28, 47));
-            }
+        if (movingRight) {
+            sprite.setTextureRect(sf::IntRect(8 + currentFrame * 28, 139, 26, 47));//coin gauche, coin en haut, largeur, hauteur
+        } else if (movingLeft) {
+            sprite.setTextureRect(sf::IntRect(202 + currentFrame * 32, 191, 26, 47));//28 et 33 //202
+        } else { // Mario au repos -> frame droite par défaut
+            sprite.setTextureRect(sf::IntRect(8, 139, 28, 47));
         }
     } else if (characterName == "Luigi") {
         if (movingRight) {
