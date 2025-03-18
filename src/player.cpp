@@ -12,6 +12,11 @@
  * @param left Touche pour déplacer le joueur vers la gauche.
  * @param jump Touche pour faire sauter le joueur.
  */
+
+//Player::Player(const std::string& texturePath, float x, float y, float speed, sf::Keyboard::Key right,sf::Keyboard::Key left, sf::Keyboard::Key jump,const std::string& characterType ) 
+  //  : mouvement(sprite, speed), rightKey(right), leftKey(left), jumpKey(jump), lives(3), coins(0), big(true), isDead(false), movingRight(false), movingLeft(false), currentFrame(0), frameCounter(0), characterType(characterType)
+    
+
 Player::Player(const std::string& texturePath, const std::string& name, float x, float y, float speed, 
                sf::Keyboard::Key right, sf::Keyboard::Key left, sf::Keyboard::Key jump) 
     : normalTexture(),
@@ -30,18 +35,25 @@ Player::Player(const std::string& texturePath, const std::string& name, float x,
       lives(3),
       coins(0),
       fireballCooldown(0),
-      fireballs()
+      fireballs(),
+      currentFrame(0), 
+      frameCounter(0)
+
 {
  
     if (!normalTexture.loadFromFile(texturePath)) 
     {
         std::cerr << "Erreur : Impossible de charger " << texturePath << std::endl;
     }
+
+    //sprite.setTexture(texture);
+   // sprite.setScale(1.0f, 1.0f);
     
 
     std::string fireTexturePath;
     if (characterName == "Mario") {
         fireTexturePath = "images/mario_fire.png";
+        sprite.setScale(0.1f, 0.1f);
     } else if (characterName == "Luigi") {
         fireTexturePath = "images/luigi_fire.png"; 
     } else {
@@ -56,7 +68,8 @@ Player::Player(const std::string& texturePath, const std::string& name, float x,
     }
     
     sprite.setTexture(normalTexture);
-    sprite.setScale(0.15f, 0.15f);
+    sprite.setScale(1.0f, 1.0f);
+
     sprite.setPosition(x, y);
 }
 
@@ -88,10 +101,14 @@ void Player::update(const std::vector<sf::Sprite>& blocks, const std::vector<sf:
 
     if (sf::Keyboard::isKeyPressed(rightKey) && canMoveRight) {
         mouvement.moveRight();
+        movingRight = true;  
+        movingLeft = false;
     }
 
     if (sf::Keyboard::isKeyPressed(leftKey) && canMoveLeft) {
         mouvement.moveLeft();
+        movingLeft = true;  
+        movingRight = false;
     }
 
     if (sf::Keyboard::isKeyPressed(jumpKey)) {
@@ -99,6 +116,11 @@ void Player::update(const std::vector<sf::Sprite>& blocks, const std::vector<sf:
     }
 
     applyGravity(blocks, pipes);
+
+    if (movingRight || movingLeft) {
+        animate();
+    }
+
 }
 
 /**
@@ -206,7 +228,7 @@ void Player::die()
 void Player::grow() 
 {
     big = true;  
-    sprite.setScale(0.2f, 0.2f); 
+    sprite.setScale(0.1f, 0.1f); 
     sprite.setPosition(sprite.getPosition().x, 480.0f);
 }
 
@@ -218,7 +240,7 @@ void Player::shrink()
     
     if (big) {
         big = false;
-        sprite.setScale(0.1f, 0.1f); 
+        sprite.setScale(0.7f, 0.7f); 
         sprite.setPosition(sprite.getPosition().x, 500.0f);
         std::cout << "Mario devient petit!" << std::endl;
     } else {
@@ -232,6 +254,41 @@ void Player::shrink()
 bool Player::isBig() const 
 {
     return big;
+}
+
+
+void Player::animate()
+{
+    frameCounter++;
+    if (frameCounter >= 40)
+    {
+        frameCounter = 0;
+        currentFrame = (currentFrame + 1) % (movingLeft ? (characterName == "luigi" ? 5 : 4) : 4);
+    }
+
+    if (characterName == "Mario") {
+        if (movingRight) {
+            sprite.setTextureRect(sf::IntRect(8 + currentFrame * 28, 139, 28, 47));//coin gauche, coin en haut, largeur, hauteur
+        } else if (movingLeft) {
+            sprite.setTextureRect(sf::IntRect(202 + currentFrame * 28, 191, 33, 47));
+        } else { // Mario au repos -> frame droite par défaut
+            sprite.setTextureRect(sf::IntRect(8, 139, 28, 47));
+        }
+    } else if (characterName == "Luigi") {
+        if (movingRight) {
+            sprite.setTextureRect(sf::IntRect(8 + currentFrame * 28, 191, 28, 47));
+        } else if (movingLeft) {
+            sprite.setTextureRect(sf::IntRect(234 + currentFrame * 24, 8, 24, 33));
+        } else { // Luigi au repos -> frame droite par défaut
+            sprite.setTextureRect(sf::IntRect(8, 191, 28, 47));
+        }
+    }
+
+}
+
+
+sf::Sprite& Player::getSprite() {
+    return sprite;
 }
 
 /**

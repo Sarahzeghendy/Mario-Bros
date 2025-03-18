@@ -18,15 +18,17 @@ private:
     sf::Keyboard::Key rightKey;
     sf::Keyboard::Key leftKey;
     sf::Keyboard::Key jumpKey;
-    bool big;  
+    //bool big;  
     bool isDead;
     bool movingRight;
     bool movingLeft;
-    bool hasFirePower;
-    int lives;
-    int coins;
-    int fireballCooldown;
-    std::vector<Fireball> fireballs;
+    int currentFrame;
+    int frameCounter;
+    std::string characterType;
+
+
+    // Constructor
+    //Player(const std::string& texturePath, float x, float y, float speed,sf::Keyboard::Key right, sf::Keyboard::Key left, sf::Keyboard::Key jump,const std::string& characterType );
     
 
 public:
@@ -34,11 +36,12 @@ public:
     Player(const std::string& texturePath, const std::string& name, float x, float y, float speed, 
            sf::Keyboard::Key right, sf::Keyboard::Key left, sf::Keyboard::Key jump);
 
-   
+    bool big; 
     void update(const std::vector<sf::Sprite>& blocks, const std::vector<sf::Sprite>& pipes);
     void jump();
     void applyGravity(const std::vector<sf::Sprite>& blocks, const std::vector<sf::Sprite>& pipes);
     void draw(sf::RenderWindow& window);
+    void animate();
 
    
     void moveRight() { mouvement.moveRight(); }
@@ -66,6 +69,14 @@ public:
 
     bool loadTexture();
     void checkForGaps(const std::vector<sf::FloatRect> &gaps);
+    bool hasFirePower;
+    int lives;
+    int coins;
+    int fireballCooldown;
+    std::vector<Fireball> fireballs;
+
+    sf::Sprite& getSprite();
+
     bool checkWin(const sf::Sprite& flag);
 
     void collectFireFlower();
@@ -80,6 +91,7 @@ public:
     void loseFirePower();
    
     void bounce() { mouvement.bounce(); }
+
 
 };
 
