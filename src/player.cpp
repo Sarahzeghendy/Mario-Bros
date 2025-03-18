@@ -53,7 +53,7 @@ Player::Player(const std::string& texturePath, const std::string& name, float x,
     std::string fireTexturePath;
     if (characterName == "Mario") {
         fireTexturePath = "images/mario_fire.png";
-        sprite.setScale(0.1f, 0.1f);
+        //sprite.setScale(0.1f, 0.1f);
     } else if (characterName == "Luigi") {
         fireTexturePath = "images/luigi_fire.png"; 
     } else {
@@ -263,27 +263,26 @@ void Player::animate()
     if (frameCounter >= 40)
     {
         frameCounter = 0;
-        currentFrame = (currentFrame + 1) % (movingLeft ? (characterName == "luigi" ? 5 : 4) : 4);
+        currentFrame = (currentFrame + 1) % (movingLeft ? (characterName == "luigi" ? 3 : 3) : 4);
     }
 
     if (characterName == "Mario") {
         if (movingRight) {
-            sprite.setTextureRect(sf::IntRect(8 + currentFrame * 28, 139, 28, 47));//coin gauche, coin en haut, largeur, hauteur
+            sprite.setTextureRect(sf::IntRect(8 + currentFrame * 28, 139, 26, 47));//coin gauche, coin en haut, largeur, hauteur
         } else if (movingLeft) {
-            sprite.setTextureRect(sf::IntRect(202 + currentFrame * 28, 191, 33, 47));
+            sprite.setTextureRect(sf::IntRect(202 + currentFrame * 32, 191, 26, 47));//28 et 33 //202
         } else { // Mario au repos -> frame droite par défaut
             sprite.setTextureRect(sf::IntRect(8, 139, 28, 47));
         }
     } else if (characterName == "Luigi") {
         if (movingRight) {
-            sprite.setTextureRect(sf::IntRect(8 + currentFrame * 28, 191, 28, 47));
+            sprite.setTextureRect(sf::IntRect(8 + currentFrame * 28, 191, 24, 47));
         } else if (movingLeft) {
-            sprite.setTextureRect(sf::IntRect(234 + currentFrame * 24, 8, 24, 33));
+            sprite.setTextureRect(sf::IntRect(262 + currentFrame * 25, 4, 24, 47)); //24, 6, 24, 47 //234
         } else { // Luigi au repos -> frame droite par défaut
             sprite.setTextureRect(sf::IntRect(8, 191, 28, 47));
         }
     }
-
 }
 
 
