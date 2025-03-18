@@ -53,6 +53,7 @@ Player::Player(const std::string& texturePath, const std::string& name, float x,
     std::string fireTexturePath;
     if (characterName == "Mario") {
         fireTexturePath = "images/mario_fire.png";
+        sprite.setScale(0.1f, 0.1f);
     } else if (characterName == "Luigi") {
         fireTexturePath = "images/luigi_fire.png"; 
     } else {
@@ -67,7 +68,7 @@ Player::Player(const std::string& texturePath, const std::string& name, float x,
     }
     
     sprite.setTexture(normalTexture);
-    sprite.setScale(0.15f, 0.15f);
+    sprite.setScale(1.0f, 1.0f);
 
     sprite.setPosition(x, y);
 }
@@ -262,10 +263,10 @@ void Player::animate()
     if (frameCounter >= 40)
     {
         frameCounter = 0;
-        currentFrame = (currentFrame + 1) % (movingLeft ? (characterType == "luigi" ? 5 : 4) : 4);
+        currentFrame = (currentFrame + 1) % (movingLeft ? (characterName == "luigi" ? 5 : 4) : 4);
     }
 
-    if (characterType == "mario") {
+    if (characterName == "Mario") {
         if (movingRight) {
             sprite.setTextureRect(sf::IntRect(8 + currentFrame * 28, 139, 28, 47));//coin gauche, coin en haut, largeur, hauteur
         } else if (movingLeft) {
@@ -273,7 +274,7 @@ void Player::animate()
         } else { // Mario au repos -> frame droite par défaut
             sprite.setTextureRect(sf::IntRect(8, 139, 28, 47));
         }
-    } else if (characterType == "luigi") {
+    } else if (characterName == "Luigi") {
         if (movingRight) {
             sprite.setTextureRect(sf::IntRect(8 + currentFrame * 28, 191, 28, 47));
         } else if (movingLeft) {

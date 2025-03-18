@@ -86,10 +86,14 @@ int main()
      */
 
     // Initialisation des joueurs with character names
-    Player mario("images/mario_resized.png", "Mario", 100, 483, 0.07f, 
+    Player mario("images/sprite.jpg", "Mario", 100, 483, 0.07f, 
                  sf::Keyboard::Right, sf::Keyboard::Left, sf::Keyboard::Up);
-    Player luigi("images/luigi.png", "Luigi", 200, 480, 0.07f, 
+    Player luigi("images/sprite.jpg", "Luigi", 200, 480, 0.07f, 
                  sf::Keyboard::M, sf::Keyboard::A, sf::Keyboard::J);
+
+
+    mario.getSprite().setTextureRect(sf::IntRect(8, 139, 28, 47)); //frame de départ
+    luigi.getSprite().setTextureRect(sf::IntRect(8, 191, 28, 47)); //frame de départ
 
     // Création des différents types d'ennemis et leur zone de patrouille
     std::vector<std::unique_ptr<Enemy>> enemies;

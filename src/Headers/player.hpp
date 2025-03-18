@@ -18,7 +18,7 @@ private:
     sf::Keyboard::Key rightKey;
     sf::Keyboard::Key leftKey;
     sf::Keyboard::Key jumpKey;
-    bool big;  
+    //bool big;  
     bool isDead;
     bool movingRight;
     bool movingLeft;
