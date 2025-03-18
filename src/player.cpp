@@ -37,8 +37,8 @@ Player::Player(const std::string& texturePath, const std::string& name, float x,
       fireballCooldown(0),
       fireballs(),
       currentFrame(0), 
-      frameCounter(0)
-
+      frameCounter(0),
+      characterType()
 {
  
     if (!normalTexture.loadFromFile(texturePath)) 
