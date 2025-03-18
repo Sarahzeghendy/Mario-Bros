@@ -10,7 +10,7 @@
 
 Mouvement::Mouvement(sf::Sprite &spr, float spd)
     : sprite(spr), speed(spd), isJumping(false),
-      velocityY(0.0f), gravity(0.004f), jumpStrength(-1.2f), hangTime(40.0f), hangCounter(0.0f) {}
+      velocityY(0.0f), gravity(0.002f), jumpStrength(-0.8f), hangTime(20.0f), hangCounter(0.0f) {}
 
 /**
  * @brief Déplace le joueur vers la droite.
@@ -34,22 +34,25 @@ void Mouvement::moveLeft()
  */
 void Mouvement::jump()
 {
-    if (!isJumping) {
+    if (!isJumping)
+    {
         isJumping = true;
         velocityY = jumpStrength;
         hangCounter = hangTime;
     }
-    else if (hangCounter > 0) {
-        velocityY = jumpStrength * 0.75f;
-        hangCounter--;
-    }
-    if (velocityY < 0) // Montée
+
+    if (velocityY < 0)
     {
-        velocityY += gravity * 0.1f;
+        velocityY += gravity * 0.5f;
     }
     else
     {
-        velocityY += gravity * 0.6f; // Descente
+        velocityY += gravity * 0.7f;
+    }
+
+    if (velocityY > 0.5f)
+    {
+        velocityY = 0.5f;
     }
 }
 
@@ -68,15 +71,34 @@ bool Mouvement::checkCollision(const sf::Sprite &object)
  * @param blocks Les blocs avec lesquels vérifier la collision.
  * @param pipes Les tuyaux avec lesquels vérifier la collision.
  */
-void Mouvement::applyGravity(const std::vector<sf::Sprite>& blocks, const std::vector<sf::Sprite>& pipes) {
-    velocityY += gravity;
+void Mouvement::applyGravity(const std::vector<sf::Sprite> &blocks, const std::vector<sf::Sprite> &pipes)
+{
+    
+    if (velocityY < 0)
+    {
+        velocityY += gravity * 0.5f;
+    }
+    else
+    {
+        velocityY += gravity * 0.7f;
+    }
+
+    if (velocityY > 0.5f)
+    {
+        velocityY = 0.5f;
+    }
+
     sprite.move(0, velocityY);
 
     bool onGround = false;
 
-    for (const auto& block : blocks) {
-        if (sprite.getGlobalBounds().intersects(block.getGlobalBounds())) {
-            if (velocityY > 0) {
+    // ✅ Vérifie la collision avec les blocs
+    for (const auto &block : blocks)
+    {
+        if (sprite.getGlobalBounds().intersects(block.getGlobalBounds()))
+        {
+            if (velocityY > 0)
+            {
                 sprite.setPosition(sprite.getPosition().x, block.getPosition().y - sprite.getGlobalBounds().height);
                 velocityY = 0;
                 isJumping = false;
@@ -86,10 +108,22 @@ void Mouvement::applyGravity(const std::vector<sf::Sprite>& blocks, const std::v
         }
     }
 
-    for (const auto& pipe : pipes) {
-        if (sprite.getGlobalBounds().intersects(pipe.getGlobalBounds())) {
-            if (velocityY > 0) {
-                sprite.setPosition(sprite.getPosition().x, pipe.getPosition().y - sprite.getGlobalBounds().height);
+    for (const auto &pipe : pipes)
+    {
+        sf::FloatRect pipeBounds = pipe.getGlobalBounds();
+
+        float pipeLeft = pipeBounds.left + 80.0f;   
+        float pipeWidth = 15.4f;                    
+        float topOfPipe = pipeBounds.top;
+        float pipeHeight = pipeBounds.height;
+
+        sf::FloatRect fixedPipeBounds(pipeLeft, topOfPipe, pipeWidth, pipeHeight);
+
+        if (sprite.getGlobalBounds().intersects(fixedPipeBounds))
+        {
+            if (velocityY > 0)
+            {
+                sprite.setPosition(sprite.getPosition().x, topOfPipe - sprite.getGlobalBounds().height);
                 velocityY = 0;
                 isJumping = false;
                 hangCounter = 0;
@@ -97,39 +131,83 @@ void Mouvement::applyGravity(const std::vector<sf::Sprite>& blocks, const std::v
             }
         }
     }
-    if (!onGround) {
+
+    if (!onGround)
+    {
         isJumping = true;
     }
 }
+
 /**
- * @brief 
- * 
+ * @brief Vérifie s'il y a un trou sous le joueur.
+ * @param gaps Les trous avec lesquels vérifier la collision.
  */
-void Mouvement::checkForGaps(const std::vector<sf::FloatRect>& gaps) {
-    for (const auto& gap : gaps) {
-        if (sprite.getGlobalBounds().intersects(gap)) {
+void Mouvement::checkForGaps(const std::vector<sf::FloatRect> &gaps)
+{
+    for (const auto &gap : gaps)
+    {
+        if (sprite.getGlobalBounds().intersects(gap))
+        {
             std::cout << "Le joueur est tombé dans un trou !" << std::endl;
-            sprite.setPosition(100, 300); 
+            sprite.setPosition(100, 300);
             break;
         }
     }
 }
 
 /**
- * 
+ * @brief Vérifie si quelque chose bloque le mouvement du joueur.
+ * @param obstacles Les obstacles avec lesquels vérifier la collision.
+ * @param pipes Les tuyaux avec lesquels vérifier la collision.
+ * @return Vrai si le joueur peut bouger, faux sinon.
  */
-bool Mouvement::blockMovement(const std::vector<sf::Sprite>& obstacles, const std::vector<sf::Sprite>& pipes) {
-    for (const auto& obstacle : obstacles) {
-        if (sprite.getGlobalBounds().intersects(obstacle.getGlobalBounds())) {
-            return false; 
+std::pair<bool, bool> Mouvement::blockMovement(const std::vector<sf::Sprite> &obstacles, const std::vector<sf::Sprite> &pipes)
+{
+    bool canMoveRight = true;
+    bool canMoveLeft = true;
+
+    sf::FloatRect nextPositionRight = sprite.getGlobalBounds();
+    sf::FloatRect nextPositionLeft = sprite.getGlobalBounds();
+    nextPositionRight.left += speed;
+    nextPositionLeft.left -= speed;
+
+    for (const auto &obstacle : obstacles)
+    {
+        if (nextPositionRight.intersects(obstacle.getGlobalBounds()))
+        {
+            canMoveRight = false;
+        }
+        if (nextPositionLeft.intersects(obstacle.getGlobalBounds()))
+        {
+            canMoveLeft = false;
         }
     }
 
-    for (const auto& pipe : pipes) {
-        if (sprite.getGlobalBounds().intersects(pipe.getGlobalBounds())) {
-            return false; 
+    for (const auto &pipe : pipes)
+    {
+        sf::FloatRect pipeBounds = pipe.getGlobalBounds();
+
+        float pipeLeft = pipeBounds.left + 85.0f;
+        float pipeWidth = 15.4f;
+        float topOfPipe = pipeBounds.top;
+        float pipeHeight = pipeBounds.height;
+
+        sf::FloatRect fixedPipeBounds(pipeLeft, topOfPipe, pipeWidth, pipeHeight);
+
+        if (nextPositionRight.intersects(fixedPipeBounds))
+        {
+            std::cout << "Collision à droite détectée ! Mouvement vers l'avant bloqué." << std::endl;
+            canMoveRight = false;
+            canMoveLeft = true; 
+        }
+
+        if (nextPositionLeft.intersects(fixedPipeBounds))
+        {
+            std::cout << "Collision à gauche détectée ! Mouvement vers l'arrière bloqué." << std::endl;
+            canMoveLeft = false;
+            canMoveRight = true;
         }
     }
 
-    return true;
+    return {canMoveRight, canMoveLeft};
 }

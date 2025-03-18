@@ -7,8 +7,9 @@
 
 class FriendlyMushroom : public Enemy {
 public:
-    FriendlyMushroom(const std::string& imagePath, float x, float y, float leftLim, float rightLim);
+    FriendlyMushroom(float x, float y, float leftLim, float rightLim);
 
+    void update() override;
     void interactWithPlayer(Player& player) override;
 };
 

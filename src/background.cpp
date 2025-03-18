@@ -6,15 +6,11 @@ const float TILE_SIZE = 40.0f;
 
 Background::Background()
 {
-   
-    sky.setSize(sf::Vector2f(1280, 720));
-    sky.setFillColor(sf::Color(135, 206, 250)); // Bleu ciel
 
-    if (!groundTexture.loadFromFile("images/block.png"))
-    {
-        throw std::runtime_error("Erreur : Impossible de charger block.png");
-    }
-    if (!brickTexture.loadFromFile("images/block.png"))
+    sky.setSize(sf::Vector2f(1280, 720));
+    sky.setFillColor(sf::Color(135, 206, 250)); 
+
+    if (!groundBlock.loadFromFile("images/blocks.png"))
     {
         throw std::runtime_error("Erreur : Impossible de charger block.png");
     }
@@ -22,7 +18,7 @@ Background::Background()
     {
         throw std::runtime_error("Erreur : Impossible de charger coin.png");
     }
-    if (!pipeTexture.loadFromFile("images/pipes.png"))
+    if (!pipeTexture.loadFromFile("images/pipe.png"))
     {
         throw std::runtime_error("Erreur : Impossible de charger pipe.png");
     }
@@ -30,7 +26,10 @@ Background::Background()
     {
         throw std::runtime_error("Erreur : Impossible de charger cloud.png");
     }
-
+    if (!flagTexture.loadFromFile("images/flag.png"))
+    {
+        throw std::runtime_error("Erreur : Impossible de charger flag.png");
+    }
 
     loadMap("map.txt");
 
@@ -46,13 +45,13 @@ Background::Background()
 void Background::loadMap(const std::string &filePath)
 {
     std::ifstream file(filePath);
+
     if (!file.is_open())
     {
         std::cerr << "Erreur : Impossible de lire le fichier " << filePath << std::endl;
         return;
     }
 
-   
     std::vector<std::string> lines;
     std::string line;
     while (std::getline(file, line))
@@ -63,8 +62,8 @@ void Background::loadMap(const std::string &filePath)
 
     const float TILE_SIZE = 40.0f;
 
-    float windowHeight = 720.0f;
     float verticalOffset = 50.0f;
+
     if (verticalOffset < 0)
         verticalOffset = 0;
 
@@ -78,16 +77,16 @@ void Background::loadMap(const std::string &filePath)
 
             if (tile == '#')
             {
-                sf::Sprite ground(groundTexture);
+                sf::Sprite ground(groundBlock);
                 ground.setPosition(x, y);
-                ground.setScale(0.043f, 0.043f);
+                //ground.setScale(0.043f, 0.043f);
                 groundTiles.push_back(ground);
             }
             else if (tile == 'P' || tile == 'p')
             {
                 sf::Sprite pipe(pipeTexture);
-                pipe.setPosition(x, y - TILE_SIZE);
-                pipe.setScale(0.077f, 0.083f);
+                pipe.setPosition(100, 430);
+                pipe.setScale(0.3f, 0.3f);
 
                 pipes.push_back(pipe);
             }
@@ -102,13 +101,24 @@ void Background::loadMap(const std::string &filePath)
             {
                 gaps.push_back(sf::FloatRect(x, y, TILE_SIZE, TILE_SIZE));
             }
+            else if (tile == 'F')
+            {
+                if (!flagPlaced)
+                {
+                    flag.setTexture(flagTexture);
+                    flag.setPosition(x, 530);
+                    flag.setOrigin(flag.getGlobalBounds().width / 2, flag.getGlobalBounds().height / 2);
+                    flag.setScale(0.3f, 0.3f); 
+                    flagPlaced = true;
+                }
+            }
         }
     }
 }
 
 void Background::draw(sf::RenderWindow &window)
 {
-  
+
     window.draw(sky);
 
     for (auto &tile : groundTiles)
@@ -135,4 +145,16 @@ void Background::draw(sf::RenderWindow &window)
     {
         window.draw(cloud);
     }
+    if (flagPlaced)
+    {
+        window.draw(flag);
+    }
+}
+
+const sf::Sprite& Background::getFlag() const {
+    return flag;
+}
+std::vector<sf::FloatRect> Background::getGaps() const
+{
+    return gaps;
 }
