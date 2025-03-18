@@ -107,7 +107,7 @@ int main()
     // enemies.push_back(std::make_unique<KoopaTroopa>(900, 545, 800, 1000));
 
     // // Champignons gentils
-    // enemies.push_back(std::make_unique<FriendlyMushroom>(400, 545, 350, 500));
+    enemies.push_back(std::make_unique<FriendlyMushroom>(400, 545, 350, 500));
     // enemies.push_back(std::make_unique<FriendlyMushroom>(800, 545, 750, 900));
 
     // Placement des pièces dans le niveau

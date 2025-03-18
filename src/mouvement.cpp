@@ -112,8 +112,8 @@ void Mouvement::applyGravity(const std::vector<sf::Sprite> &blocks, const std::v
     {
         sf::FloatRect pipeBounds = pipe.getGlobalBounds();
 
-        float pipeLeft = pipeBounds.left + 80.0f;   
-        float pipeWidth = 15.4f;                    
+        float pipeLeft = pipeBounds.left + 60.0f;   
+        float pipeWidth = 35.4f;                    
         float topOfPipe = pipeBounds.top;
         float pipeHeight = pipeBounds.height;
 
@@ -187,8 +187,8 @@ std::pair<bool, bool> Mouvement::blockMovement(const std::vector<sf::Sprite> &ob
     {
         sf::FloatRect pipeBounds = pipe.getGlobalBounds();
 
-        float pipeLeft = pipeBounds.left + 85.0f;
-        float pipeWidth = 15.4f;
+        float pipeLeft = pipeBounds.left + 60.0f;
+        float pipeWidth = 35.4f;
         float topOfPipe = pipeBounds.top;
         float pipeHeight = pipeBounds.height;
 

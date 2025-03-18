@@ -11,6 +11,7 @@ public:
 
     void update() override;
     void interactWithPlayer(Player& player) override;
+    void onJumpedOn() override; 
 };
 
 #endif
