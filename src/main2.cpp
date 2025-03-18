@@ -19,7 +19,7 @@ int main()
     Background background;
 
    
-
+    sf::Clock clock; // Déclare un clock global ou dans ta fonction main
    
 
     //Menu menu(800, 600);
@@ -29,8 +29,13 @@ int main()
      * Mario est contrôlé par les touches fléchées
      * Luigi est contrôlé par les touches M : Move et J : Jump
      */
-    Player mario("images/mario_resized.png", 100, 483, 0.07f, sf::Keyboard::Right, sf::Keyboard::Left, sf::Keyboard::Up);
-    Player luigi("images/luigi.png", 200, 480, 0.07f, sf::Keyboard::M, sf::Keyboard::A, sf::Keyboard::J);
+    Player mario("images/sprite.jpg", 100, 545, 0.07f, sf::Keyboard::Right, sf::Keyboard::Left, sf::Keyboard::Up, "mario");
+    Player luigi("images/sprite.jpg", 200, 545, 0.07f, sf::Keyboard::M, sf::Keyboard::A, sf::Keyboard::J, "luigi");
+
+
+    mario.getSprite().setTextureRect(sf::IntRect(8, 139, 28, 47)); //frame de départ
+    luigi.getSprite().setTextureRect(sf::IntRect(8, 191, 28, 47)); //frame de départ
+    
 
     /**
      * Création des ennemis
@@ -63,6 +68,8 @@ int main()
      */
     while (window.isOpen())
     {
+        float deltaTime = clock.restart().asSeconds(); // temps écoulé depuis la dernière frame
+        
         sf::Event event;
         while (window.pollEvent(event))
         {
@@ -71,6 +78,7 @@ int main()
             else if (event.type == sf::Event::Resized)
                 camera.update({event.size.width, event.size.height});
         }
+
 
         // Menu
         // if (event.type == sf::Event::KeyPressed) {

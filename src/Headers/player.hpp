@@ -19,10 +19,13 @@ private:
     bool isDead;
     bool movingRight;
     bool movingLeft;
+    int currentFrame;
+    int frameCounter;
+    std::string characterType;
 
 public:
     // Constructor
-    Player(const std::string& texturePath, float x, float y, float speed,sf::Keyboard::Key right, sf::Keyboard::Key left, sf::Keyboard::Key jump);
+    Player(const std::string& texturePath, float x, float y, float speed,sf::Keyboard::Key right, sf::Keyboard::Key left, sf::Keyboard::Key jump,const std::string& characterType );
 
     bool big;  
 
@@ -31,6 +34,7 @@ public:
     void jump();
     void applyGravity(const std::vector<sf::Sprite>& blocks, const std::vector<sf::Sprite>& pipes);
     void draw(sf::RenderWindow& window);
+    void animate();
 
     // Movement related
     void moveRight() { mouvement.moveRight(); }
@@ -58,6 +62,8 @@ public:
 
     bool loadTexture();
     void checkForGaps(const std::vector<sf::FloatRect> &gaps);
+
+    sf::Sprite& getSprite();
 };
 
 #endif 
