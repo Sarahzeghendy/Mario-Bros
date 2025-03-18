@@ -46,14 +46,9 @@ Player::Player(const std::string& texturePath, const std::string& name, float x,
         std::cerr << "Erreur : Impossible de charger " << texturePath << std::endl;
     }
 
-    //sprite.setTexture(texture);
-   // sprite.setScale(1.0f, 1.0f);
-    
-
     std::string fireTexturePath;
     if (characterName == "Mario") {
         fireTexturePath = "images/mario_fire.png";
-        sprite.setScale(0.1f, 0.1f);
     } else if (characterName == "Luigi") {
         fireTexturePath = "images/luigi_fire.png"; 
     } else {
@@ -66,10 +61,14 @@ Player::Player(const std::string& texturePath, const std::string& name, float x,
         std::cerr << "Erreur : Impossible de charger " << fireTexturePath << std::endl;
         fireTexture = normalTexture; 
     }
+    else {
+        std::cout << "Fire texture loaded successfully: " << fireTexturePath << std::endl;
+        // Print the size of the texture to verify dimensions
+        std::cout << "Fire texture size: " << fireTexture.getSize().x << "x" << fireTexture.getSize().y << std::endl;
+    }
     
     sprite.setTexture(normalTexture);
-    sprite.setScale(1.0f, 1.0f);
-
+    sprite.setScale(1.2f, 1.2f);
     sprite.setPosition(x, y);
 }
 
@@ -117,10 +116,13 @@ void Player::update(const std::vector<sf::Sprite>& blocks, const std::vector<sf:
 
     applyGravity(blocks, pipes);
 
-    if (movingRight || movingLeft) {
-        animate();
+    // Only animate based on movement if the player doesn't have fire power !fi) {
+    // If they have fire power, animate regardless of movement
+    if (!hasFirePower) {
+        if (movingRight || movingLeft) {
+            animate();
+        }
     }
-
 }
 
 /**
@@ -228,7 +230,7 @@ void Player::die()
 void Player::grow() 
 {
     big = true;  
-    sprite.setScale(0.1f, 0.1f); 
+    sprite.setScale(1.2f, 1.2f); 
     sprite.setPosition(sprite.getPosition().x, 480.0f);
 }
 
@@ -256,7 +258,6 @@ bool Player::isBig() const
     return big;
 }
 
-
 void Player::animate()
 {
     frameCounter++;
@@ -267,25 +268,64 @@ void Player::animate()
     }
 
     if (characterName == "Mario") {
-        if (movingRight) {
-            sprite.setTextureRect(sf::IntRect(8 + currentFrame * 28, 139, 28, 47));//coin gauche, coin en haut, largeur, hauteur
-        } else if (movingLeft) {
-            sprite.setTextureRect(sf::IntRect(202 + currentFrame * 28, 191, 33, 47));
-        } else { // Mario au repos -> frame droite par défaut
-            sprite.setTextureRect(sf::IntRect(8, 139, 28, 47));
+        if (hasFirePower) {
+            // Fire Mario animation coordinates
+            if (movingRight) {
+                sprite.setTextureRect(sf::IntRect(8 + currentFrame * 28, 139, 28, 47)); 
+            } else if (movingLeft) {
+                sprite.setTextureRect(sf::IntRect(202 + currentFrame * 28, 191, 33, 47));
+            } else {
+                sprite.setTextureRect(sf::IntRect(8, 139, 28, 47));
+            }
+        } else {
+            // Regular Mario animation coordinates
+            if (movingRight) {
+                sprite.setTextureRect(sf::IntRect(8 + currentFrame * 28, 139, 28, 47));
+            } else if (movingLeft) {
+                sprite.setTextureRect(sf::IntRect(202 + currentFrame * 28, 191, 33, 47));
+            } else {
+                sprite.setTextureRect(sf::IntRect(8, 139, 28, 47));
+            }
         }
     } else if (characterName == "Luigi") {
         if (movingRight) {
             sprite.setTextureRect(sf::IntRect(8 + currentFrame * 28, 191, 28, 47));
         } else if (movingLeft) {
             sprite.setTextureRect(sf::IntRect(234 + currentFrame * 24, 8, 24, 33));
-        } else { // Luigi au repos -> frame droite par défaut
+        } else {
             sprite.setTextureRect(sf::IntRect(8, 191, 28, 47));
         }
     }
-
 }
 
+void Player::collectFireFlower()
+{
+    hasFirePower = true;
+    big = true;
+    sprite.setTexture(fireTexture);
+    
+    // Debug output - print texture size to verify it was set correctly
+    std::cout << "Current texture size: " << sprite.getTexture()->getSize().x << "x" 
+              << sprite.getTexture()->getSize().y << std::endl;
+    
+    // Try different coordinates or use the full texture
+    if (characterName == "Mario") {
+        // Use the entire fire texture first to debug
+        sprite.setTextureRect(sf::IntRect(0, 0, fireTexture.getSize().x, fireTexture.getSize().y));
+        // Then try specific coordinates once you can see the full texture
+        // sprite.setTextureRect(sf::IntRect(8, 139, 28, 47));
+    } else if (characterName == "Luigi") {
+        sprite.setTextureRect(sf::IntRect(0, 0, fireTexture.getSize().x, fireTexture.getSize().y));
+    }
+    
+    // Try a different scale to ensure the whole sprite is visible
+    sprite.setScale(0.15f, 0.15f); // Start with no scaling to see the full texture
+    std::cout << characterName << " est maintenant en mode de feu !" << std::endl;
+    
+    // Debug - print the actual sprite bounds after all changes
+    std::cout << "Sprite bounds: " << sprite.getGlobalBounds().width << "x" 
+              << sprite.getGlobalBounds().height << std::endl;
+}
 
 sf::Sprite& Player::getSprite() {
     return sprite;
@@ -299,26 +339,13 @@ sf::Sprite& Player::getSprite() {
 bool Player::checkWin(const sf::Sprite& flag) {
     float playerX = sprite.getPosition().x + sprite.getGlobalBounds().width / 2;
     float playerY = sprite.getPosition().y + sprite.getGlobalBounds().height / 2;
-
     float flagX = flag.getPosition().x;
     float flagY = flag.getPosition().y;
-
     if (std::abs(playerX - flagX) < 10.0f && std::abs(playerY - flagY) < 15.0f) {
         std::cout << "Victoire !" << std::endl;
         return true;
     }
-
     return false;
-}
-
-void Player::collectFireFlower()
-{
-    hasFirePower = true;
-    big = true;
-    sprite.setTexture(fireTexture);
-    
-    sprite.setScale(0.15f, 0.15f);
-    std::cout << characterName << " est maintenant en mode de feu !" << std::endl;
 }
 
 void Player::shootFireball()
@@ -326,18 +353,15 @@ void Player::shootFireball()
     if (hasFirePower && fireballCooldown == 0) 
     {
         float direction = movingLeft ? -1.0f : 1.0f;
-        
         float offsetX = (direction > 0) ? sprite.getGlobalBounds().width : 0;
         float offsetY = sprite.getGlobalBounds().height / 3;
-        
         fireballs.emplace_back(sprite.getPosition().x + offsetX, 
                               sprite.getPosition().y + offsetY, 
                               direction);
-        
         fireballCooldown = 15;
         std::cout << characterName << " lance une boule de feu!" << std::endl;
-    }
-    else if (!hasFirePower)
+    } 
+    else if (!hasFirePower) 
     {
         std::cout << characterName << " a besoin d'une Fleur de Feu pour lancer des boules de feu!" << std::endl;
     }
@@ -368,7 +392,6 @@ void Player::loseFirePower()
         hasFirePower = false;
         sprite.setTexture(normalTexture);
         std::cout << characterName << " a perdu son pouvoir de feu!" << std::endl;
-
         if (big) {
             sprite.setScale(0.15f, 0.15f);
         } else {
