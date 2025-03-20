@@ -15,7 +15,7 @@ Background::Background()
     {
         throw std::runtime_error("Erreur : Impossible de charger block.png");
     }
-    if (!questionBlockTexture.loadFromFile("images/questionmark_block.png"))
+    if (!questionBlockTexture.loadFromFile("images/questionmark_block_resized.png"))
     {
         throw std::runtime_error("Erreur : Impossible de charger questionmark_block.png");
     }
@@ -94,8 +94,7 @@ void Background::loadMap(const std::string &filePath)
             else if (tile == '?')
             {
                 sf::Sprite questionBlock(questionBlockTexture);
-                questionBlock.setPosition(x, y);
-                questionBlock.setScale(0.5f, 0.5f);
+                questionBlock.setPosition(x-12, y-17);
                 questionBlocks.push_back(questionBlock);
             }
             else if (tile == ' ')

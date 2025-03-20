@@ -1,12 +1,11 @@
 #include "Headers/enemy.hpp"
 #include "Headers/mouvement.hpp"
 #include "Headers/player.hpp"
-#include "Headers/friendlymushroom.hpp"
 #include <iostream>
 
 
 FriendlyMushroom::FriendlyMushroom(float x, float y)
-    : Enemy("images/champignon.png", x, y, 0, 0)  // Set limits to 0 in parent class
+    : Enemy("images/champignon.png", x, y, 0, 0) // Set limits to 0 in parent class
 {
     sprite.setScale(0.1f, 0.1f);
 }
