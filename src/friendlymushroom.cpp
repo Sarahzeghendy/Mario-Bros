@@ -5,38 +5,32 @@
 #include <iostream>
 
 
-FriendlyMushroom::FriendlyMushroom(float x, float y)
-    : Enemy("images/champignon.png", x, y, 0, 0),  // Set limits to 0 in parent class
-      mouvement(sprite, 0.5f)  // Adjust speed as needed
+FriendlyMushroom::FriendlyMushroom(float x, float y, float leftLim, float rightLim)
+    : Enemy("images/champignon.png", x, y, leftLim, rightLim) 
 {
     sprite.setScale(0.1f, 0.1f);
-    movingRight = true;  // Start moving right
-    std::cout << "FriendlyMushroom created at position (" << x << ", " << y << ")" << std::endl;
 }
 
 void FriendlyMushroom::update() 
 {
-    // Only process if alive
-    if (!alive) return;
-    
     // Store current position
     sf::Vector2f oldPosition = sprite.getPosition();
 
-    // Move based on direction without boundary checks
+    // Move based on direction
     if (movingRight) {
         mouvement.moveRight();
+        if (sprite.getPosition().x >= rightLimit) {
+            movingRight = false;
+        }
     } else {
         mouvement.moveLeft();
+        if (sprite.getPosition().x <= leftLimit) {
+            movingRight = true;
+        }
     }
 
-    // Let the mushroom move continuously in one direction
-    // You might want to add screen boundary checks or other logic here
-    
-    // Debug info
-    sf::Vector2f newPosition = sprite.getPosition();
-    if (oldPosition.x == newPosition.x) {
-        std::cout << "Warning: Mushroom didn't move!" << std::endl;
-    }
+    // Use the generic collision handling method
+    handleCollisions(oldPosition);
 }
 
 void FriendlyMushroom::interactWithPlayer(Player& player) 
@@ -65,4 +59,3 @@ void FriendlyMushroom::onJumpedOn()
 void FriendlyMushroom::reverseDirection() {
     movingRight = !movingRight; 
 }
-
