@@ -5,7 +5,6 @@
 #include "Headers/camera.hpp"
 #include "Headers/enemy.hpp"
 #include "Headers/menu.hpp"
-#include "Headers/friendlymushroom.hpp"
 #include "Headers/game.hpp"
 #include "Headers/fireflower.hpp"
 #include "Headers/fireball.hpp"
