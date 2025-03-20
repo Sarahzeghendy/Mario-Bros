@@ -1,8 +1,8 @@
 #include "Headers/enemy.hpp"
 #include <iostream>
 
-Goomba::Goomba(float x, float y, float leftLim, float rightLim)
-    : Enemy("images/goomba.png", x, y, leftLim, rightLim) 
+Goomba::Goomba(float x, float y)
+    : Enemy("images/goomba.png", x, y, 0, 0)  // Set limits to 0 in parent class
 {
 }
 
@@ -18,19 +18,14 @@ void Goomba::update()
     // Store current position
     sf::Vector2f oldPosition = sprite.getPosition();
 
-    // Move based on direction
+    // Move based on direction without boundary checks
     if (movingRight) {
         mouvement.moveRight();
-        if (sprite.getPosition().x >= rightLimit) {
-            movingRight = false;
-        }
     } else {
         mouvement.moveLeft();
-        if (sprite.getPosition().x <= leftLimit) {
-            movingRight = true;
-        }
     }
 
+    // Handle collisions without checking limits
     handleCollisions(oldPosition);
 }
 

@@ -1,8 +1,8 @@
 #include "Headers/enemy.hpp"
 #include <iostream>
 
-KoopaTroopa::KoopaTroopa(float x, float y, float leftLim, float rightLim)
-    : Enemy("images/koopa.png", x, y, leftLim, rightLim) 
+KoopaTroopa::KoopaTroopa(float x, float y)
+    : Enemy("images/koopa.png", x, y, 0, 0)  // Set limits to 0 in parent class
 {
     sprite.setScale(0.15f, 0.15f);
     speed = 0.03f;  // Set the movement speed
