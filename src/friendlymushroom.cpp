@@ -1,7 +1,6 @@
 #include "Headers/enemy.hpp"
 #include "Headers/mouvement.hpp"
 #include "Headers/player.hpp"
-#include "Headers/friendlymushroom.hpp"
 #include <iostream>
 
 
