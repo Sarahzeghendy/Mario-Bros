@@ -1,6 +1,5 @@
 #include <SFML/Graphics.hpp>
 #include "Headers/player.hpp"
-#include <iostream>
 #include "Headers/coin.hpp"
 #include "Headers/background.hpp"
 #include "Headers/camera.hpp"
@@ -11,6 +10,7 @@
 #include "Headers/fireflower.hpp"
 #include "Headers/fireball.hpp"
 #include "Headers/AIPlayer.hpp"
+#include "Headers/score.hpp"
 
 int main()
 {
@@ -124,10 +124,9 @@ int main()
         return -1;
     }
 
-    sf::Text scoreText;
-    scoreText.setFont(font);
-    scoreText.setCharacterSize(24);
-    scoreText.setFillColor(sf::Color::White);
+    // Replace scoreText with Score objects
+    Score marioScore("images/mario_score.png", font);
+    Score luigiScore("images/luigi_score.png", font);
 
     // Game loop
     while (window.isOpen())
@@ -394,23 +393,24 @@ int main()
             }
         }
 
-        // Mise à jour du score
-        std::string scoreString = "Mario: " + std::to_string(mario.getScore()) + 
-                                 "\nLuigi: " + std::to_string(luigi.getScore());
-        scoreText.setString(scoreString);
-        
-        // Affichage du scoreq
+        // Affichage du score
         sf::View view = window.getView();
-        scoreText.setPosition(view.getCenter().x + view.getSize().x/2 - 150, 
-                             view.getCenter().y - view.getSize().y/2 + 10);
+        float baseX = view.getCenter().x + view.getSize().x/2 - 100;
+        float baseY = view.getCenter().y - view.getSize().y/2 + 10;
         
-        window.draw(scoreText);
+        marioScore.setPosition(baseX, baseY);
+        luigiScore.setPosition(baseX, baseY + 40);
+        
+        marioScore.update(mario.getScore());
+        luigiScore.update(luigi.getScore());
+        
+        marioScore.draw(window);
+        luigiScore.draw(window);
 
         game.drawResult(window);
         window.display();
     }
 
-    // Clean up
     if (aiController) {
         delete aiController;
     }
