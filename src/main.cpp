@@ -86,7 +86,7 @@ int main()
      */
 
     // Initialisation des joueurs with character names
-    Player mario("images/mario_resized.png", "Mario", 100, 470, 0.07f, 
+    Player mario("images/sprite.jpg", "Mario", 100, 483, 0.07f, 
                  sf::Keyboard::Right, sf::Keyboard::Left, sf::Keyboard::Up);
     Player luigi("images/sprite.jpg", "Luigi", 200, 480, 0.07f, 
                  sf::Keyboard::M, sf::Keyboard::A, sf::Keyboard::J);
