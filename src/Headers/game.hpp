@@ -1,10 +1,13 @@
 #pragma once
+#ifndef GAME_HPP
+#define GAME_HPP
+
 #include <SFML/Graphics.hpp>
 
 class Game {
 private:
-    bool gameOver; 
-    int winner = -1;
+    bool isOver;
+    int winner;
     bool aiDead_;   
     sf::Font font;
     std::vector<sf::Text> results;
@@ -17,5 +20,7 @@ public:
     void handleAIDeath();
     bool isAIDead() const { return aiDead_; }
 
-    bool isGameOver() const { return gameOver; }
+    bool isGameOver() const { return isOver; } 
 };
+
+#endif

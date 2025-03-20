@@ -39,7 +39,9 @@ Player::Player(const std::string& texturePath, const std::string& name, float x,
       currentFrame(0), 
       frameCounter(0),
       characterType(),
-      hitTimer(0) // Initialize hitTimer to 0
+      hitTimer(0), 
+      score(0)  
+
 {
  
     if (!normalTexture.loadFromFile(texturePath)) 
@@ -187,7 +189,8 @@ void Player::draw(sf::RenderWindow& window)
 void Player::getCoins() 
 {
     coins++;
-    std::cout << "Nombre de pièces : " << coins << std::endl;
+    score += 10;  // Add 10 points when collecting a coin
+    std::cout << "Nombre de pièces : " << coins << " Score : " << score << std::endl;
 
     if (coins > 100) 
     {
