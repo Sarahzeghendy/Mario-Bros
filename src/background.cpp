@@ -7,7 +7,8 @@ const float TILE_SIZE = 40.0f;
 Background::Background()
 {
 
-    sky.setSize(sf::Vector2f(1280, 720));
+    sky.setSize(sf::Vector2f(5000, 720));
+    sky.setPosition(-400, 0);
     sky.setFillColor(sf::Color(135, 206, 250)); 
 
     if (!groundBlock.loadFromFile("images/blocks.png"))
@@ -62,6 +63,7 @@ void Background::loadMap(const std::string &filePath)
 
     const float TILE_SIZE = 40.0f;
 
+    float horizontalOffset = -100.0f;
     float verticalOffset = 50.0f;
 
     if (verticalOffset < 0)
@@ -72,20 +74,19 @@ void Background::loadMap(const std::string &filePath)
         for (size_t col = 0; col < lines[row].size(); col++)
         {
             char tile = lines[row][col];
-            float x = col * TILE_SIZE;
+            float x = col * TILE_SIZE + horizontalOffset;
             float y = row * TILE_SIZE + verticalOffset;
 
             if (tile == '#')
             {
                 sf::Sprite ground(groundBlock);
                 ground.setPosition(x, y);
-                //ground.setScale(0.043f, 0.043f);
                 groundTiles.push_back(ground);
             }
             else if (tile == 'P' || tile == 'p')
             {
                 sf::Sprite pipe(pipeTexture);
-                pipe.setPosition(100, 430);
+                pipe.setPosition(x, y-17);
                 pipe.setScale(0.3f, 0.3f);
 
                 pipes.push_back(pipe);

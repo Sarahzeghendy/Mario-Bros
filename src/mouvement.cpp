@@ -92,7 +92,7 @@ void Mouvement::applyGravity(const std::vector<sf::Sprite> &blocks, const std::v
 
     bool onGround = false;
 
-    // ✅ Vérifie la collision avec les blocs
+    // Vérifie la collision avec les blocs
     for (const auto &block : blocks)
     {
         if (sprite.getGlobalBounds().intersects(block.getGlobalBounds()))
