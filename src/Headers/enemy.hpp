@@ -90,7 +90,7 @@ class KoopaTroopa : public Enemy {
 
 class FriendlyMushroom : public Enemy {
     public:
-        FriendlyMushroom(float x, float y);  // Updated to match implementation with 2 parameters
+        FriendlyMushroom(float x, float y);
         void update() override;
         void interactWithPlayer(Player& player) override;
         void onJumpedOn() override; 

@@ -13,7 +13,7 @@ Background::Background()
 
     if (!groundBlock.loadFromFile("images/blocks.png"))
     {
-        throw std::runtime_error("Erreur : Impossible de charger block.png");
+        throw std::runtime_error("Erreur : Impossible de charger blocks.png");
     }
     if (!questionBlockTexture.loadFromFile("images/questionmark_block_resized.png"))
     {
