@@ -5,28 +5,32 @@
 #include <iostream>
 
 
-FriendlyMushroom::FriendlyMushroom(float x, float y, float leftLim, float rightLim)
-    : Enemy("images/champignon.png", x, y, leftLim, rightLim) 
+FriendlyMushroom::FriendlyMushroom(float x, float y)
+    : Enemy("images/champignon.png", x, y, 0, 0)  // Set limits to 0 in parent class
 {
     sprite.setScale(0.1f, 0.1f);
 }
 
 void FriendlyMushroom::update() 
 {
+    // Only process if alive
+    if (!alive) return;
+    
+    // Check if falling first
+    if (isFalling)
+    {
+        fall();
+        return;
+    }
+    
     // Store current position
     sf::Vector2f oldPosition = sprite.getPosition();
 
-    // Move based on direction
+    // Move based on direction without checking limits
     if (movingRight) {
         mouvement.moveRight();
-        if (sprite.getPosition().x >= rightLimit) {
-            movingRight = false;
-        }
     } else {
         mouvement.moveLeft();
-        if (sprite.getPosition().x <= leftLimit) {
-            movingRight = true;
-        }
     }
 
     // Use the generic collision handling method

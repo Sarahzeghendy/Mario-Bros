@@ -7,7 +7,7 @@
 
 class FriendlyMushroom : public Enemy {
 public:
-    FriendlyMushroom(float x, float y, float leftLim, float rightLim);  // Constructor with limits
+    FriendlyMushroom(float x, float y);  // Updated constructor without limits
 
     void update() override;
     void interactWithPlayer(Player& player) override;

@@ -25,15 +25,27 @@ void KoopaTroopa::update()
 
     // Move based on direction without checking limits
     if (movingRight) {
-        sprite.move(speed, 0);
-        // Keep sprite facing right
-        if (sprite.getScale().x < 0) {
+        if (inShellState) {
+            // Use the faster shell speed when in shell state
+            sprite.move(speed * 2, 0);
+        } else {
+            sprite.move(speed, 0);
+        }
+        
+        // Keep sprite facing right (only if not in shell state)
+        if (!inShellState && sprite.getScale().x < 0) {
             sprite.setScale(0.15f, 0.15f);
         }
     } else {
-        sprite.move(-speed, 0);
-        // Keep sprite facing left
-        if (sprite.getScale().x > 0) {
+        if (inShellState) {
+            // Use the faster shell speed when in shell state
+            sprite.move(-speed * 2, 0);
+        } else {
+            sprite.move(-speed, 0);
+        }
+        
+        // Keep sprite facing left (only if not in shell state)
+        if (!inShellState && sprite.getScale().x > 0) {
             sprite.setScale(-0.15f, 0.15f);
         }
     }
@@ -67,7 +79,13 @@ void KoopaTroopa::interactWithPlayer(Player& player)
 
 void KoopaTroopa::onJumpedOn() 
 {
-
+    // If already in shell state, just reverse direction
+    if (inShellState) {
+        movingRight = !movingRight;
+        std::cout << "Koopa shell kicked in other direction!" << std::endl;
+        return;
+    }
+    
     inShellState = true;
 
     sf::Vector2f originalPosition = sprite.getPosition();
@@ -80,8 +98,11 @@ void KoopaTroopa::onJumpedOn()
     sprite.setPosition(originalPosition);
     sprite.setScale(0.15f, 0.15f);
     
-    movingRight = (rand() % 2 == 0);  
-    mouvement.setSpeed(0.06f);  
+    // Don't change direction when first entered shell state
+    // movingRight = (rand() % 2 == 0);  
+    
+    // Increase the speed for shell state
+    speed = 0.06f;  
     
     std::cout << "Koopa dans sa carapace!" << std::endl;
 }
