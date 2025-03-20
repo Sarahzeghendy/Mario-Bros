@@ -96,9 +96,15 @@ int main()
 
     // Enemies
     std::vector<std::unique_ptr<Enemy>> enemies;
+<<<<<<< HEAD
     enemies.push_back(std::make_unique<Goomba>(300, 545));
     enemies.push_back(std::make_unique<KoopaTroopa>(750, 530));
     enemies.push_back(std::make_unique<FriendlyMushroom>(400, 540));
+=======
+    enemies.push_back(std::make_unique<Goomba>(300, 545, 200, 400));
+    enemies.push_back(std::make_unique<KoopaTroopa>(750, 530, -10000, 10000));
+    enemies.push_back(std::make_unique<FriendlyMushroom>(400, 540, -350, 500));
+>>>>>>> 00dcc7407df73bcc27f4d303c764549f373f715f
 
     // Create AI controller for Luigi if in AI mode
     AIPlayer* aiController = nullptr;
