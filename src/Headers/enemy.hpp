@@ -88,4 +88,13 @@ class KoopaTroopa : public Enemy {
         bool inShellState = false;  
 };
 
+class FriendlyMushroom : public Enemy {
+    public:
+        FriendlyMushroom(float x, float y, float leftLim, float rightLim);
+        void update() override;
+        void interactWithPlayer(Player& player) override;
+        void onJumpedOn() override; 
+        void reverseDirection();
+};
+
 #endif

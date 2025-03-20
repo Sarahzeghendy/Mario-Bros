@@ -53,7 +53,6 @@ void FriendlyMushroom::interactWithPlayer(Player& player)
 
 void FriendlyMushroom::onJumpedOn()
 {
-    
     if (alive) {
         alive = false;
         std::cout << "Champignon gentil collecté en sautant dessus!" << std::endl;
