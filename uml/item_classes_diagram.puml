@@ -1,0 +1,48 @@
+@startuml Item Classes Diagram
+
+class Coin {
+  - sf::Texture texture
+  - sf::Sprite sprite
+  - bool collected
+  - int animationFrame
+  - int frameCounter
+  
+  + Coin(x: float, y: float)
+  + draw(window: sf::RenderWindow&): void
+  + collect(): void
+  + isCollected(): bool
+  + getBounds(): sf::FloatRect
+}
+
+class FireFlower {
+  - sf::Texture texture
+  - sf::Sprite sprite
+  - bool collected
+  - int animationFrame
+  - int frameCounter
+  
+  + FireFlower(x: float, y: float)
+  + draw(window: sf::RenderWindow&): void
+  + collect(): void
+  + isCollected(): bool
+  + getBounds(): sf::FloatRect
+}
+
+class Fireball {
+  - sf::Texture texture
+  - sf::Sprite sprite
+  - float velocityX
+  - float velocityY
+  - float gravity
+  - bool active
+  - int bounceCount
+  
+  + Fireball(x: float, y: float, direction: float)
+  + update(blocks: vector<sf::Sprite>&): void
+  + draw(window: sf::RenderWindow&): void
+  + isActive(): bool
+  + destroy(): void
+  + getBounds(): sf::FloatRect
+}
+
+@enduml

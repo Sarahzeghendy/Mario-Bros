@@ -1,0 +1,24 @@
+@startuml Movement Class Diagram
+
+class Mouvement {
+  - sf::Sprite& sprite
+  - float speed
+  - bool isJumping
+  - float velocityY
+  - float gravity
+  - float jumpStrength
+  - float hangTime
+  - float hangCounter
+  
+  + Mouvement(spr: sf::Sprite&, spd: float)
+  + moveRight(): void
+  + moveLeft(): void
+  + jump(): void
+  + checkCollision(object: sf::Sprite&): bool
+  + applyGravity(blocks: vector<sf::Sprite>&, pipes: vector<sf::Sprite>&): void
+  + checkForGaps(gaps: vector<sf::FloatRect>&): void
+  + blockMovement(obstacles: vector<sf::Sprite>&, pipes: vector<sf::Sprite>&): pair<bool, bool>
+  + bounce(): void
+}
+
+@enduml

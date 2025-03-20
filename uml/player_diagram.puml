@@ -1,0 +1,69 @@
+@startuml Player Class Diagram
+
+class Player {
+  - sf::Texture normalTexture
+  - sf::Texture fireTexture
+  - sf::Sprite sprite
+  - std::string characterName
+  - Mouvement mouvement
+  - sf::Keyboard::Key rightKey
+  - sf::Keyboard::Key leftKey
+  - sf::Keyboard::Key jumpKey
+  - bool big
+  - bool isDead
+  - bool movingRight
+  - bool movingLeft
+  - bool hasFirePower
+  - int lives
+  - int coins
+  - int fireballCooldown
+  - std::vector<Fireball> fireballs
+  - int currentFrame
+  - int frameCounter
+  - std::string characterType
+  
+  + Player(texturePath: string, name: string, x: float, y: float, speed: float, right: Key, left: Key, jump: Key)
+  + update(blocks: vector<sf::Sprite>&, pipes: vector<sf::Sprite>&): void
+  + jump(): void
+  + applyGravity(blocks: vector<sf::Sprite>&, pipes: vector<sf::Sprite>&): void
+  + draw(window: sf::RenderWindow&): void
+  + animate(): void
+  + moveRight(): void
+  + moveLeft(): void
+  + isMovingRight(): bool
+  + isMovingLeft(): bool
+  + getPosition(): sf::Vector2f
+  + setPosition(x: float, y: float): void
+  + getbounds(): sf::FloatRect
+  + getCoins(): void
+  + loseLife(): void
+  + gainLife(): void
+  + getLives(): int
+  + grow(): void
+  + shrink(): void
+  + isBig(): bool
+  + die(): void
+  + loadTexture(): bool
+  + checkForGaps(gaps: vector<sf::FloatRect>&): void
+  + getSprite(): sf::Sprite&
+  + checkWin(flag: sf::Sprite&): bool
+  + collectFireFlower(): void
+  + shootFireball(): void
+  + updateFireballs(blocks: vector<sf::Sprite>&): void
+  + drawFireballs(window: sf::RenderWindow&): void
+  + getFireballs(): vector<Fireball>&
+  + hasFirePowerActive(): bool
+  + loseFirePower(): void
+  + bounce(): void
+}
+
+class Mouvement {
+}
+
+class Fireball {
+}
+
+Player -- Mouvement : has >
+Player -- Fireball : contains >
+
+@enduml

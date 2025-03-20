@@ -38,6 +38,7 @@ public:
         velocityY = jumpStrength * 0.6f; 
         isJumping = true;
     }
+    bool getIsJumping() const { return isJumping; }
 };
 
 #endif

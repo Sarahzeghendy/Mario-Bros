@@ -28,6 +28,7 @@ SRCS = $(SRC_DIR)/main.cpp \
        $(SRC_DIR)/koopa.cpp \
        $(SRC_DIR)/fireflower.cpp \
        $(SRC_DIR)/fireball.cpp \
+       $(SRC_DIR)/AIPlayer.cpp \
 
 
 # Générer les fichiers objets correspondants

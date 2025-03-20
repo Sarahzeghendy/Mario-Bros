@@ -6,6 +6,7 @@ class Player; //déclaration aticipée de la classe Player
 #include <SFML/Graphics.hpp>
 #include "player.hpp"
 #include "mouvement.hpp"
+#include <iostream>
 
 
 class Enemy 
@@ -21,11 +22,21 @@ class Enemy
         virtual void checkForGaps(const std::vector<sf::FloatRect>& gaps); 
         void fall(); 
    
-   
         void render(sf::RenderWindow& window); 
         bool isAlive() const;     
         sf::FloatRect getBounds() const; 
         void draw(sf::RenderWindow& window);
+
+        void interactWithPlayerSafely(Player& player) {
+            auto originalScale = player.getSprite().getScale();
+         
+            interactWithPlayer(player);
+            
+            if (player.getSprite().getScale().x < 0.1f || player.getSprite().getScale().y < 0.1f) {
+                std::cout << "Warning: Player scale too small after enemy interaction. Restoring." << std::endl;
+                player.getSprite().setScale(originalScale);
+            }
+        }
 
     protected:
         sf::Texture texture;
