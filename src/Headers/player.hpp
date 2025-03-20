@@ -13,16 +13,16 @@ private:
     sf::Texture normalTexture; 
     sf::Texture fireTexture;
     sf::Sprite sprite;
-    std::string characterName; // Add this to track which character (Mario or Luigi)
+    std::string characterName; 
     Mouvement mouvement;
     sf::Keyboard::Key rightKey;
     sf::Keyboard::Key leftKey;
     sf::Keyboard::Key jumpKey;
-    bool big;  // Move from public to private to match initialization order
+    bool big;  
     bool isDead;
     bool movingRight;
     bool movingLeft;
-    bool hasFirePower; // Move this here to match initialization order
+    bool hasFirePower; 
     int lives;
     int coins;
     int fireballCooldown;
@@ -30,13 +30,12 @@ private:
     int currentFrame;
     int frameCounter;
     std::string characterType;
+    int hitTimer; // Add this variable to track invincibility after being hit
 
 public:
     Player(const std::string& texturePath, const std::string& name, float x, float y, float speed, 
            sf::Keyboard::Key right, sf::Keyboard::Key left, sf::Keyboard::Key jump);
 
-    // Remove from here as it's now private
-    // bool big; 
     void update(const std::vector<sf::Sprite>& blocks, const std::vector<sf::Sprite>& pipes);
     void jump();
     void applyGravity(const std::vector<sf::Sprite>& blocks, const std::vector<sf::Sprite>& pipes);
@@ -65,13 +64,6 @@ public:
     bool loadTexture();
     void checkForGaps(const std::vector<sf::FloatRect> &gaps);
 
-    // These are now private members
-    // bool hasFirePower;
-    // int lives;
-    // int coins;
-    // int fireballCooldown;
-    // std::vector<Fireball> fireballs;
-
     sf::Sprite& getSprite();
 
     bool checkWin(const sf::Sprite& flag);
@@ -87,6 +79,17 @@ public:
     void loseFirePower();
    
     void bounce() { mouvement.bounce(); }
-};
 
+    void setMovingRight(bool move) { movingRight = move; }
+    void setMovingLeft(bool move) { movingLeft = move; }
+    bool isInAir() const { return mouvement.getIsJumping(); }
+
+    Mouvement& getMouvement() { return mouvement; }
+
+    bool isSmall() const;
+    bool isHit() const;
+    bool isInvincible() const;
+    bool getIsDead() const { return isDead; }
+    void setIsDead(bool dead) { isDead = dead; }
+};
 #endif

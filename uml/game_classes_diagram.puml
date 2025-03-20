@@ -1,0 +1,60 @@
+@startuml Game Classes Diagram
+
+class Game {
+  - bool gameOver
+  - int winner
+  - sf::Font font
+  - sf::Text resultText
+  
+  + Game()
+  + handleWin(playerNumber: int): void
+  + isGameOver(): bool
+  + drawResult(window: sf::RenderWindow&): void
+}
+
+class Background {
+  - sf::Texture groundTexture
+  - sf::Texture skyTexture
+  - sf::Texture pipeTexture
+  - sf::Texture flagTexture
+  - std::vector<sf::Sprite> groundTiles
+  - std::vector<sf::Sprite> skyTiles
+  - std::vector<sf::Sprite> pipes
+  - sf::Sprite flag
+  - std::vector<sf::FloatRect> gaps
+  
+  + Background()
+  + draw(window: sf::RenderWindow&): void
+  + getGroundTiles(): const vector<sf::Sprite>&
+  + getPipes(): const vector<sf::Sprite>&
+  + getFlag(): const sf::Sprite&
+  + getGaps(): const vector<sf::FloatRect>&
+}
+
+class Camera {
+  - sf::View view
+  
+  + Camera(width: unsigned int, height: unsigned int)
+  + update(size: sf::Vector2u): void
+  + setCenter(x: float, y: float): void
+  + getView(): const sf::View&
+}
+
+class Menu {
+  - sf::Font font
+  - std::vector<sf::Text> options
+  - int selectedItemIndex
+  - sf::Text title
+  - sf::Text rulesText
+  - bool showingRules
+  
+  + Menu(width: float, height: float)
+  + draw(window: sf::RenderWindow&): void
+  + moveUp(): void
+  + moveDown(): void
+  + getSelectedIndex(): int
+  + showRules(): void
+  + hideRules(): void
+}
+
+@enduml

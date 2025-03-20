@@ -1,0 +1,54 @@
+@startuml Enemy Class Diagram
+
+abstract class Enemy {
+  # sf::Texture texture
+  # sf::Sprite sprite
+  # Mouvement mouvement
+  # bool alive
+  # bool movingRight
+  # float leftLimit
+  # float rightLimit
+  
+  + Enemy(texturePath: string, x: float, y: float, leftLim: float, rightLim: float)
+  + virtual update(): void
+  + render(window: sf::RenderWindow&): void
+  + isAlive(): bool
+  + getBounds(): sf::FloatRect
+  + virtual interactWithPlayer(player: Player&): void
+  + checkForGaps(gaps: vector<sf::FloatRect>&): void
+  + {abstract} virtual onJumpedOn(): void
+  + virtual onFireballHit(): void
+}
+
+class Goomba {
+  + Goomba(x: float, y: float, leftLim: float, rightLim: float)
+  + update(): void
+  + interactWithPlayer(player: Player&): void
+  + onJumpedOn(): void
+}
+
+class KoopaTroopa {
+  - bool isShell
+  - int shellTimer
+  
+  + KoopaTroopa(x: float, y: float, leftLim: float, rightLim: float)
+  + update(): void
+  + interactWithPlayer(player: Player&): void
+  + onJumpedOn(): void
+  + onFireballHit(): void
+}
+
+class FriendlyMushroom {
+  + FriendlyMushroom(x: float, y: float, leftLim: float, rightLim: float)
+  + update(): void
+  + interactWithPlayer(player: Player&): void
+  + onJumpedOn(): void
+}
+
+Enemy <|-- Goomba
+Enemy <|-- KoopaTroopa
+Enemy <|-- FriendlyMushroom
+
+Enemy -- Mouvement : has >
+
+@enduml

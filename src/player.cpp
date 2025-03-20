@@ -38,7 +38,8 @@ Player::Player(const std::string& texturePath, const std::string& name, float x,
       fireballs(),
       currentFrame(0), 
       frameCounter(0),
-      characterType()
+      characterType(),
+      hitTimer(0) // Initialize hitTimer to 0
 {
  
     if (!normalTexture.loadFromFile(texturePath)) 
@@ -87,6 +88,23 @@ bool Player::loadTexture() {
 void Player::update(const std::vector<sf::Sprite>& blocks, const std::vector<sf::Sprite>& pipes) {
     if (isDead) return;
 
+    // Decrease hit invincibility timer if it's active
+    if (hitTimer > 0) {
+        hitTimer--;
+        
+        // Flash the sprite to show invincibility
+        if (hitTimer % 10 < 5) {
+            sprite.setColor(sf::Color(255, 255, 255, 128)); // Semi-transparent
+        } else {
+            sprite.setColor(sf::Color(255, 255, 255, 255)); // Fully visible
+        }
+        
+        // Reset to fully visible when invincibility ends
+        if (hitTimer == 0) {
+            sprite.setColor(sf::Color(255, 255, 255, 255));
+        }
+    }
+
     if (fireballCooldown > 0) {
         fireballCooldown--;
     }
@@ -116,13 +134,8 @@ void Player::update(const std::vector<sf::Sprite>& blocks, const std::vector<sf:
 
     applyGravity(blocks, pipes);
 
-    // Only animate based on movement if the player doesn't have fire power !fi) {
-    // If they have fire power, animate regardless of movement
-    if (!hasFirePower) {
-        if (movingRight || movingLeft) {
-            animate();
-        }
-    }
+    // Call animate regardless of fire power status
+    animate();
 }
 
 /**
@@ -245,6 +258,9 @@ void Player::shrink()
         sprite.setScale(0.7f, 0.7f); 
         sprite.setPosition(sprite.getPosition().x, 500.0f);
         std::cout << "Mario devient petit!" << std::endl;
+        
+        // Set invincibility timer when shrinking (hit)
+        hitTimer = 120; // 2 seconds at 60 FPS
     } else {
         die();
     }
@@ -258,6 +274,27 @@ bool Player::isBig() const
     return big;
 }
 
+bool Player::isSmall() const {
+    // Determine if player is in small state based on sprite size or other indicators
+    // This depends on how you're implementing the shrinking mechanic
+    return sprite.getScale().x < 1.0f; // Adjust this condition based on your implementation
+}
+
+bool Player::isHit() const {
+    // Return true if player was recently hit
+    return hitTimer > 0;
+}
+
+bool Player::isInvincible() const {
+    // Return true if player is currently invincible (right after being hit)
+    return hitTimer > 0;
+}
+
+// Remove this implementation as it's already defined elsewhere
+// bool Player::isInAir() const {
+//     return mouvement.isInAir();
+// }
+
 void Player::animate()
 {
     frameCounter++;
@@ -267,21 +304,63 @@ void Player::animate()
         currentFrame = (currentFrame + 1) % (movingLeft ? (characterName == "luigi" ? 3 : 3) : 4);
     }
 
-    if (characterName == "Mario") {
+    if (hasFirePower) {
+        // For fire power, we'll just flip the sprite horizontally based on direction
+        // instead of using different animation frames
         if (movingRight) {
-            sprite.setTextureRect(sf::IntRect(8 + currentFrame * 28, 139, 26, 47));//coin gauche, coin en haut, largeur, hauteur
+            // When moving right, make sure scale is positive (no flip)
+            if (sprite.getScale().x < 0) {
+                sprite.setScale(std::abs(sprite.getScale().x), sprite.getScale().y);
+            }
         } else if (movingLeft) {
-            sprite.setTextureRect(sf::IntRect(202 + currentFrame * 32, 191, 26, 47));//28 et 33 //202
-        } else { // Mario au repos -> frame droite par défaut
-            sprite.setTextureRect(sf::IntRect(8, 139, 28, 47));
+            // When moving left, make scale negative (horizontal flip)
+            if (sprite.getScale().x > 0) {
+                sprite.setScale(-sprite.getScale().x, sprite.getScale().y);
+            }
         }
-    } else if (characterName == "Luigi") {
-        if (movingRight) {
-            sprite.setTextureRect(sf::IntRect(8 + currentFrame * 28, 191, 24, 47));
-        } else if (movingLeft) {
-            sprite.setTextureRect(sf::IntRect(262 + currentFrame * 25, 4, 24, 47)); //24, 6, 24, 47 //234
-        } else { // Luigi au repos -> frame droite par défaut
-            sprite.setTextureRect(sf::IntRect(8, 191, 28, 47));
+        // No need to change texture rect for fire power as we're using the full texture
+    } else {
+        // Original animation for non-fire power state
+        if (characterName == "Mario") {
+            if (movingRight) {
+                sprite.setTextureRect(sf::IntRect(8 + currentFrame * 28, 139, 26, 47));
+                // Ensure no flip
+                if (sprite.getScale().x < 0) {
+                    sprite.setScale(std::abs(sprite.getScale().x), sprite.getScale().y);
+                }
+            } else if (movingLeft) {
+                sprite.setTextureRect(sf::IntRect(202 + currentFrame * 32, 191, 26, 47));
+                // Ensure no flip as we're using left-facing frames
+                if (sprite.getScale().x < 0) {
+                    sprite.setScale(std::abs(sprite.getScale().x), sprite.getScale().y);
+                }
+            } else { // Standing still
+                sprite.setTextureRect(sf::IntRect(8, 139, 28, 47));
+                // Default to right-facing
+                if (sprite.getScale().x < 0) {
+                    sprite.setScale(std::abs(sprite.getScale().x), sprite.getScale().y);
+                }
+            }
+        } else if (characterName == "Luigi") {
+            if (movingRight) {
+                sprite.setTextureRect(sf::IntRect(8 + currentFrame * 28, 191, 24, 47));
+                // Ensure no flip
+                if (sprite.getScale().x < 0) {
+                    sprite.setScale(std::abs(sprite.getScale().x), sprite.getScale().y);
+                }
+            } else if (movingLeft) {
+                sprite.setTextureRect(sf::IntRect(262 + currentFrame * 25, 4, 24, 47));
+                // Ensure no flip as we're using left-facing frames
+                if (sprite.getScale().x < 0) {
+                    sprite.setScale(std::abs(sprite.getScale().x), sprite.getScale().y);
+                }
+            } else { // Standing still
+                sprite.setTextureRect(sf::IntRect(8, 191, 28, 47));
+                // Default to right-facing
+                if (sprite.getScale().x < 0) {
+                    sprite.setScale(std::abs(sprite.getScale().x), sprite.getScale().y);
+                }
+            }
         }
     }
 }
@@ -296,18 +375,16 @@ void Player::collectFireFlower()
     std::cout << "Current texture size: " << sprite.getTexture()->getSize().x << "x" 
               << sprite.getTexture()->getSize().y << std::endl;
     
-    // Try different coordinates or use the full texture
-    if (characterName == "Mario") {
-        // Use the entire fire texture first to debug
-        sprite.setTextureRect(sf::IntRect(0, 0, fireTexture.getSize().x, fireTexture.getSize().y));
-        // Then try specific coordinates once you can see the full texture
-        // sprite.setTextureRect(sf::IntRect(8, 139, 28, 47));
-    } else if (characterName == "Luigi") {
-        sprite.setTextureRect(sf::IntRect(0, 0, fireTexture.getSize().x, fireTexture.getSize().y));
-    }
+    // Use the entire fire texture
+    sprite.setTextureRect(sf::IntRect(0, 0, fireTexture.getSize().x, fireTexture.getSize().y));
     
-    // Try a different scale to ensure the whole sprite is visible
-    sprite.setScale(0.15f, 0.15f); // Start with no scaling to see the full texture
+    // Set scale but preserve direction (if player was moving left, keep it flipped)
+    float scaleValue = 0.15f;
+    float currentScaleX = sprite.getScale().x;
+    float directionMultiplier = (currentScaleX < 0) ? -1.0f : 1.0f;
+    
+    sprite.setScale(scaleValue * directionMultiplier, scaleValue);
+    
     std::cout << characterName << " est maintenant en mode de feu !" << std::endl;
     
     // Debug - print the actual sprite bounds after all changes
@@ -387,4 +464,3 @@ void Player::loseFirePower()
         }
     }
 }
-

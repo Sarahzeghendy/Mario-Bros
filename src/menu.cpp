@@ -50,7 +50,7 @@ Menu::Menu(float width, float height) {
     }
     
     
-    std::vector<std::string> options = {"Jouer", "Regles du jeu", "Quitter"};
+    std::vector<std::string> options = {"Jouer", "Jouer contre IA", "Regles du jeu", "Quitter"};
     selectedIndex = 0;
 
     for (size_t i = 0; i < options.size(); i++) {

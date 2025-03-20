@@ -1,0 +1,134 @@
+@startuml Complete Class Diagram
+
+' Player-related classes
+class Player {
+  ' Key attributes
+  - normalTexture: sf::Texture
+  - fireTexture: sf::Texture
+  - sprite: sf::Sprite
+  - mouvement: Mouvement
+  - bool big
+  - bool hasFirePower
+  - std::vector<Fireball> fireballs
+  
+  ' Key methods
+  + update()
+  + draw()
+  + collectFireFlower()
+  + shootFireball()
+  + grow()
+  + shrink()
+}
+
+class Mouvement {
+  - sf::Sprite& sprite
+  - float speed
+  - bool isJumping
+  - float velocityY
+  
+  + moveRight()
+  + moveLeft()
+  + jump()
+  + applyGravity()
+}
+
+' Enemy-related classes
+abstract class Enemy {
+  # texture: sf::Texture
+  # sprite: sf::Sprite
+  # mouvement: Mouvement
+  # bool alive
+  
+  + {abstract} onJumpedOn()
+  + interactWithPlayer()
+  + update()
+}
+
+class Goomba {
+  + onJumpedOn()
+  + interactWithPlayer()
+}
+
+class KoopaTroopa {
+  - bool isShell
+  + onJumpedOn()
+  + interactWithPlayer()
+}
+
+class FriendlyMushroom {
+  + onJumpedOn()
+  + interactWithPlayer()
+}
+
+' Item classes
+class Coin {
+  - sprite: sf::Sprite
+  - bool collected
+  
+  + draw()
+  + collect()
+  + isCollected()
+}
+
+class FireFlower {
+  - sprite: sf::Sprite
+  - bool collected
+  
+  + draw()
+  + collect()
+}
+
+class Fireball {
+  - sprite: sf::Sprite
+  - velocityX: float
+  - active: bool
+  
+  + update()
+  + destroy()
+}
+
+' Game management classes
+class Game {
+  - bool gameOver
+  - int winner
+  
+  + handleWin()
+  + isGameOver()
+}
+
+class Background {
+  - groundTiles: vector<sf::Sprite>
+  - pipes: vector<sf::Sprite>
+  - flag: sf::Sprite
+  
+  + draw()
+  + getGroundTiles()
+  + getPipes()
+}
+
+class Camera {
+  - view: sf::View
+  
+  + setCenter()
+  + getView()
+}
+
+class Menu {
+  - options: vector<sf::Text>
+  - selectedItemIndex: int
+  
+  + draw()
+  + moveUp()
+  + moveDown()
+}
+
+' Relationships
+Player -- Mouvement : has >
+Player -- Fireball : contains >
+
+Enemy <|-- Goomba
+Enemy <|-- KoopaTroopa
+Enemy <|-- FriendlyMushroom
+Enemy -- Mouvement : has >
+
+@enduml
