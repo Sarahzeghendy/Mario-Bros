@@ -97,7 +97,10 @@ int main()
     // Enemies
     std::vector<std::unique_ptr<Enemy>> enemies;
     enemies.push_back(std::make_unique<Goomba>(300, 545, 200, 400));
-    enemies.push_back(std::make_unique<KoopaTroopa>(750, 530, 650, 850));
+    
+    // Remove limits for Koopa by setting very large values
+    enemies.push_back(std::make_unique<KoopaTroopa>(750, 530, -10000, 10000));
+    
     enemies.push_back(std::make_unique<FriendlyMushroom>(400, 545, 350, 500));
 
     // Create AI controller for Luigi if in AI mode

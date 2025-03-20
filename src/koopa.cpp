@@ -23,18 +23,18 @@ void KoopaTroopa::update()
     // Store current position
     sf::Vector2f oldPosition = sprite.getPosition();
 
-    // Move based on direction
+    // Move based on direction without checking limits
     if (movingRight) {
         sprite.move(speed, 0);
-        if (sprite.getPosition().x >= rightLimit) {
-            movingRight = false;
-            sprite.setScale(-0.15f, 0.15f);  
+        // Keep sprite facing right
+        if (sprite.getScale().x < 0) {
+            sprite.setScale(0.15f, 0.15f);
         }
     } else {
         sprite.move(-speed, 0);
-        if (sprite.getPosition().x <= leftLimit) {
-            movingRight = true;
-            sprite.setScale(0.15f, 0.15f);  
+        // Keep sprite facing left
+        if (sprite.getScale().x > 0) {
+            sprite.setScale(-0.15f, 0.15f);
         }
     }
 
@@ -97,4 +97,11 @@ void KoopaTroopa::onFireballHit()
 
 void KoopaTroopa::reverseDirection() {
     movingRight = !movingRight;
+    
+    // Update sprite direction when reversing
+    if (movingRight) {
+        sprite.setScale(0.15f, 0.15f);  // Face right
+    } else {
+        sprite.setScale(-0.15f, 0.15f); // Face left
+    }
 }
