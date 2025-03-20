@@ -97,7 +97,7 @@ int main()
     // Enemies
     std::vector<std::unique_ptr<Enemy>> enemies;
     enemies.push_back(std::make_unique<Goomba>(300, 545, 200, 400));
-    enemies.push_back(std::make_unique<KoopaTroopa>(700, 530, 650, 850));
+    enemies.push_back(std::make_unique<KoopaTroopa>(750, 530, 650, 850));
     enemies.push_back(std::make_unique<FriendlyMushroom>(400, 545, 350, 500));
 
     // Create AI controller for Luigi if in AI mode
@@ -353,6 +353,21 @@ int main()
         flower.draw(window);
         for (Coin *coin : coins) {
             coin->draw(window);
+        }
+
+        // Inside the game loop, before updating enemies
+        std::vector<Enemy*> enemyPtrs;
+        for (auto& enemy : enemies) {
+            enemyPtrs.push_back(enemy.get());
+        }
+
+        // Update each enemy with current level information
+        for (auto& enemy : enemies) {
+            enemy->setCurrentLevel(background.getGroundTiles(), 
+                                   background.getPipes(),
+                                   enemyPtrs); // Call setCurrentLevel
+            enemy->checkForGaps(background.getGaps());
+            enemy->update(); 
         }
 
         for (auto &enemy : enemies) {

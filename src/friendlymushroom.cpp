@@ -13,20 +13,24 @@ FriendlyMushroom::FriendlyMushroom(float x, float y, float leftLim, float rightL
 
 void FriendlyMushroom::update() 
 {
-    if (movingRight)
-    {
+    // Store current position
+    sf::Vector2f oldPosition = sprite.getPosition();
+
+    // Move based on direction
+    if (movingRight) {
         mouvement.moveRight();
         if (sprite.getPosition().x >= rightLimit) {
             movingRight = false;
         }
-    }
-    else
-    {
+    } else {
         mouvement.moveLeft();
         if (sprite.getPosition().x <= leftLimit) {
             movingRight = true;
         }
     }
+
+    // Use the generic collision handling method
+    handleCollisions(oldPosition);
 }
 
 void FriendlyMushroom::interactWithPlayer(Player& player) 
@@ -50,5 +54,9 @@ void FriendlyMushroom::onJumpedOn()
         alive = false;
         std::cout << "Champignon gentil collecté en sautant dessus!" << std::endl;
     }
+}
+
+void FriendlyMushroom::reverseDirection() {
+    movingRight = !movingRight; 
 }
 

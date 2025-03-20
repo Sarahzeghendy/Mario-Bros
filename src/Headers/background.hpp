@@ -26,6 +26,7 @@ public:
 private:
     sf::RectangleShape sky;
     sf::Texture groundBlock;
+    sf::Texture questionBlock;  // Add this line
     sf::Texture questionBlockTexture;
     sf::Texture pipeTexture;
     sf::Texture cloudTexture;

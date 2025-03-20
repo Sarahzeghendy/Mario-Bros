@@ -5,6 +5,7 @@ KoopaTroopa::KoopaTroopa(float x, float y, float leftLim, float rightLim)
     : Enemy("images/koopa.png", x, y, leftLim, rightLim) 
 {
     sprite.setScale(0.15f, 0.15f);
+    speed = 0.03f;  // Set the movement speed
     if (!koopaShell.loadFromFile("images/koopa_closed.png")) {
         std::cerr << "Erreur: Impossible de charger koopa_closed.png\n";
     }
@@ -13,29 +14,32 @@ KoopaTroopa::KoopaTroopa(float x, float y, float leftLim, float rightLim)
 void KoopaTroopa::update() 
 {
     if (!alive) return;
-  
     if (isFalling)
     {
         fall();
         return;
     }
 
-    if (movingRight)
-    {
-        mouvement.moveRight();
+    // Store current position
+    sf::Vector2f oldPosition = sprite.getPosition();
+
+    // Move based on direction
+    if (movingRight) {
+        sprite.move(speed, 0);
         if (sprite.getPosition().x >= rightLimit) {
             movingRight = false;
             sprite.setScale(-0.15f, 0.15f);  
         }
-    }
-    else
-    {
-        mouvement.moveLeft();
+    } else {
+        sprite.move(-speed, 0);
         if (sprite.getPosition().x <= leftLimit) {
             movingRight = true;
             sprite.setScale(0.15f, 0.15f);  
         }
     }
+
+    // Use the generic collision handling method
+    handleCollisions(oldPosition);
 }
 
 void KoopaTroopa::interactWithPlayer(Player& player) 
@@ -89,4 +93,8 @@ void KoopaTroopa::onFireballHit()
     std::cout << "Koopa defeated by fireball!" << std::endl;
     
     sprite.setScale(0.15f, -0.15f);  
+}
+
+void KoopaTroopa::reverseDirection() {
+    movingRight = !movingRight;
 }

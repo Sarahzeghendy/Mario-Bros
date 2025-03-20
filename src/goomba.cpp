@@ -9,27 +9,29 @@ Goomba::Goomba(float x, float y, float leftLim, float rightLim)
 void Goomba::update() 
 {
     if (!alive) return;
-    
     if (isFalling)
     {
         fall();
         return;
     }
 
-    if (movingRight)
-    {
+    // Store current position
+    sf::Vector2f oldPosition = sprite.getPosition();
+
+    // Move based on direction
+    if (movingRight) {
         mouvement.moveRight();
         if (sprite.getPosition().x >= rightLimit) {
             movingRight = false;
         }
-    }
-    else
-    {
+    } else {
         mouvement.moveLeft();
         if (sprite.getPosition().x <= leftLimit) {
             movingRight = true;
         }
     }
+
+    handleCollisions(oldPosition);
 }
 
 void Goomba::interactWithPlayer(Player& player) 
@@ -66,4 +68,8 @@ void Goomba::onFireballHit()
     // Add a special death animation when hit by fireball
     sprite.setScale(0.1f, -0.1f);  // Flip upside down
     std::cout << "Goomba touché par une boule de feu et vaincu!" << std::endl;
+}
+
+void Goomba::reverseDirection() {
+    movingRight = !movingRight;
 }

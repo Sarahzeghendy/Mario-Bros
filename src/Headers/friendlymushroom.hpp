@@ -7,11 +7,12 @@
 
 class FriendlyMushroom : public Enemy {
 public:
-    FriendlyMushroom(float x, float y, float leftLim, float rightLim);
+    FriendlyMushroom(float x, float y, float leftLim, float rightLim);  // Constructor with limits
 
     void update() override;
     void interactWithPlayer(Player& player) override;
     void onJumpedOn() override; 
+    void reverseDirection();
 };
 
 #endif

@@ -86,3 +86,59 @@ void Enemy::fall()
         }
     }
 }
+
+void Enemy::setCurrentLevel(const std::vector<sf::Sprite>& blocks, 
+                            const std::vector<sf::Sprite>& pipes,
+                            const std::vector<Enemy*>& enemies) {
+    currentBlocks = blocks;
+    currentPipes = pipes;
+    currentEnemies = enemies;
+}
+
+void Enemy::reverseDirection() {
+    movingRight = !movingRight;
+}
+
+void Enemy::handleCollisions(const sf::Vector2f& oldPosition) {
+    // Define smaller bounding boxes for right and left collision detection
+    sf::FloatRect globalBounds = sprite.getGlobalBounds();
+    sf::FloatRect rightBounds(globalBounds.left + globalBounds.width - 5, globalBounds.top + 5, 5, globalBounds.height - 10); // Right edge
+    sf::FloatRect leftBounds(globalBounds.left, globalBounds.top + 5, 5, globalBounds.height - 10); // Left edge
+
+    // Check pipe collisions
+    for (const auto& pipe : currentPipes) {
+        sf::FloatRect pipeBounds = pipe.getGlobalBounds();
+        float pipeLeft = pipeBounds.left + 60.0f;
+        float pipeWidth = 35.4f;
+        sf::FloatRect fixedPipeBounds(pipeLeft, pipeBounds.top, pipeWidth, pipeBounds.height);
+
+        if (movingRight && rightBounds.intersects(fixedPipeBounds)) {
+            // Restore position and change direction
+            sprite.setPosition(oldPosition);
+            movingRight = false;
+            return; 
+        }
+        else if (!movingRight && leftBounds.intersects(fixedPipeBounds)) {
+            // Restore position and change direction
+            sprite.setPosition(oldPosition);
+            movingRight = true;
+            return; 
+        }
+    }
+
+    // Check block collisions
+    for (const auto& block : currentBlocks) {
+        if (movingRight && rightBounds.intersects(block.getGlobalBounds())) {
+            // Restore position and change direction
+            sprite.setPosition(oldPosition);
+            movingRight = false;
+            return; 
+        }
+        else if (!movingRight && leftBounds.intersects(block.getGlobalBounds())) {
+            // Restore position and change direction
+            sprite.setPosition(oldPosition);
+            movingRight = true;
+            return;  
+        }
+    }
+}
