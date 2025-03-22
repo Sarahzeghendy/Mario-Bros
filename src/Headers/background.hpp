@@ -22,6 +22,10 @@ public:
     }
     const sf::Sprite &getFlag() const;
     std::vector<sf::FloatRect> getGaps() const;
+    const std::vector<sf::Sprite> &getQuestionBlocks() const
+    {
+        return questionBlocks;
+    }
 
 private:
     sf::RectangleShape sky;

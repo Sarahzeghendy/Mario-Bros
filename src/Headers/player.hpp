@@ -36,14 +36,19 @@ private:
     float baseSpeed;    // Vitesse normale du joueur
     float currentSpeed; // Vitesse actuelle (modifiée par l'étoile)
     int score; 
-
+    float initialX; // Initial X position for respawning
+    float initialY; // Initial Y position for respawning
+    float deathX;   // Position where player died
+    float deathY;
+    int lastLifeThreshold;  // Tracks the last score threshold where a life was earned
+    
 public:
     Player(const std::string& texturePath, const std::string& name, float x, float y, float speed, 
            sf::Keyboard::Key right, sf::Keyboard::Key left, sf::Keyboard::Key jump);
 
-    void update(const std::vector<sf::Sprite>& blocks, const std::vector<sf::Sprite>& pipes);
+    void update(const std::vector<sf::Sprite>& blocks, const std::vector<sf::Sprite>& pipes, const std::vector<sf::Sprite>& questionBlocks); // Updated
     void jump();
-    void applyGravity(const std::vector<sf::Sprite>& blocks, const std::vector<sf::Sprite>& pipes);
+    void applyGravity(const std::vector<sf::Sprite>& blocks, const std::vector<sf::Sprite>& pipes, const std::vector<sf::Sprite>& questionBlocks); // Updated
     void draw(sf::RenderWindow& window);
     void animate();
    
@@ -85,7 +90,6 @@ public:
    
     void bounce() { mouvement.bounce(); }
 
-
     int getScore() const { return score; }
     std::string getName() const { return characterName; }
 
@@ -104,6 +108,12 @@ public:
     void collectEtoile();
     void setSpeed(float newSpeed) { baseSpeed = newSpeed; }
     float getSpeed() const { return currentSpeed; }
+    float getBaseSpeed() const { return baseSpeed; } // Add getter for baseSpeed
+
+    void respawn(); // Respawn player at initial position
+    void updateInitialPosition(float x, float y); // Update initial spawn position
+    bool shouldRespawn() const; // Check if player should respawn (dead but has lives)
+    void addScore(int points);  // New method to add score with life threshold checking
 };
 
 #endif

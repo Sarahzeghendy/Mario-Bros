@@ -71,22 +71,24 @@ bool Mouvement::checkCollision(const sf::Sprite &object)
  * @param blocks Les blocs avec lesquels vérifier la collision.
  * @param pipes Les tuyaux avec lesquels vérifier la collision.
  */
-void Mouvement::applyGravity(const std::vector<sf::Sprite> &blocks, const std::vector<sf::Sprite> &pipes)
+void Mouvement::applyGravity(const std::vector<sf::Sprite> &blocks, const std::vector<sf::Sprite> &pipes, const std::vector<sf::Sprite> &questionBlocks)
 {
-    
+    // Combine blocks and questionBlocks for collision checks
+    std::vector<sf::Sprite> allBlocks = blocks;
+    allBlocks.insert(allBlocks.end(), questionBlocks.begin(), questionBlocks.end());
+
     if (velocityY < 0)
     {
         velocityY += gravity * 0.5f;
-        
+
         // Check for collision with blocks above when jumping
-        for (const auto &block : blocks)
+        for (const auto &block : allBlocks)
         {
             if (sprite.getGlobalBounds().intersects(block.getGlobalBounds()))
             {
                 if (velocityY < 0) // Only when moving upward
                 {
-                    sprite.setPosition(sprite.getPosition().x, 
-                                     block.getPosition().y + block.getGlobalBounds().height);
+                    sprite.setPosition(sprite.getPosition().x, block.getPosition().y + block.getGlobalBounds().height);
                     velocityY = 0;
                     break;
                 }
@@ -107,8 +109,8 @@ void Mouvement::applyGravity(const std::vector<sf::Sprite> &blocks, const std::v
 
     bool onGround = false;
 
-    // Vérifie la collision avec les blocs
-    for (const auto &block : blocks)
+    // Check collision with blocks below
+    for (const auto &block : allBlocks)
     {
         if (sprite.getGlobalBounds().intersects(block.getGlobalBounds()))
         {
@@ -122,8 +124,7 @@ void Mouvement::applyGravity(const std::vector<sf::Sprite> &blocks, const std::v
             }
             else if (velocityY < 0) // Moving upward
             {
-                sprite.setPosition(sprite.getPosition().x, 
-                                 block.getPosition().y + block.getGlobalBounds().height);
+                sprite.setPosition(sprite.getPosition().x, block.getPosition().y + block.getGlobalBounds().height);
                 velocityY = 0;
             }
         }
@@ -133,8 +134,8 @@ void Mouvement::applyGravity(const std::vector<sf::Sprite> &blocks, const std::v
     {
         sf::FloatRect pipeBounds = pipe.getGlobalBounds();
 
-        float pipeLeft = pipeBounds.left + 60.0f;   
-        float pipeWidth = 35.4f;                    
+        float pipeLeft = pipeBounds.left + 60.0f;
+        float pipeWidth = 35.4f;
         float topOfPipe = pipeBounds.top;
         float pipeHeight = pipeBounds.height;
 
@@ -182,8 +183,12 @@ void Mouvement::checkForGaps(const std::vector<sf::FloatRect> &gaps)
  * @param pipes Les tuyaux avec lesquels vérifier la collision.
  * @return Vrai si le joueur peut bouger, faux sinon.
  */
-std::pair<bool, bool> Mouvement::blockMovement(const std::vector<sf::Sprite> &obstacles, const std::vector<sf::Sprite> &pipes)
+std::pair<bool, bool> Mouvement::blockMovement(const std::vector<sf::Sprite> &obstacles, const std::vector<sf::Sprite> &pipes, const std::vector<sf::Sprite> &questionBlocks)
 {
+    // Combine obstacles and questionBlocks for collision checks
+    std::vector<sf::Sprite> allObstacles = obstacles;
+    allObstacles.insert(allObstacles.end(), questionBlocks.begin(), questionBlocks.end());
+
     bool canMoveRight = true;
     bool canMoveLeft = true;
 
@@ -192,7 +197,7 @@ std::pair<bool, bool> Mouvement::blockMovement(const std::vector<sf::Sprite> &ob
     nextPositionRight.left += speed;
     nextPositionLeft.left -= speed;
 
-    for (const auto &obstacle : obstacles)
+    for (const auto &obstacle : allObstacles)
     {
         if (nextPositionRight.intersects(obstacle.getGlobalBounds()))
         {
@@ -218,7 +223,7 @@ std::pair<bool, bool> Mouvement::blockMovement(const std::vector<sf::Sprite> &ob
         if (nextPositionRight.intersects(fixedPipeBounds))
         {
             canMoveRight = false;
-            canMoveLeft = true; 
+            canMoveLeft = true;
         }
 
         if (nextPositionLeft.intersects(fixedPipeBounds))

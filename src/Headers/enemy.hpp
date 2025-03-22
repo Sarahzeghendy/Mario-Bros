@@ -16,7 +16,7 @@ class Enemy
         virtual ~Enemy() = default;
 
         virtual void update() = 0;
-        virtual void interactWithPlayer(Player& player) = 0;
+        virtual void interactWithPlayer(Player& player);
         virtual void onJumpedOn() = 0;
         virtual void onFireballHit(); 
         virtual void checkForGaps(const std::vector<sf::FloatRect>& gaps); 

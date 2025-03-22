@@ -42,9 +42,12 @@ Player::Player(const std::string& texturePath, const std::string& name, float x,
       hitTimer(0), // Initialise hitTimer to 0
       baseSpeed(speed), // Stocke la vitesse initiale
       currentSpeed(speed), // Initialise aussi la vitesse actuelle
-      score(0)  
-
-
+      score(0),
+      initialX(x),
+      initialY(y),
+      deathX(x),    // Initialize death position to match initial position
+      deathY(y),
+      lastLifeThreshold(0)  // Initialize the last life threshold at 0
 {
  
     if (!normalTexture.loadFromFile(texturePath)) 
@@ -90,7 +93,7 @@ bool Player::loadTexture() {
  * @param blocks Les blocs avec lesquels vérifier la collision.
  * @param pipes Les tuyaux avec lesquels vérifier la collision.
  */
-void Player::update(const std::vector<sf::Sprite>& blocks, const std::vector<sf::Sprite>& pipes) {
+void Player::update(const std::vector<sf::Sprite>& blocks, const std::vector<sf::Sprite>& pipes, const std::vector<sf::Sprite>& questionBlocks) {
     if (isDead) return;
 
     // Decrease hit invincibility timer if it's active
@@ -119,7 +122,7 @@ void Player::update(const std::vector<sf::Sprite>& blocks, const std::vector<sf:
 
     updateFireballs(blocks);
 
-    auto [canMoveRight, canMoveLeft] = mouvement.blockMovement(blocks, pipes);
+    auto [canMoveRight, canMoveLeft] = mouvement.blockMovement(blocks, pipes, questionBlocks);
 
     if (sf::Keyboard::isKeyPressed(rightKey) && canMoveRight) {
         mouvement.moveRight();
@@ -152,7 +155,7 @@ void Player::update(const std::vector<sf::Sprite>& blocks, const std::vector<sf:
         }
     }
 
-    applyGravity(blocks, pipes);
+    applyGravity(blocks, pipes, questionBlocks);
 
     // Call animate regardless of fire power status
     animate();
@@ -172,8 +175,8 @@ void Player::jump() {
  * @param blocks Les blocs avec lesquels vérifier la collision.
  * @param pipes Les tuyaux avec lesquels vérifier la collision.
  */
-void Player::applyGravity(const std::vector<sf::Sprite>& blocks, const std::vector<sf::Sprite>& pipes) {
-    mouvement.applyGravity( blocks, pipes);
+void Player::applyGravity(const std::vector<sf::Sprite>& blocks, const std::vector<sf::Sprite>& pipes, const std::vector<sf::Sprite>& questionBlocks) {
+    mouvement.applyGravity( blocks, pipes, questionBlocks);
 }
 
 /**
@@ -198,6 +201,29 @@ void Player::draw(sf::RenderWindow& window)
 }
 
 /**
+ * @brief Ajoute des points au score et vérifie les seuils pour gagner des vies
+ * @param points Nombre de points à ajouter
+ */
+void Player::addScore(int points) {
+    int oldScore = score;
+    score += points;
+    
+    // Check if player has crossed a 100-point threshold
+    int oldThreshold = oldScore / 100;
+    int newThreshold = score / 100;
+    
+    if (newThreshold > oldThreshold) {
+        // Player has crossed at least one 100-point threshold
+        int livesGained = newThreshold - oldThreshold;
+        for (int i = 0; i < livesGained; i++) {
+            gainLife();
+            std::cout << characterName << " gained a life from score! Lives: " << lives << std::endl;
+        }
+        lastLifeThreshold = newThreshold * 100;
+    }
+}
+
+/**
  * @brief Récupère une pièce.
  * @details Si le joueur a plus de 100 pièces, il gagne une vie.
  *         Le nombre de pièces est remis à zéro.
@@ -207,7 +233,7 @@ void Player::draw(sf::RenderWindow& window)
 void Player::getCoins() 
 {
     coins++;
-    score += 10;
+    addScore(10);  // Replace direct score addition with the new method
 
     if (coins > 100) 
     {
@@ -223,6 +249,16 @@ void Player::getCoins()
 
 void Player::loseLife() {
     lives--;
+    std::cout << characterName << " lost a life! Remaining lives: " << lives << std::endl;
+    
+    if (lives <= 0) {
+        // No more lives, player is permanently dead
+        isDead = true;
+        std::cout << characterName << " lost all lives! Game over!" << std::endl;
+    } else {
+        // Player still has lives, mark for respawn
+        isDead = true;
+    }
 }
 
 /**
@@ -245,8 +281,15 @@ int Player::getLives() const {
  */
 void Player::die() 
 {
-    isDead = true;  
-    std::cout << "Le joueur est mort !" << std::endl;
+    if (!isDead && hitTimer <= 0) { // Only die if not already dead and not invincible
+        // Store current position as death position
+        deathX = sprite.getPosition().x;
+        deathY = sprite.getPosition().y;
+        
+        isDead = true;
+        loseLife(); // Lose a life when player dies
+        std::cout << characterName << " est mort ! Vies restantes : " << lives << std::endl;
+    }
 }
 
 /**
@@ -264,14 +307,38 @@ void Player::grow()
  */
 void Player::shrink() 
 {
-    
-    if (big) {
+    // First check if player has fire power - losing fire power takes precedence
+    if (hasFirePower) {
+        hasFirePower = false;
+        
+        // Keep big state but revert to normal texture
+        big = true;
+        sprite.setTexture(normalTexture);
+        
+        // Set proper scale for big Mario/Luigi
+        sprite.setScale(1.2f, 1.2f);
+        
+        // Reposition if needed
+        sprite.setPosition(sprite.getPosition().x, 480.0f);
+        
+        // Set invincibility timer
+        hitTimer = 120;
+        
+        std::cout << characterName << " lost fire power!" << std::endl;
+    }
+    // If player is big (but doesn't have fire power), shrink them
+    else if (big) {
         big = false;
         sprite.setScale(0.7f, 0.7f); 
         sprite.setPosition(sprite.getPosition().x, 500.0f);
         hitTimer = 120;
-    } else {
+        
+        std::cout << characterName << " shrank to small size!" << std::endl;
+    } 
+    // If player is already small, kill them
+    else {
         die();
+        std::cout << characterName << " was already small and died!" << std::endl;
     }
 }
 
@@ -465,4 +532,63 @@ void Player::loseFirePower()
             sprite.setScale(0.1f, 0.1f);
         }
     }
+}
+
+void Player::respawn() {
+    if (lives > 0 && isDead) {
+        // Reset position to death position instead of initial position
+        sprite.setPosition(deathX, deathY);
+        
+        // Reset state
+        isDead = false;
+        movingRight = false;
+        movingLeft = false;
+        
+        // Keep fire power but reset texture
+        if (hasFirePower) {
+            sprite.setTexture(fireTexture);
+        } else {
+            sprite.setTexture(normalTexture);
+        }
+        
+        // Reset to big size if player had fire power
+        if (hasFirePower) {
+            big = true;
+            float scaleValue = 0.15f;
+            sprite.setScale(scaleValue, scaleValue);
+        } else {
+            // Otherwise reset to normal size - make sure it's visible
+            big = false;
+            sprite.setScale(0.7f, 0.7f);
+        }
+        
+        // Clear any active fireballs
+        fireballs.clear();
+        
+        // Reset texture rect to standing position
+        if (characterName == "Mario") {
+            sprite.setTextureRect(sf::IntRect(8, 139, 28, 47));
+        } else if (characterName == "Luigi") {
+            sprite.setTextureRect(sf::IntRect(8, 191, 28, 47));
+        }
+        
+        // Reset immunity timer for longer period after respawn
+        hitTimer = 180; // 3 seconds of immunity after respawn
+        
+        // Make sure player is visible with temporary invincibility effect
+        sprite.setColor(sf::Color(255, 255, 255, 180));
+        
+        std::cout << characterName << " respawned at death position! Remaining lives: " << lives << std::endl;
+    } else {
+        std::cout << characterName << " cannot respawn: lives=" << lives << ", isDead=" << isDead << std::endl;
+    }
+}
+
+void Player::updateInitialPosition(float x, float y) {
+    initialX = x;
+    initialY = y;
+}
+
+bool Player::shouldRespawn() const {
+    return isDead && lives > 0;
 }

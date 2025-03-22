@@ -1,4 +1,4 @@
-@startuml Player Class Diagram
+@startuml Player_class_diagram
 
 class Player {
   - sf::Texture normalTexture
