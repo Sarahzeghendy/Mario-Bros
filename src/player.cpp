@@ -379,7 +379,7 @@ void Player::collectEtoile()
 {
     std::cout << characterName << " est maintenant avec le pouvoir étoile !" << std::endl;
     // Doubler la vitesse en fonction de l'état actuel
-    currentSpeed = baseSpeed * 2;
+    currentSpeed = baseSpeed * 3;
     mouvement.setSpeed(currentSpeed);
 
     // Activer l'état étoilé
