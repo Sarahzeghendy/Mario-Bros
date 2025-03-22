@@ -141,6 +141,54 @@ int main()
                 camera.update({event.size.width, event.size.height});
         }
 
+        // Check if a player falls below the lower limit of the screen
+        float lowerLimit = window.getSize().y + 50; // Allow some margin below the screen
+        if (mario.getPosition().y > lowerLimit) {
+            game.handleWin(2); // Luigi wins
+        }
+        if (luigi.getPosition().y > lowerLimit) {
+            game.handleWin(1); // Mario wins
+        }
+
+        // If the game is over, display the winner and return to the menu
+        if (game.isGameOver()) {
+            sf::Text returnToMenuText;
+            returnToMenuText.setFont(font);
+            returnToMenuText.setString("Return to the Menu");
+            returnToMenuText.setCharacterSize(30);
+            returnToMenuText.setFillColor(sf::Color::White);
+
+            sf::Vector2f viewCenter = window.getView().getCenter();
+            sf::FloatRect textBounds = returnToMenuText.getLocalBounds();
+            returnToMenuText.setOrigin(textBounds.width / 2, textBounds.height / 2);
+            returnToMenuText.setPosition(viewCenter.x, viewCenter.y + 50);
+
+            while (window.isOpen()) {
+                sf::Event event;
+                while (window.pollEvent(event)) {
+                    if (event.type == sf::Event::Closed) {
+                        window.close();
+                        return 0;
+                    }
+                    if (event.type == sf::Event::MouseButtonPressed) {
+                        sf::Vector2i mousePos = sf::Mouse::getPosition(window);
+                        sf::FloatRect buttonBounds = returnToMenuText.getGlobalBounds();
+                        if (buttonBounds.contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
+                            // Return to the menu
+                            menuWindow.create(sf::VideoMode(800, 600), "Mario Bros - Menu");
+                            return main();
+                        }
+                    }
+                }
+
+                window.clear();
+                background.draw(window);
+                game.drawResult(window);
+                window.draw(returnToMenuText);
+                window.display();
+            }
+        }
+
         // Process game logic based on mode
         if (isAIMode) {
             // AI mode - update AI controller for Luigi
