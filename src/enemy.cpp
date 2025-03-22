@@ -100,10 +100,10 @@ void Enemy::reverseDirection() {
 }
 
 void Enemy::handleCollisions(const sf::Vector2f& oldPosition) {
-    // Define smaller bounding boxes for right and left collision detection
+    // Define larger bounding boxes for right and left collision detection
     sf::FloatRect globalBounds = sprite.getGlobalBounds();
-    sf::FloatRect rightBounds(globalBounds.left + globalBounds.width - 5, globalBounds.top + 5, 5, globalBounds.height - 10); // Right edge
-    sf::FloatRect leftBounds(globalBounds.left, globalBounds.top + 5, 5, globalBounds.height - 10); // Left edge
+    sf::FloatRect rightBounds(globalBounds.left + globalBounds.width - 10, globalBounds.top + 5, 10, globalBounds.height - 10); // Right edge
+    sf::FloatRect leftBounds(globalBounds.left, globalBounds.top + 5, 10, globalBounds.height - 10); // Left edge
 
     // Check pipe collisions
     for (const auto& pipe : currentPipes) {
@@ -113,15 +113,17 @@ void Enemy::handleCollisions(const sf::Vector2f& oldPosition) {
         sf::FloatRect fixedPipeBounds(pipeLeft, pipeBounds.top, pipeWidth, pipeBounds.height);
 
         if (movingRight && rightBounds.intersects(fixedPipeBounds)) {
-            // Restore position and change direction
-            sprite.setPosition(oldPosition);
-            movingRight = false;
+            // Restore position, reverse direction, and adjust position slightly
+            sprite.setPosition(oldPosition.x, oldPosition.y); // Move slightly left
+            reverseDirection(); // Reverse direction
+            std::cout << "Goomba collided with a pipe on the right. Reversing direction." << std::endl;
             return; 
         }
         else if (!movingRight && leftBounds.intersects(fixedPipeBounds)) {
-            // Restore position and change direction
-            sprite.setPosition(oldPosition);
-            movingRight = true;
+            // Restore position, reverse direction, and adjust position slightly
+            sprite.setPosition(oldPosition.x, oldPosition.y); // Move slightly right
+            reverseDirection(); // Reverse direction
+            std::cout << "Goomba collided with a pipe on the left. Reversing direction." << std::endl;
             return; 
         }
     }
@@ -129,15 +131,17 @@ void Enemy::handleCollisions(const sf::Vector2f& oldPosition) {
     // Check block collisions
     for (const auto& block : currentBlocks) {
         if (movingRight && rightBounds.intersects(block.getGlobalBounds())) {
-            // Restore position and change direction
-            sprite.setPosition(oldPosition);
-            movingRight = false;
+            // Restore position, reverse direction, and adjust position slightly
+            sprite.setPosition(oldPosition.x, oldPosition.y); // Move slightly left
+            reverseDirection(); // Reverse direction
+            std::cout << "Goomba collided with a block on the right. Reversing direction." << std::endl;
             return; 
         }
         else if (!movingRight && leftBounds.intersects(block.getGlobalBounds())) {
-            // Restore position and change direction
-            sprite.setPosition(oldPosition);
-            movingRight = true;
+            // Restore position, reverse direction, and adjust position slightly
+            sprite.setPosition(oldPosition.x, oldPosition.y); // Move slightly right
+            reverseDirection(); // Reverse direction
+            std::cout << "Goomba collided with a block on the left. Reversing direction." << std::endl;
             return;  
         }
     }

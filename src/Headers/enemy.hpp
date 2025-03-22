@@ -72,6 +72,7 @@ class Goomba : public Enemy {
         void onJumpedOn() override;
         void onFireballHit() override;  
         void reverseDirection();
+        void handleCollisionsGoomba(const sf::Vector2f& oldPosition);
 };
 
 class KoopaTroopa : public Enemy {
