@@ -10,12 +10,15 @@ private:
     sf::Texture iconTexture;
     sf::Sprite icon;
     sf::Text scoreText;
+    sf::Text livesText;
     sf::Font font;
+    bool showLives;
 
 public:
-    Score(const std::string& iconPath, const sf::Font& font);
+    Score(const std::string& iconPath, const sf::Font& font, bool displayLives = false);
     void setPosition(float x, float y);
     void update(int score);
+    void updateLives(int lives);
     void draw(sf::RenderWindow& window);
 };
 

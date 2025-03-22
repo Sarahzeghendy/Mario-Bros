@@ -142,3 +142,33 @@ void Enemy::handleCollisions(const sf::Vector2f& oldPosition) {
         }
     }
 }
+
+/**
+ * @brief Interacts with a player, handling collision detection and effects.
+ * @param player The player to interact with.
+ */
+void Enemy::interactWithPlayer(Player& player) {
+    if (player.getIsDead() || !isAlive()) return; // Skip if player is dead or enemy is dead
+    
+    // Don't interact if player is invincible after a hit
+    if (player.isInvincible()) return;
+    
+    sf::FloatRect playerBounds = player.getbounds();
+    sf::FloatRect enemyBounds = sprite.getGlobalBounds();
+    
+    if (playerBounds.intersects(enemyBounds)) {
+        // If player has star power, enemy dies
+        if (player.getSpeed() > player.getBaseSpeed()) {
+            this->onJumpedOn();
+            return;
+        }
+        
+        // If player is big, shrink
+        if (player.isBig()) {
+            player.shrink();
+        } else {
+            // If player is small, die
+            player.die();
+        }
+    }
+}
