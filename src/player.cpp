@@ -90,7 +90,7 @@ bool Player::loadTexture() {
  * @param blocks Les blocs avec lesquels vérifier la collision.
  * @param pipes Les tuyaux avec lesquels vérifier la collision.
  */
-void Player::update(const std::vector<sf::Sprite>& blocks, const std::vector<sf::Sprite>& pipes) {
+void Player::update(const std::vector<sf::Sprite>& blocks, const std::vector<sf::Sprite>& pipes, const std::vector<sf::Sprite>& questionBlocks) {
     if (isDead) return;
 
     // Decrease hit invincibility timer if it's active
@@ -119,7 +119,7 @@ void Player::update(const std::vector<sf::Sprite>& blocks, const std::vector<sf:
 
     updateFireballs(blocks);
 
-    auto [canMoveRight, canMoveLeft] = mouvement.blockMovement(blocks, pipes);
+    auto [canMoveRight, canMoveLeft] = mouvement.blockMovement(blocks, pipes, questionBlocks);
 
     if (sf::Keyboard::isKeyPressed(rightKey) && canMoveRight) {
         mouvement.moveRight();
@@ -152,7 +152,7 @@ void Player::update(const std::vector<sf::Sprite>& blocks, const std::vector<sf:
         }
     }
 
-    applyGravity(blocks, pipes);
+    applyGravity(blocks, pipes, questionBlocks);
 
     // Call animate regardless of fire power status
     animate();
@@ -172,8 +172,8 @@ void Player::jump() {
  * @param blocks Les blocs avec lesquels vérifier la collision.
  * @param pipes Les tuyaux avec lesquels vérifier la collision.
  */
-void Player::applyGravity(const std::vector<sf::Sprite>& blocks, const std::vector<sf::Sprite>& pipes) {
-    mouvement.applyGravity( blocks, pipes);
+void Player::applyGravity(const std::vector<sf::Sprite>& blocks, const std::vector<sf::Sprite>& pipes, const std::vector<sf::Sprite>& questionBlocks) {
+    mouvement.applyGravity( blocks, pipes, questionBlocks);
 }
 
 /**

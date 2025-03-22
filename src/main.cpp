@@ -144,7 +144,7 @@ int main()
         // Process game logic based on mode
         if (isAIMode) {
             // AI mode - update AI controller for Luigi
-            aiController->update(background.getGroundTiles(), background.getPipes(), background.getFlag());
+            aiController->update(background.getGroundTiles(), background.getPipes(), background.getFlag()); // Fixed argument
             
             // Handle human input for Mario only
             mario.setMovingRight(sf::Keyboard::isKeyPressed(sf::Keyboard::Right));
@@ -248,14 +248,14 @@ int main()
 
         if (!game.isGameOver()) {
             // Update Mario
-            mario.update(background.getGroundTiles(), background.getPipes());
+            mario.update(background.getGroundTiles(), background.getPipes(), background.getQuestionBlocks()); // Added questionBlocks
             
             if (isAIMode) {
                 // Skip AI update if Luigi is dead
                 if (!luigi.getIsDead()) { // Use getter instead of isDead()
                     // For AI mode, Luigi is updated by the AI controller
                     auto [canMoveRight, canMoveLeft] = luigi.getMouvement().blockMovement(
-                        background.getGroundTiles(), background.getPipes());
+                        background.getGroundTiles(), background.getPipes(), background.getQuestionBlocks()); // Added questionBlocks
 
                     // Apply movement based on flags set by AI
                     if (luigi.isMovingRight() && canMoveRight) {
@@ -266,14 +266,14 @@ int main()
                     }
 
                     // Apply physics
-                    luigi.applyGravity(background.getGroundTiles(), background.getPipes());
+                    luigi.applyGravity(background.getGroundTiles(), background.getPipes(), background.getQuestionBlocks()); // Added questionBlocks
 
                     // Animate Luigi
                     luigi.animate();
                 }
             } else {
                 // Normal mode - update Luigi normally
-                luigi.update(background.getGroundTiles(), background.getPipes());
+                luigi.update(background.getGroundTiles(), background.getPipes(), background.getQuestionBlocks()); // Added questionBlocks
             }
 
             // Check win conditions
