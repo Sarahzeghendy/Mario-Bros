@@ -2,7 +2,7 @@
 #include <iostream>
 
 
-Game::Game() : aiDead_(false) {
+Game::Game() : aiDead_(false), isOver(false), winner(0) {
     
     if (!font.loadFromFile("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf")) {
         std::cerr << "Erreur : Impossible de charger la police !" << std::endl;
@@ -10,12 +10,12 @@ Game::Game() : aiDead_(false) {
 }
 
 void Game::handleWin(int playerId) {
-    gameOver = true;
+    isOver = true; 
     winner = playerId;
 }
 
 void Game::drawResult(sf::RenderWindow& window) {
-    if (gameOver) {
+    if (isOver) {
         sf::Font font;
 
         if (!font.loadFromFile("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf")) {
@@ -72,6 +72,9 @@ void Game::drawResult(sf::RenderWindow& window) {
  */
 void Game::handleAIDeath() {
     aiDead_ = true;
+    isOver = true;
+    winner = 1; // Player 1 (Mario) wins when AI dies
+    std::cout << "AI Luigi has died! Player 1 (Mario) wins!" << std::endl;
     
     sf::Text aiDeathText;
     aiDeathText.setFont(font);

@@ -77,6 +77,21 @@ void Mouvement::applyGravity(const std::vector<sf::Sprite> &blocks, const std::v
     if (velocityY < 0)
     {
         velocityY += gravity * 0.5f;
+        
+        // Check for collision with blocks above when jumping
+        for (const auto &block : blocks)
+        {
+            if (sprite.getGlobalBounds().intersects(block.getGlobalBounds()))
+            {
+                if (velocityY < 0) // Only when moving upward
+                {
+                    sprite.setPosition(sprite.getPosition().x, 
+                                     block.getPosition().y + block.getGlobalBounds().height);
+                    velocityY = 0;
+                    break;
+                }
+            }
+        }
     }
     else
     {
@@ -97,13 +112,19 @@ void Mouvement::applyGravity(const std::vector<sf::Sprite> &blocks, const std::v
     {
         if (sprite.getGlobalBounds().intersects(block.getGlobalBounds()))
         {
-            if (velocityY > 0)
+            if (velocityY > 0) // Falling
             {
                 sprite.setPosition(sprite.getPosition().x, block.getPosition().y - sprite.getGlobalBounds().height);
                 velocityY = 0;
                 isJumping = false;
                 hangCounter = 0;
                 onGround = true;
+            }
+            else if (velocityY < 0) // Moving upward
+            {
+                sprite.setPosition(sprite.getPosition().x, 
+                                 block.getPosition().y + block.getGlobalBounds().height);
+                velocityY = 0;
             }
         }
     }
@@ -148,7 +169,7 @@ void Mouvement::checkForGaps(const std::vector<sf::FloatRect> &gaps)
     {
         if (sprite.getGlobalBounds().intersects(gap))
         {
-            std::cout << "Le joueur est tombé dans un trou !" << std::endl;
+        std::cout << "Le joueur est tombé dans un trou !" << std::endl;
             sprite.setPosition(100, 300);
             break;
         }
@@ -196,14 +217,12 @@ std::pair<bool, bool> Mouvement::blockMovement(const std::vector<sf::Sprite> &ob
 
         if (nextPositionRight.intersects(fixedPipeBounds))
         {
-            std::cout << "Collision à droite détectée ! Mouvement vers l'avant bloqué." << std::endl;
             canMoveRight = false;
             canMoveLeft = true; 
         }
 
         if (nextPositionLeft.intersects(fixedPipeBounds))
         {
-            std::cout << "Collision à gauche détectée ! Mouvement vers l'arrière bloqué." << std::endl;
             canMoveLeft = false;
             canMoveRight = true;
         }

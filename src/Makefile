@@ -30,12 +30,12 @@ SRCS = $(SRC_DIR)/main.cpp \
        $(SRC_DIR)/fireball.cpp \
        $(SRC_DIR)/AIPlayer.cpp \
        $(SRC_DIR)/etoile.cpp \
+       $(SRC_DIR)/score.cpp \
 
 
 # Générer les fichiers objets correspondants
 OBJS = $(SRCS:.cpp=.o)
 
-# Règle principale
 all: $(EXEC)
 
 # Compilation de l'exécutable

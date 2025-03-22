@@ -39,9 +39,12 @@ Player::Player(const std::string& texturePath, const std::string& name, float x,
       currentFrame(0), 
       frameCounter(0),
       characterType(),
-      hitTimer(0), // Initialize hitTimer to 0
+      hitTimer(0), // Initialise hitTimer to 0
       baseSpeed(speed), // Stocke la vitesse initiale
-      currentSpeed(speed) // Initialise aussi la vitesse actuelle
+      currentSpeed(speed), // Initialise aussi la vitesse actuelle
+      score(0)  
+
+
 {
  
     if (!normalTexture.loadFromFile(texturePath)) 
@@ -204,13 +207,11 @@ void Player::draw(sf::RenderWindow& window)
 void Player::getCoins() 
 {
     coins++;
-    std::cout << "Nombre de pièces : " << coins << std::endl;
+    score += 10;
 
     if (coins > 100) 
     {
-        std::cout << "Vous avez gagné une vie !" << std::endl;
         gainLife();
-        std::cout << "Nombre de vies : " << lives << std::endl;
         coins = 0;
     }
 }
@@ -222,11 +223,6 @@ void Player::getCoins()
 
 void Player::loseLife() {
     lives--;
-    std::cout << "Nombre de vies : " << lives << std::endl;
-
-    if (lives == 0) {
-        std::cout << "Game Over !" << std::endl;
-    }
 }
 
 /**
@@ -235,7 +231,6 @@ void Player::loseLife() {
  */
 void Player::gainLife() {
     lives++;
-    std::cout << "Nombre de vies : " << lives << std::endl;
 }
 
 /**
@@ -274,10 +269,7 @@ void Player::shrink()
         big = false;
         sprite.setScale(0.7f, 0.7f); 
         sprite.setPosition(sprite.getPosition().x, 500.0f);
-        std::cout << "Mario devient petit!" << std::endl;
-        
-        // Set invincibility timer when shrinking (hit)
-        hitTimer = 120; // 2 seconds at 60 FPS
+        hitTimer = 120;
     } else {
         die();
     }
@@ -401,26 +393,11 @@ void Player::collectFireFlower()
     hasFirePower = true;
     big = true;
     sprite.setTexture(fireTexture);
-    
-    // Debug output - print texture size to verify it was set correctly
-    std::cout << "Current texture size: " << sprite.getTexture()->getSize().x << "x" 
-              << sprite.getTexture()->getSize().y << std::endl;
-    
-    // Use the entire fire texture
     sprite.setTextureRect(sf::IntRect(0, 0, fireTexture.getSize().x, fireTexture.getSize().y));
-    
-    // Set scale but preserve direction (if player was moving left, keep it flipped)
     float scaleValue = 0.15f;
     float currentScaleX = sprite.getScale().x;
     float directionMultiplier = (currentScaleX < 0) ? -1.0f : 1.0f;
-    
     sprite.setScale(scaleValue * directionMultiplier, scaleValue);
-    
-    std::cout << characterName << " est maintenant en mode de feu !" << std::endl;
-    
-    // Debug - print the actual sprite bounds after all changes
-    std::cout << "Sprite bounds: " << sprite.getGlobalBounds().width << "x" 
-              << sprite.getGlobalBounds().height << std::endl;
 }
 
 sf::Sprite& Player::getSprite() {
@@ -455,11 +432,6 @@ void Player::shootFireball()
                               sprite.getPosition().y + offsetY, 
                               direction);
         fireballCooldown = 15;
-        std::cout << characterName << " lance une boule de feu!" << std::endl;
-    } 
-    else if (!hasFirePower) 
-    {
-        std::cout << characterName << " a besoin d'une Fleur de Feu pour lancer des boules de feu!" << std::endl;
     }
 }
 
@@ -487,7 +459,6 @@ void Player::loseFirePower()
     if (hasFirePower) {
         hasFirePower = false;
         sprite.setTexture(normalTexture);
-        std::cout << characterName << " a perdu son pouvoir de feu!" << std::endl;
         if (big) {
             sprite.setScale(0.15f, 0.15f);
         } else {

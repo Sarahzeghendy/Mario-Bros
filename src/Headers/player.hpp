@@ -30,11 +30,12 @@ private:
     int currentFrame;
     int frameCounter;
     std::string characterType;
-    int hitTimer; // Add this variable to track invincibility after being hit
+    int hitTimer;
     bool isStarPowered = false; 
     int starPowerFrames = 0;
     float baseSpeed;    // Vitesse normale du joueur
     float currentSpeed; // Vitesse actuelle (modifiée par l'étoile)
+    int score; 
 
 public:
     Player(const std::string& texturePath, const std::string& name, float x, float y, float speed, 
@@ -84,6 +85,10 @@ public:
    
     void bounce() { mouvement.bounce(); }
 
+
+    int getScore() const { return score; }
+    std::string getName() const { return characterName; }
+
     void setMovingRight(bool move) { movingRight = move; }
     void setMovingLeft(bool move) { movingLeft = move; }
     bool isInAir() const { return mouvement.getIsJumping(); }
@@ -100,4 +105,5 @@ public:
     void setSpeed(float newSpeed) { baseSpeed = newSpeed; }
     float getSpeed() const { return currentSpeed; }
 };
+
 #endif

@@ -1,35 +1,32 @@
 #include "Headers/enemy.hpp"
 #include <iostream>
 
-Goomba::Goomba(float x, float y, float leftLim, float rightLim)
-    : Enemy("images/goomba.png", x, y, leftLim, rightLim) 
+Goomba::Goomba(float x, float y)
+    : Enemy("images/goomba.png", x, y, 0, 0)  // Set limits to 0 in parent class
 {
 }
 
 void Goomba::update() 
 {
     if (!alive) return;
-    
     if (isFalling)
     {
         fall();
         return;
     }
 
-    if (movingRight)
-    {
+    // Store current position
+    sf::Vector2f oldPosition = sprite.getPosition();
+
+    // Move based on direction without boundary checks
+    if (movingRight) {
         mouvement.moveRight();
-        if (sprite.getPosition().x >= rightLimit) {
-            movingRight = false;
-        }
-    }
-    else
-    {
+    } else {
         mouvement.moveLeft();
-        if (sprite.getPosition().x <= leftLimit) {
-            movingRight = true;
-        }
     }
+
+    // Handle collisions without checking limits
+    handleCollisions(oldPosition);
 }
 
 void Goomba::interactWithPlayer(Player& player) 
@@ -66,4 +63,8 @@ void Goomba::onFireballHit()
     // Add a special death animation when hit by fireball
     sprite.setScale(0.1f, -0.1f);  // Flip upside down
     std::cout << "Goomba touché par une boule de feu et vaincu!" << std::endl;
+}
+
+void Goomba::reverseDirection() {
+    movingRight = !movingRight;
 }

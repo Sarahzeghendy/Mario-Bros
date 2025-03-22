@@ -1,17 +1,16 @@
 #include <SFML/Graphics.hpp>
 #include "Headers/player.hpp"
-#include <iostream>
 #include "Headers/coin.hpp"
 #include "Headers/background.hpp"
 #include "Headers/camera.hpp"
 #include "Headers/enemy.hpp"
 #include "Headers/menu.hpp"
-#include "Headers/friendlymushroom.hpp"
 #include "Headers/game.hpp"
 #include "Headers/fireflower.hpp"
 #include "Headers/fireball.hpp"
 #include "Headers/AIPlayer.hpp"
 #include "Headers/etoile.hpp"
+#include "Headers/score.hpp"
 
 int main()
 {
@@ -98,9 +97,9 @@ int main()
 
     // Enemies
     std::vector<std::unique_ptr<Enemy>> enemies;
-    enemies.push_back(std::make_unique<Goomba>(300, 545, 200, 400));
-    enemies.push_back(std::make_unique<KoopaTroopa>(700, 530, 650, 850));
-    enemies.push_back(std::make_unique<FriendlyMushroom>(400, 545, 350, 500));
+    enemies.push_back(std::make_unique<Goomba>(700, 545));
+    enemies.push_back(std::make_unique<KoopaTroopa>(750, 530));
+    enemies.push_back(std::make_unique<FriendlyMushroom>(400, 540));  // Removed limits
 
     // Create AI controller for Luigi if in AI mode
     AIPlayer* aiController = nullptr;
@@ -118,6 +117,17 @@ int main()
 
     // Camera setup
     Camera camera(800, 600);
+
+    sf::Font font;
+    if (!font.loadFromFile("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf")) // Chargement du font pour l'affichage du score
+    {
+        std::cout << "Error loading font" << std::endl;
+        return -1;
+    }
+
+    // Replace scoreText with Score objects
+    Score marioScore("images/mario_score.png", font);
+    Score luigiScore("images/luigi_score.png", font);
 
     // Game loop
     while (window.isOpen())
@@ -365,6 +375,21 @@ int main()
             coin->draw(window);
         }
 
+        // Inside the game loop, before updating enemies
+        std::vector<Enemy*> enemyPtrs;
+        for (auto& enemy : enemies) {
+            enemyPtrs.push_back(enemy.get());
+        }
+
+        // Update each enemy with current level information
+        for (auto& enemy : enemies) {
+            enemy->setCurrentLevel(background.getGroundTiles(), 
+                                   background.getPipes(),
+                                   enemyPtrs); // Call setCurrentLevel
+            enemy->checkForGaps(background.getGaps());
+            enemy->update(); 
+        }
+
         for (auto &enemy : enemies) {
             if (enemy->isAlive()) {
                 enemy->checkForGaps(background.getGaps());
@@ -403,11 +428,24 @@ int main()
             }
         }
 
+        // Affichage du score
+        sf::View view = window.getView();
+        float baseX = view.getCenter().x + view.getSize().x/2 - 100;
+        float baseY = view.getCenter().y - view.getSize().y/2 + 10;
+        
+        marioScore.setPosition(baseX, baseY);
+        luigiScore.setPosition(baseX, baseY + 40);
+        
+        marioScore.update(mario.getScore());
+        luigiScore.update(luigi.getScore());
+        
+        marioScore.draw(window);
+        luigiScore.draw(window);
+
         game.drawResult(window);
         window.display();
     }
 
-    // Clean up
     if (aiController) {
         delete aiController;
     }

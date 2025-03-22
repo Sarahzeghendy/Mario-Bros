@@ -27,6 +27,12 @@ class Enemy
         sf::FloatRect getBounds() const; 
         void draw(sf::RenderWindow& window);
 
+        void setCurrentLevel(const std::vector<sf::Sprite>& blocks, 
+                             const std::vector<sf::Sprite>& pipes,
+                             const std::vector<Enemy*>& enemies);
+
+        virtual void reverseDirection(); 
+
         void interactWithPlayerSafely(Player& player) {
             auto originalScale = player.getSprite().getScale();
          
@@ -39,6 +45,8 @@ class Enemy
         }
 
     protected:
+        void handleCollisions(const sf::Vector2f& oldPosition); // New method for collision handling
+
         sf::Texture texture;
         sf::Sprite sprite;
         bool alive;
@@ -48,30 +56,45 @@ class Enemy
         bool isFalling = false;        
         float fallSpeed = 0.0f;        
         const float GRAVITY = 0.5f;    
+        std::vector<sf::Sprite> currentBlocks;
+        std::vector<sf::Sprite> currentPipes;
+        std::vector<Enemy*> currentEnemies;
+        float speed;
 };
 
 
 
 class Goomba : public Enemy {
     public:
-        Goomba(float x, float y, float leftLim, float rightLim);
+        Goomba(float x, float y);  // Updated constructor without limits
         void update() override;
         void interactWithPlayer(Player& player) override;
         void onJumpedOn() override;
         void onFireballHit() override;  
+        void reverseDirection();
 };
 
 class KoopaTroopa : public Enemy {
     public:
-        KoopaTroopa(float x, float y, float leftLim, float rightLim);
+        KoopaTroopa(float x, float y);  // Updated constructor without limits
         void update() override;
         void interactWithPlayer(Player& player) override;
         void onJumpedOn() override;
         void onFireballHit() override;
+        void reverseDirection();
     
     private:
         sf::Texture koopaShell;  
         bool inShellState = false;  
+};
+
+class FriendlyMushroom : public Enemy {
+    public:
+        FriendlyMushroom(float x, float y);
+        void update() override;
+        void interactWithPlayer(Player& player) override;
+        void onJumpedOn() override; 
+        void reverseDirection();
 };
 
 #endif
