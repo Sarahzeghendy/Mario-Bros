@@ -11,6 +11,7 @@
 #include "Headers/fireflower.hpp"
 #include "Headers/fireball.hpp"
 #include "Headers/AIPlayer.hpp"
+#include "Headers/etoile.hpp"
 
 int main()
 {
@@ -84,6 +85,7 @@ int main()
     Background background;
     Game game;
     FireFlower flower(1000, 500);
+    Etoile etoile(450,540); //position
 
     // Initialize players
     Player mario("images/sprite.jpg", "Mario", 100, 483, 0.07f, 
@@ -326,6 +328,24 @@ int main()
         checkFireballCollisions(mario, "Mario");
         checkFireballCollisions(luigi, "Luigi");
 
+        
+        // Etoile
+        if (mario.getbounds().intersects(etoile.getBounds()) && !etoile.isCollected()) 
+        {
+            etoile.collect();
+            mario.collectEtoile();
+            std::cout << "Mario a collecté une étoile!" << std::endl;
+        }
+
+        if (luigi.getbounds().intersects(etoile.getBounds()) && !etoile.isCollected()) {
+            etoile.collect();
+            luigi.collectEtoile();
+            std::cout << "Luigi a collecté une étoile!" << std::endl;
+        }
+
+
+
+
         // Rendering
         window.clear();
         background.draw(window);
@@ -340,6 +360,7 @@ int main()
         mario.drawFireballs(window);
 
         flower.draw(window);
+        etoile.draw(window);
         for (Coin *coin : coins) {
             coin->draw(window);
         }

@@ -39,7 +39,9 @@ Player::Player(const std::string& texturePath, const std::string& name, float x,
       currentFrame(0), 
       frameCounter(0),
       characterType(),
-      hitTimer(0) // Initialize hitTimer to 0
+      hitTimer(0), // Initialize hitTimer to 0
+      baseSpeed(speed), // Stocke la vitesse initiale
+      currentSpeed(speed) // Initialise aussi la vitesse actuelle
 {
  
     if (!normalTexture.loadFromFile(texturePath)) 
@@ -130,6 +132,21 @@ void Player::update(const std::vector<sf::Sprite>& blocks, const std::vector<sf:
 
     if (sf::Keyboard::isKeyPressed(jumpKey)) {
         mouvement.jump();
+    }
+
+    if (isStarPowered) 
+    {
+        starPowerFrames--; // Décrémentation du compteur
+
+        if (starPowerFrames <= 0)
+        {
+            
+            // Rétablir la vitesse normale
+            currentSpeed = baseSpeed;
+            mouvement.setSpeed(currentSpeed);
+            isStarPowered = false;
+            std::cout << characterName << " vient de perdre le pouvoir étoile !" << std::endl;
+        }
     }
 
     applyGravity(blocks, pipes);
@@ -364,6 +381,20 @@ void Player::animate()
         }
     }
 }
+
+//fonction pour l'étoile
+void Player::collectEtoile()
+{
+    std::cout << characterName << " est maintenant avec le pouvoir étoile !" << std::endl;
+    // Doubler la vitesse en fonction de l'état actuel
+    currentSpeed = baseSpeed * 2;
+    mouvement.setSpeed(currentSpeed);
+
+    // Activer l'état étoilé
+    isStarPowered = true;
+    starPowerFrames = 1800; // Environ 10 secondes si 60 FPS
+}
+
 
 void Player::collectFireFlower()
 {

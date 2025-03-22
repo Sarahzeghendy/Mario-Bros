@@ -31,6 +31,10 @@ private:
     int frameCounter;
     std::string characterType;
     int hitTimer; // Add this variable to track invincibility after being hit
+    bool isStarPowered = false; 
+    int starPowerFrames = 0;
+    float baseSpeed;    // Vitesse normale du joueur
+    float currentSpeed; // Vitesse actuelle (modifiée par l'étoile)
 
 public:
     Player(const std::string& texturePath, const std::string& name, float x, float y, float speed, 
@@ -91,5 +95,9 @@ public:
     bool isInvincible() const;
     bool getIsDead() const { return isDead; }
     void setIsDead(bool dead) { isDead = dead; }
+
+    void collectEtoile();
+    void setSpeed(float newSpeed) { baseSpeed = newSpeed; }
+    float getSpeed() const { return currentSpeed; }
 };
 #endif
