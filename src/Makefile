@@ -11,7 +11,7 @@ CXX = g++
 CXXFLAGS = -Wall -Wextra -std=c++17 -I$(HEADERS_DIR)
 
 # Bibliothèques SFML
-SFML_LIBS = -lsfml-graphics -lsfml-window -lsfml-system
+SFML_LIBS = -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio
 
 # Liste des fichiers source à compiler
 SRCS = $(SRC_DIR)/main.cpp \

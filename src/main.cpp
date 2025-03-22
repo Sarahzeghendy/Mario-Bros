@@ -1,4 +1,5 @@
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 #include "Headers/player.hpp"
 #include "Headers/coin.hpp"
 #include "Headers/background.hpp"
@@ -12,6 +13,8 @@
 #include "Headers/etoile.hpp"
 #include "Headers/score.hpp"
 
+
+
 int main()
 {
     bool restartGame = true;
@@ -19,6 +22,17 @@ int main()
     while (restartGame) {
         restartGame = false; // Reset flag
         
+        //Musique de fond
+        sf::Music music;
+        if (!music.openFromFile("musiques/mario.wav")) {
+            std::cerr << "Erreur : impossible de charger la musique !\n";
+            return -1;
+        }
+
+        music.setLoop(true);  // La musique tourne en boucle
+        music.play();         // Lancer la musique
+
+
         // Menu window
         sf::RenderWindow menuWindow(sf::VideoMode(800, 600), "Mario Bros - Menu");
         Menu menu(800, 600);
