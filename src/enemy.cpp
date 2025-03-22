@@ -113,17 +113,15 @@ void Enemy::handleCollisions(const sf::Vector2f& oldPosition) {
         sf::FloatRect fixedPipeBounds(pipeLeft, pipeBounds.top, pipeWidth, pipeBounds.height);
 
         if (movingRight && rightBounds.intersects(fixedPipeBounds)) {
-            // Restore position, reverse direction, and adjust position slightly
-            sprite.setPosition(oldPosition.x, oldPosition.y); // Move slightly left
-            reverseDirection(); // Reverse direction
-            std::cout << "Goomba collided with a pipe on the right. Reversing direction." << std::endl;
+            // Restore position, reverse direction
+            sprite.setPosition(oldPosition.x, oldPosition.y); 
+            reverseDirection();
             return; 
         }
         else if (!movingRight && leftBounds.intersects(fixedPipeBounds)) {
-            // Restore position, reverse direction, and adjust position slightly
-            sprite.setPosition(oldPosition.x, oldPosition.y); // Move slightly right
-            reverseDirection(); // Reverse direction
-            std::cout << "Goomba collided with a pipe on the left. Reversing direction." << std::endl;
+            // Restore position, reverse direction
+            sprite.setPosition(oldPosition.x, oldPosition.y); 
+            reverseDirection();
             return; 
         }
     }
@@ -131,17 +129,15 @@ void Enemy::handleCollisions(const sf::Vector2f& oldPosition) {
     // Check block collisions
     for (const auto& block : currentBlocks) {
         if (movingRight && rightBounds.intersects(block.getGlobalBounds())) {
-            // Restore position, reverse direction, and adjust position slightly
-            sprite.setPosition(oldPosition.x, oldPosition.y); // Move slightly left
-            reverseDirection(); // Reverse direction
-            std::cout << "Goomba collided with a block on the right. Reversing direction." << std::endl;
+            // Restore position, reverse direction
+            sprite.setPosition(oldPosition.x, oldPosition.y);
+            reverseDirection();
             return; 
         }
         else if (!movingRight && leftBounds.intersects(block.getGlobalBounds())) {
-            // Restore position, reverse direction, and adjust position slightly
-            sprite.setPosition(oldPosition.x, oldPosition.y); // Move slightly right
-            reverseDirection(); // Reverse direction
-            std::cout << "Goomba collided with a block on the left. Reversing direction." << std::endl;
+            // Restore position, reverse direction
+            sprite.setPosition(oldPosition.x, oldPosition.y); 
+            reverseDirection();
             return;  
         }
     }
