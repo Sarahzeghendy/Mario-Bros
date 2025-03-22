@@ -307,14 +307,38 @@ void Player::grow()
  */
 void Player::shrink() 
 {
-    
-    if (big) {
+    // First check if player has fire power - losing fire power takes precedence
+    if (hasFirePower) {
+        hasFirePower = false;
+        
+        // Keep big state but revert to normal texture
+        big = true;
+        sprite.setTexture(normalTexture);
+        
+        // Set proper scale for big Mario/Luigi
+        sprite.setScale(1.2f, 1.2f);
+        
+        // Reposition if needed
+        sprite.setPosition(sprite.getPosition().x, 480.0f);
+        
+        // Set invincibility timer
+        hitTimer = 120;
+        
+        std::cout << characterName << " lost fire power!" << std::endl;
+    }
+    // If player is big (but doesn't have fire power), shrink them
+    else if (big) {
         big = false;
         sprite.setScale(0.7f, 0.7f); 
         sprite.setPosition(sprite.getPosition().x, 500.0f);
         hitTimer = 120;
-    } else {
+        
+        std::cout << characterName << " shrank to small size!" << std::endl;
+    } 
+    // If player is already small, kill them
+    else {
         die();
+        std::cout << characterName << " was already small and died!" << std::endl;
     }
 }
 
