@@ -102,13 +102,27 @@ int main()
 
         Background background;
         Game game;
+        
+        // Add more fire flowers at different positions
         FireFlower flower(900, 370);
-        Etoile etoile(450,540); //position
-
+        FireFlower flower1(1940, 370);
+        FireFlower flower2(6550, 370);  // New flower
+        //FireFlower flower3(4100, 300);  // New flower
+        //FireFlower flower4(1200, 410);  // New flower
+        FireFlower* flowers[] = {&flower, &flower1, &flower2} ;//&flower2, &flower3, &flower4};
+        
+        // Add more stars at different positions
+        Etoile etoile(520, 410);
+        Etoile etoile2(3185, 410);
+        Etoile etoile3(6235, 410);  // New star
+        Etoile etoile4(6870, 410);  // New star
+        Etoile etoile5(1190, 410);  // New star
+        Etoile etoile6(8485, 410);  // New star
+        Etoile* etoiles[] = {&etoile, &etoile2, &etoile5, &etoile3, &etoile4, &etoile6};
         // Initialize players
-        Player mario("images/sprite.jpg", "Mario", 100, 483, 0.2f, 
+        Player mario("images/sprite.jpg", "Mario", 100, 483, 0.7f, 
                      sf::Keyboard::Right, sf::Keyboard::Left, sf::Keyboard::Up);
-        Player luigi("images/sprite.jpg", "Luigi", 200, 480, 0.2f, 
+        Player luigi("images/sprite.jpg", "Luigi", 150, 480, 0.7f, 
                      sf::Keyboard::M, sf::Keyboard::A, sf::Keyboard::J);
 
         mario.getSprite().setTextureRect(sf::IntRect(8, 139, 28, 47)); // Starting frame
@@ -118,10 +132,26 @@ int main()
         std::vector<std::unique_ptr<Enemy>> enemies;
         enemies.push_back(std::make_unique<Goomba>(700, 545));
         enemies.push_back(std::make_unique<KoopaTroopa>(750, 530));
-        enemies.push_back(std::make_unique<FriendlyMushroom>(400, 540));  // Removed limits
         enemies.push_back(std::make_unique<Goomba>(1000, 545));
         enemies.push_back(std::make_unique<KoopaTroopa>(1300, 530));
         enemies.push_back(std::make_unique<FriendlyMushroom>(1500, 540));  // Removed limits
+        enemies.push_back(std::make_unique<Goomba>(3250, 545));
+        enemies.push_back(std::make_unique<KoopaTroopa>(3350, 530));
+        enemies.push_back(std::make_unique<FriendlyMushroom>(3300, 540));  // Removed limits
+        enemies.push_back(std::make_unique<Goomba>(3200, 545));
+        enemies.push_back(std::make_unique<KoopaTroopa>(3190, 530));
+        enemies.push_back(std::make_unique<Goomba>(4550, 545));
+        enemies.push_back(std::make_unique<KoopaTroopa>(4600, 530));
+        enemies.push_back(std::make_unique<FriendlyMushroom>(4700, 540)); 
+        enemies.push_back(std::make_unique<Goomba>(5100, 545));
+        enemies.push_back(std::make_unique<KoopaTroopa>(5200, 530));
+        enemies.push_back(std::make_unique<FriendlyMushroom>(5300, 540)); 
+        enemies.push_back(std::make_unique<Goomba>(7500, 545));
+        enemies.push_back(std::make_unique<KoopaTroopa>(7600, 530));
+        enemies.push_back(std::make_unique<FriendlyMushroom>(7700, 540)); 
+        enemies.push_back(std::make_unique<Goomba>(8500, 545));
+        enemies.push_back(std::make_unique<KoopaTroopa>(8600, 530));
+        enemies.push_back(std::make_unique<FriendlyMushroom>(8700, 540)); 
         // Create AI controller for Luigi if in AI mode
         AIPlayer* aiController = nullptr;
         if (isAIMode) {
@@ -139,7 +169,19 @@ int main()
         Coin coin8(1380, 400);
         Coin coin9(1420, 400);
         Coin coin10(1460, 400);
-        Coin* coins[] = {&coin1, &coin2, &coin3, &coin4, &coin5, &coin6, &coin7, &coin8, &coin9, &coin10};
+        Coin coin11(3000, 400);
+        Coin coin12(3040, 400);
+        Coin coin13(3080, 400);
+        Coin coin14(1620, 400);
+        Coin coin15(8760, 400);
+        Coin coin16(8800, 400);
+        Coin coin17(8840, 400);
+        Coin coin18(5780, 400);
+        Coin coin19(5820, 400);
+        Coin coin20(6860, 400);
+        Coin coin21(6900, 400);
+        Coin coin22(6940, 400);
+        Coin* coins[] = {&coin1, &coin2, &coin3, &coin4, &coin5, &coin6, &coin7, &coin8, &coin9, &coin10, &coin11, &coin12, &coin13, &coin14, &coin15, &coin16, &coin17, &coin18, &coin19, &coin20, &coin21, &coin22};
 
         // Camera setup
         Camera camera(800, 600);
@@ -593,19 +635,22 @@ int main()
                 }
             }
 
-            // Fire flower collection
-            if (mario.getbounds().intersects(flower.getBounds()) && !flower.isCollected()) {
-                flower.collect();
-                mario.collectFireFlower();
-                std::cout << "Mario a collecté une fleur de feu !" << std::endl;
+            // Fire flower collection - check all flowers for both players
+            for (FireFlower* flower : flowers) {
+                if (!flower->isCollected()) {
+                    if (mario.getbounds().intersects(flower->getBounds())) {
+                        flower->collect();
+                        mario.collectFireFlower();
+                        std::cout << "Mario a collecté une fleur de feu !" << std::endl;
+                    }
+                    else if (luigi.getbounds().intersects(flower->getBounds())) {
+                        flower->collect();
+                        luigi.collectFireFlower();
+                        std::cout << "Luigi a collecté une fleur de feu !" << std::endl;
+                    }
+                }
             }
-
-            if (luigi.getbounds().intersects(flower.getBounds()) && !flower.isCollected()) {
-                flower.collect();
-                luigi.collectFireFlower();
-                std::cout << "Luigi a collecté une fleur de feu !" << std::endl;
-            }
-
+            
             // Fireball input handling
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
                 mario.shootFireball();
@@ -641,18 +686,20 @@ int main()
             checkFireballCollisions(luigi, "Luigi");
 
             
-            // Etoile
-            if (mario.getbounds().intersects(etoile.getBounds()) && !etoile.isCollected()) 
-            {
-                etoile.collect();
-                mario.collectEtoile();
-                std::cout << "Mario a collecté une étoile!" << std::endl;
-            }
-
-            if (luigi.getbounds().intersects(etoile.getBounds()) && !etoile.isCollected()) {
-                etoile.collect();
-                luigi.collectEtoile();
-                std::cout << "Luigi a collecté une étoile!" << std::endl;
+            // Star collection - check all stars for both players
+            for (Etoile* star : etoiles) {
+                if (!star->isCollected()) {
+                    if (mario.getbounds().intersects(star->getBounds())) {
+                        star->collect();
+                        mario.collectEtoile();
+                        std::cout << "Mario a collecté une étoile!" << std::endl;
+                    }
+                    else if (luigi.getbounds().intersects(star->getBounds())) {
+                        star->collect();
+                        luigi.collectEtoile();
+                        std::cout << "Luigi a collecté une étoile!" << std::endl;
+                    }
+                }
             }
 
 
@@ -671,8 +718,17 @@ int main()
             
             mario.drawFireballs(gameWindow);
 
-            flower.draw(gameWindow);
-            etoile.draw(gameWindow);
+            // Draw all flowers
+            for (FireFlower* flower : flowers) {
+                flower->draw(gameWindow);
+            }
+            
+            // Draw all stars
+            for (Etoile* star : etoiles) {
+                star->draw(gameWindow);
+            }
+            
+            // Draw coins
             for (Coin *coin : coins) {
                 coin->draw(gameWindow);
             }

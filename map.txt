@@ -1,5 +1,0 @@
-// This is an example of how to extend your map file
-// Add more content to the right in your existing map.txt
-
-// Add something like this at the end of each line in your map:
-...####...?....####P####...?...####...........####?####...?...####.....F

@@ -2,10 +2,10 @@
 #include <iostream>
 
 KoopaTroopa::KoopaTroopa(float x, float y)
-    : Enemy("images/koopa.png", x, y, 0, 0)  // Set limits to 0 in parent class
+    : Enemy("images/koopa.png", x, y, 0, 0)  
 {
     sprite.setScale(0.15f, 0.15f);
-    speed = 0.03f;  // Set the movement speed
+    speed = 0.03f;  
     if (!koopaShell.loadFromFile("images/koopa_closed.png")) {
         std::cerr << "Erreur: Impossible de charger koopa_closed.png\n";
     }
@@ -20,38 +20,32 @@ void KoopaTroopa::update()
         return;
     }
 
-    // Store current position
     sf::Vector2f oldPosition = sprite.getPosition();
 
-    // Move based on direction without checking limits
     if (movingRight) {
         if (inShellState) {
-            // Use the faster shell speed when in shell state
-            sprite.move(speed * 2, 0);
+            sprite.move(speed * 3, 0);  
         } else {
             sprite.move(speed, 0);
         }
-        
-        // Keep sprite facing right (only if not in shell state)
+
         if (!inShellState && sprite.getScale().x < 0) {
             sprite.setScale(0.15f, 0.15f);
         }
     } else {
         if (inShellState) {
-            // Use the faster shell speed when in shell state
-            sprite.move(-speed * 2, 0);
+            sprite.move(-speed * 3, 0);  
         } else {
             sprite.move(-speed, 0);
         }
-        
-        // Keep sprite facing left (only if not in shell state)
+
         if (!inShellState && sprite.getScale().x > 0) {
             sprite.setScale(-0.15f, 0.15f);
         }
     }
 
-    // Use the generic collision handling method
     handleCollisions(oldPosition);
+    
 }
 
 void KoopaTroopa::interactWithPlayer(Player& player) 
@@ -79,10 +73,18 @@ void KoopaTroopa::interactWithPlayer(Player& player)
 
 void KoopaTroopa::onJumpedOn() 
 {
-    // If already in shell state, just reverse direction
     if (inShellState) {
         movingRight = !movingRight;
-        std::cout << "Koopa shell kicked in other direction!" << std::endl;
+   
+        sf::Vector2f currentPos = sprite.getPosition();
+        if (movingRight) {
+            sprite.setPosition(currentPos.x + 10.0f, currentPos.y);
+        } else {
+            sprite.setPosition(currentPos.x - 10.0f, currentPos.y);
+        }
+     
+        speed = 0.35f;
+        std::cout << "Koopa shell kicked in other direction with boost!" << std::endl;
         return;
     }
     
@@ -99,13 +101,10 @@ void KoopaTroopa::onJumpedOn()
     sprite.setPosition(originalPosition);
     sprite.setScale(0.12f, 0.12f);
     
-    // Don't change direction when first entered shell state
-    // movingRight = (rand() % 2 == 0);  
+    movingRight = (rand() % 2 == 0);  
     
-    // Increase the speed for shell state
-    speed = 0.06f;  
+    speed = 0.4f;  
     
-    std::cout << "Koopa dans sa carapace!" << std::endl;
 }
 
 void KoopaTroopa::onFireballHit()
@@ -120,10 +119,83 @@ void KoopaTroopa::onFireballHit()
 void KoopaTroopa::reverseDirection() {
     movingRight = !movingRight;
     
-    // Update sprite direction when reversing
     if (movingRight) {
-        sprite.setScale(0.15f, 0.15f);  // Face right
+        sprite.setScale(0.15f, 0.15f);  
     } else {
-        sprite.setScale(-0.15f, 0.15f); // Face left
+        sprite.setScale(-0.15f, 0.15f); 
+    }
+}
+
+void KoopaTroopa::handleCollisions(const sf::Vector2f& oldPosition) 
+{
+    if (!inShellState) {
+        Enemy::handleCollisions(oldPosition);
+        return;
+    }
+
+    sf::FloatRect globalBounds = sprite.getGlobalBounds();
+    
+  
+    sf::FloatRect rightBounds(
+        globalBounds.left + globalBounds.width - 5, 
+        globalBounds.top, 
+        10, 
+        globalBounds.height - 5 
+    );
+    
+    sf::FloatRect leftBounds(
+        globalBounds.left - 5, 
+        globalBounds.top, 
+        10, 
+        globalBounds.height - 5 
+    );
+    
+    bool collided = false;
+ 
+    for (const auto& pipe : currentPipes) {
+        sf::FloatRect pipeBounds = pipe.getGlobalBounds();
+        float pipeLeft = pipeBounds.left + 60.0f;
+        float pipeWidth = 35.4f;
+        sf::FloatRect fixedPipeBounds(pipeLeft, pipeBounds.top, pipeWidth, pipeBounds.height);
+        
+        if (movingRight && rightBounds.intersects(fixedPipeBounds)) {
+            collided = true;
+            break;
+        }
+        else if (!movingRight && leftBounds.intersects(fixedPipeBounds)) {
+            collided = true;
+            break;
+        }
+    }
+
+    if (!collided) {
+        for (const auto& block : currentBlocks) {
+            sf::FloatRect blockBounds = block.getGlobalBounds();
+            
+            if (blockBounds.top > globalBounds.top + (globalBounds.height * 0.8f)) {
+                continue; 
+            }
+            
+            if (movingRight && rightBounds.intersects(blockBounds)) {
+                collided = true;
+                break;
+            }
+            else if (!movingRight && leftBounds.intersects(blockBounds)) {
+                collided = true;
+                break;
+            }
+        }
+    }
+    
+    if (collided) {
+        movingRight = !movingRight;
+     
+        if (movingRight) {
+            sprite.setPosition(oldPosition.x - 15.0f, oldPosition.y); 
+        } else {
+            sprite.setPosition(oldPosition.x + 15.0f, oldPosition.y);
+        }
+        
+       
     }
 }
