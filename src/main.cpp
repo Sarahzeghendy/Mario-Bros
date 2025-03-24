@@ -20,7 +20,7 @@ int main()
     bool restartGame = true;
 
     while (restartGame) {
-        restartGame = false; // Reset flag
+        restartGame = false;
         
         //Musique de fond
         sf::Music music;
@@ -29,8 +29,8 @@ int main()
             return -1;
         }
 
-        music.setLoop(true);  // La musique tourne en boucle
-        music.play();         // Lancer la musique
+        music.setLoop(true);
+        music.play();
 
 
         // Menu window
