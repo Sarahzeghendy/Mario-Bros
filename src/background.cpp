@@ -7,8 +7,8 @@ const float TILE_SIZE = 40.0f;
 Background::Background()
 {
 
-    sky.setSize(sf::Vector2f(10000, 720));  // Reasonable width that's still very large
-    sky.setPosition(-1000, 0);  // Start further to the left
+    sky.setSize(sf::Vector2f(10000, 720));  
+    sky.setPosition(-1000, 0);
     sky.setFillColor(sf::Color(135, 206, 250)); 
 
     if (!groundBlock.loadFromFile("images/blocks.png"))

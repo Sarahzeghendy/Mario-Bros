@@ -106,9 +106,9 @@ int main()
         Etoile etoile(450,540); //position
 
         // Initialize players
-        Player mario("images/sprite.jpg", "Mario", 100, 483, 0.07f, 
+        Player mario("images/sprite.jpg", "Mario", 100, 483, 0.2f, 
                      sf::Keyboard::Right, sf::Keyboard::Left, sf::Keyboard::Up);
-        Player luigi("images/sprite.jpg", "Luigi", 200, 480, 0.07f, 
+        Player luigi("images/sprite.jpg", "Luigi", 200, 480, 0.2f, 
                      sf::Keyboard::M, sf::Keyboard::A, sf::Keyboard::J);
 
         mario.getSprite().setTextureRect(sf::IntRect(8, 139, 28, 47)); // Starting frame
