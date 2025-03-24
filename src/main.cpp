@@ -106,17 +106,10 @@ int main()
         Etoile etoile(450,540); //position
 
         // Initialize players
-<<<<<<< HEAD
-        Player mario("images/sprite.jpg", "Mario", 100, 483, 0.1f, 
-                     sf::Keyboard::Right, sf::Keyboard::Left, sf::Keyboard::Up);
-        Player luigi("images/sprite.jpg", "Luigi", 200, 480, 0.1f, 
-                     sf::Keyboard::D, sf::Keyboard::Q, sf::Keyboard::Z);
-=======
         Player mario("images/sprite.jpg", "Mario", 100, 483, 0.2f, 
                      sf::Keyboard::Right, sf::Keyboard::Left, sf::Keyboard::Up);
         Player luigi("images/sprite.jpg", "Luigi", 200, 480, 0.2f, 
                      sf::Keyboard::M, sf::Keyboard::A, sf::Keyboard::J);
->>>>>>> 0c91d0eae188c18eed76ddc2d77ffeef0ee84ee5
 
         mario.getSprite().setTextureRect(sf::IntRect(8, 139, 28, 47)); // Starting frame
         luigi.getSprite().setTextureRect(sf::IntRect(8, 191, 28, 47)); // Starting frame
