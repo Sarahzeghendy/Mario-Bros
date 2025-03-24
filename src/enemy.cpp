@@ -7,10 +7,11 @@ Enemy::Enemy(const std::string &imagePath, float x, float y, float leftLim, floa
     : texture(),
       sprite(),
       alive(true),
-      movingRight(true),
-      mouvement(sprite, 0.03f),
+      movingRight(false),
+      mouvement(sprite, 0.5f), // Keep the mouvement speed at 0.5f
       leftLimit(leftLim),
       rightLimit(rightLim),
+      speed(1.0f), // Default speed increased to 1.0f
       isFalling(false),
       fallSpeed(0.0f),
       GRAVITY(0.5f)

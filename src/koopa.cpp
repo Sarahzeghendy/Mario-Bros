@@ -5,7 +5,7 @@ KoopaTroopa::KoopaTroopa(float x, float y)
     : Enemy("images/koopa.png", x, y, 0, 0)  
 {
     sprite.setScale(0.15f, 0.15f);
-    speed = 0.03f;  
+    speed = 0.25f;  // Increased from 0.1f
     if (!koopaShell.loadFromFile("images/koopa_closed.png")) {
         std::cerr << "Erreur: Impossible de charger koopa_closed.png\n";
     }
@@ -83,7 +83,7 @@ void KoopaTroopa::onJumpedOn()
             sprite.setPosition(currentPos.x - 10.0f, currentPos.y);
         }
      
-        speed = 0.35f;
+        speed = 0.7f; // Increased from 0.35f for shell movement
         std::cout << "Koopa shell kicked in other direction with boost!" << std::endl;
         return;
     }
@@ -103,7 +103,7 @@ void KoopaTroopa::onJumpedOn()
     
     movingRight = (rand() % 2 == 0);  
     
-    speed = 0.4f;  
+    speed = 0.8f;  // Increased from 0.4f for shell initial speed
     
 }
 

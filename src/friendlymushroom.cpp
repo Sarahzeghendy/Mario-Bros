@@ -8,6 +8,7 @@ FriendlyMushroom::FriendlyMushroom(float x, float y)
     : Enemy("images/champignon.png", x, y, 0, 0) // Set limits to 0 in parent class
 {
     sprite.setScale(0.1f, 0.1f);
+    speed = 1.2f; 
 }
 
 void FriendlyMushroom::update() 

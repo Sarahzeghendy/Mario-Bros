@@ -762,14 +762,14 @@ int main()
                         marioRect.top + marioRect.height <= enemyRect.top + 10) {
                         enemy->onJumpedOn();
                         mario.bounce();
-                        mario.addScore(100);  // Award 100 points for stomping an enemy
+                        mario.addScore(30);  // Award 100 points for stomping an enemy
                         std::cout << "Mario a sauté sur l'ennemi! +100 points" << std::endl;
                     }
                     else if (luigiRect.intersects(enemyRect) && 
                              luigiRect.top + luigiRect.height <= enemyRect.top + 10) {
                         enemy->onJumpedOn();
                         luigi.bounce();
-                        luigi.addScore(100);  // Award 100 points for stomping an enemy
+                        luigi.addScore(30);  // Award 100 points for stomping an enemy
                         std::cout << "Luigi a sauté sur l'ennemi! +100 points" << std::endl;
                     }
                     

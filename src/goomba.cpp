@@ -5,6 +5,7 @@ Goomba::Goomba(float x, float y)
     : Enemy("images/goomba.png", x, y, 0, 0)  // Set limits to 0 in parent class
 {
     movingRight = true; // Ensure Goomba starts moving to the right
+    speed = 1.5f; // Increase the speed (default was likely around 0.5-1.0)
 }
 
 void Goomba::update() 
