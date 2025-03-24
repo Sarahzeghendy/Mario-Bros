@@ -9,9 +9,9 @@ Ce projet est une version personnalisée de **Mario Bros** développée en **C++
 
 ## **Dépendances**
 
-* **SFML** – Gestion des graphiques, audio et événements.
-* **C++** – Langage de programmation principal.
-* **Makefile** – Pour automatiser la compilation.
+* **SFML** : Gestion des graphiques, audio et événements.
+* **C++** : Langage de programmation principal.
+* **Makefile** : Pour automatiser la compilation.
 
 ## **Installation**
 
@@ -88,6 +88,16 @@ Le but du jeu est de **collecter le plus de pièces** et d’atteindre le drapea
 
 Le gagnant est celui qui **atteint le drapeau en premier** ou qui a le **meilleur score** en cas d’égalité !
 
+## **Gestion des Vies et du Score**
+
+* Le joueur commence avec 3 vies .
+* Le score augmente en :
+  * Collectant des pièces
+  * Tuant des ennemis
+* **À chaque 100 points** , le joueur  **gagne une vie supplémentaire**.
+* Si le joueur meurt mais a encore une vie disponible, il **revient à l'endroit où il est mort** sans recommencer le niveau depuis le début.
+* S’il n’a plus de vies, c’est Game Over !
+
 ## **Comment jouer?**
 
 ### **Contrôles**
@@ -128,63 +138,18 @@ La classe `Player` représente les joueurs dans le jeu Mario Bros. Elle permet d
 * Gestion de l'état (grand, petit, étoile, mort)
 * Détection de la victoire (atteinte du drapeau)
 
-#### **Détails des Attributs**
+**Diagramme UML de la Classe `Player`**
 
-| Attribut                             | Type                      | Description                                       |
-| ------------------------------------ | ------------------------- | ------------------------------------------------- |
-| `normalTexture`                    | `sf::Texture`           | Texture normale du joueur                         |
-| `fireTexture`                      | `sf::Texture`           | Texture de feu du joueur                          |
-| `sprite`                           | `sf::Sprite`            | Sprite du joueur                                  |
-| `mouvement`                        | `Mouvement`             | Gestion des déplacements                         |
-| `rightKey`,`leftKey`,`jumpKey` | `sf::Keyboard::Key`     | Touches de contrôle                              |
-| `big`                              | `bool`                  | État du joueur (grand ou petit)                  |
-| `isDead`                           | `bool`                  | État de mort du joueur                           |
-| `hasFirePower`                     | `bool`                  | État de pouvoir de feu                           |
-| `lives`                            | `int`                   | Nombre de vies                                    |
-| `coins`                            | `int`                   | Nombre de pièces collectées                     |
-| `fireballCooldown`                 | `int`                   | Temps entre deux tirs de boule de feu             |
-| `fireballs`                        | `std::vector<Fireball>` | Liste des boules de feu                           |
-| `score`                            | `int`                   | Score du joueur                                   |
-| `baseSpeed`,`currentSpeed`       | `float`                 | Vitesse de base et vitesse actuelle               |
-| `hitTimer`                         | `int`                   | Temps d'invincibilité après avoir été touché |
-| `starPowerFrames`                  | `int`                   | Temps restant du pouvoir étoile                  |
-| `isStarPowered`                    | `bool`                  | Si le joueur est sous l'effet du pouvoir étoile  |
+![Diagramme UML](uml/Player_class_diagram.png)
 
-#### **Détails des Méthodes**
-
-| Méthode                | Description                                                                      |
-| ----------------------- | -------------------------------------------------------------------------------- |
-| `Player()`            | Constructeur de la classe, initialise le joueur avec la texture et les commandes |
-| `update()`            | Met à jour le joueur à chaque frame (déplacement, animation, collision)       |
-| `applyGravity()`      | Applique la gravité au joueur                                                   |
-| `jump()`              | Fait sauter le joueur                                                            |
-| `getCoins()`          | Récupère une pièce et gère le gain de vie après 100 pièces                 |
-| `loseLife()`          | Perd une vie                                                                     |
-| `gainLife()`          | Gagne une vie                                                                    |
-| `die()`               | Tue le joueur                                                                    |
-| `grow()`              | Fait grandir le joueur                                                           |
-| `shrink()`            | Fait rétrécir le joueur                                                        |
-| `collectFireFlower()` | Permet au joueur d'obtenir le pouvoir de feu                                     |
-| `collectEtoile()`     | Donne au joueur le pouvoir étoile (invincibilité temporaire)                   |
-| `shootFireball()`     | Tire une boule de feu                                                            |
-| `updateFireballs()`   | Met à jour les boules de feu tirées par le joueur                              |
-| `drawFireballs()`     | Dessine les boules de feu à l'écran                                            |
-| `checkWin()`          | Vérifie si le joueur a atteint le drapeau                                       |
-| `animate()`           | Gère l'animation du joueur en fonction de la direction et de l'état            |
-| `loseFirePower()`     | Perd le pouvoir de feu si touché par un ennemi                                  |
-
-#### **Diagramme UML de la Classe `Player`**
-
-Voici le diagramme UML de la classe `Player` :
-
----
-
-#### Classe Enemy
+### Classe Enemy
 
 - Classe de base pour tous les ennemis
 - Implémente le comportement de base (mouvement, collision)
 - Gère l'état de vie et la logique de défaite
 - Inclut des méthodes virtuelles pour les comportements spécifiques
+
+  ![Diagramme UML](uml/Enemy_class_diagram.png)
 
 #### Classe FriendlyMushroom
 

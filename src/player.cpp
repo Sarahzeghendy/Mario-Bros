@@ -537,40 +537,46 @@ void Player::loseFirePower()
 void Player::respawn() {
     if (lives > 0 && isDead) {
         // Reset position to death position instead of initial position
-        sprite.setPosition(deathX, deathY);
+        // Also move the player slightly upward to avoid respawning inside enemies
+        sprite.setPosition(deathX, deathY - 50); // Move up 50 pixels for safety
         
         // Reset state
         isDead = false;
         movingRight = false;
         movingLeft = false;
         
-        // Keep fire power but reset texture
+        // Keep fire power if player had it
         if (hasFirePower) {
             sprite.setTexture(fireTexture);
-        } else {
-            sprite.setTexture(normalTexture);
-        }
-        
-        // Reset to big size if player had fire power
-        if (hasFirePower) {
-            big = true;
+            
+            // Use consistent scale for fire power
             float scaleValue = 0.15f;
             sprite.setScale(scaleValue, scaleValue);
+            
+            // Set fire texture rect properly - use full texture
+            sprite.setTextureRect(sf::IntRect(0, 0, fireTexture.getSize().x, fireTexture.getSize().y));
+            
+            std::cout << characterName << " respawned with fire power at death position!" << std::endl;
         } else {
-            // Otherwise reset to normal size - make sure it's visible
-            big = false;
-            sprite.setScale(0.7f, 0.7f);
+            sprite.setTexture(normalTexture);
+            
+            // If not fire power, use normal texture rect
+            if (characterName == "Mario") {
+                sprite.setTextureRect(sf::IntRect(8, 139, 28, 47));
+            } else if (characterName == "Luigi") {
+                sprite.setTextureRect(sf::IntRect(8, 191, 28, 47));
+            }
+            
+            // Set scale based on big state
+            if (big) {
+                sprite.setScale(1.2f, 1.2f);
+            } else {
+                sprite.setScale(0.7f, 0.7f);
+            }
         }
         
         // Clear any active fireballs
         fireballs.clear();
-        
-        // Reset texture rect to standing position
-        if (characterName == "Mario") {
-            sprite.setTextureRect(sf::IntRect(8, 139, 28, 47));
-        } else if (characterName == "Luigi") {
-            sprite.setTextureRect(sf::IntRect(8, 191, 28, 47));
-        }
         
         // Reset immunity timer for longer period after respawn
         hitTimer = 180; // 3 seconds of immunity after respawn
@@ -578,7 +584,8 @@ void Player::respawn() {
         // Make sure player is visible with temporary invincibility effect
         sprite.setColor(sf::Color(255, 255, 255, 180));
         
-        std::cout << characterName << " respawned at death position! Remaining lives: " << lives << std::endl;
+        std::cout << characterName << " respawned at death position (" << deathX << ", " << deathY 
+                  << ")! Remaining lives: " << lives << std::endl;
     } else {
         std::cout << characterName << " cannot respawn: lives=" << lives << ", isDead=" << isDead << std::endl;
     }

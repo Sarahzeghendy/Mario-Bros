@@ -21,11 +21,22 @@ class Player {
   - int currentFrame
   - int frameCounter
   - std::string characterType
+  - int hitTimer
+  - bool isStarPowered
+  - int starPowerFrames
+  - float baseSpeed
+  - float currentSpeed
+  - int score
+  - float initialX
+  - float initialY
+  - float deathX
+  - float deathY
+  - int lastLifeThreshold
   
   + Player(texturePath: string, name: string, x: float, y: float, speed: float, right: Key, left: Key, jump: Key)
-  + update(blocks: vector<sf::Sprite>&, pipes: vector<sf::Sprite>&): void
+  + update(blocks: vector<sf::Sprite>&, pipes: vector<sf::Sprite>&, questionBlocks: vector<sf::Sprite>&): void
   + jump(): void
-  + applyGravity(blocks: vector<sf::Sprite>&, pipes: vector<sf::Sprite>&): void
+  + applyGravity(blocks: vector<sf::Sprite>&, pipes: vector<sf::Sprite>&, questionBlocks: vector<sf::Sprite>&): void
   + draw(window: sf::RenderWindow&): void
   + animate(): void
   + moveRight(): void
@@ -55,6 +66,25 @@ class Player {
   + hasFirePowerActive(): bool
   + loseFirePower(): void
   + bounce(): void
+  + getScore(): int
+  + getName(): string
+  + setMovingRight(move: bool): void
+  + setMovingLeft(move: bool): void
+  + isInAir(): bool
+  + getMouvement(): Mouvement&
+  + isSmall(): bool
+  + isHit(): bool
+  + isInvincible(): bool
+  + getIsDead(): bool
+  + setIsDead(dead: bool): void
+  + collectEtoile(): void
+  + setSpeed(newSpeed: float): void
+  + getSpeed(): float
+  + getBaseSpeed(): float
+  + respawn(): void
+  + updateInitialPosition(x: float, y: float): void
+  + shouldRespawn(): bool
+  + addScore(points: int): void
 }
 
 class Mouvement {
