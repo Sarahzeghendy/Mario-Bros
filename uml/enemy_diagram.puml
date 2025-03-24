@@ -1,4 +1,4 @@
-@startuml Enemy Class Diagram
+@startuml Enemy_class_diagram
 
 abstract class Enemy {
   # sf::Texture texture

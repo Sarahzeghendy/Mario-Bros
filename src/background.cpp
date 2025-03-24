@@ -7,8 +7,8 @@ const float TILE_SIZE = 40.0f;
 Background::Background()
 {
 
-    sky.setSize(sf::Vector2f(5000, 720));
-    sky.setPosition(-400, 0);
+    sky.setSize(sf::Vector2f(10000, 720));  
+    sky.setPosition(-1000, 0);
     sky.setFillColor(sf::Color(135, 206, 250)); 
 
     if (!groundBlock.loadFromFile("images/blocks.png"))
@@ -34,11 +34,11 @@ Background::Background()
 
     loadMap("map.txt");
 
-    for (int i = 0; i < 5; i++)
+    for (int i = 0; i < 15; i++)
     {
         sf::Sprite cloud(cloudTexture);
-        cloud.setPosition(i * 300, 50);
-        cloud.setScale(0.2f, 0.2f);
+        cloud.setPosition(i * 300, 300);
+        cloud.setScale(0.5f, 0.5f);
         clouds.push_back(cloud);
     }
 }

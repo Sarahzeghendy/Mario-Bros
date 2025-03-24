@@ -89,6 +89,7 @@ void KoopaTroopa::onJumpedOn()
     inShellState = true;
 
     sf::Vector2f originalPosition = sprite.getPosition();
+    originalPosition.y -= 5.0f;
     
     sprite.setTexture(koopaShell, true);  
 
@@ -96,7 +97,7 @@ void KoopaTroopa::onJumpedOn()
     sprite.setTextureRect(sf::IntRect(0, 0, textureSize.x, textureSize.y));
     
     sprite.setPosition(originalPosition);
-    sprite.setScale(0.15f, 0.15f);
+    sprite.setScale(0.12f, 0.12f);
     
     // Don't change direction when first entered shell state
     // movingRight = (rand() % 2 == 0);  

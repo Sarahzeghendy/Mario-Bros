@@ -20,7 +20,7 @@ int main()
     bool restartGame = true;
 
     while (restartGame) {
-        restartGame = false; // Reset flag
+        restartGame = false;
         
         //Musique de fond
         sf::Music music;
@@ -29,8 +29,8 @@ int main()
             return -1;
         }
 
-        music.setLoop(true);  // La musique tourne en boucle
-        music.play();         // Lancer la musique
+        music.setLoop(true);
+        music.play();
 
 
         // Menu window
@@ -102,13 +102,13 @@ int main()
 
         Background background;
         Game game;
-        FireFlower flower(1000, 500);
+        FireFlower flower(900, 370);
         Etoile etoile(450,540); //position
 
         // Initialize players
-        Player mario("images/sprite.jpg", "Mario", 100, 483, 0.07f, 
+        Player mario("images/sprite.jpg", "Mario", 100, 483, 0.2f, 
                      sf::Keyboard::Right, sf::Keyboard::Left, sf::Keyboard::Up);
-        Player luigi("images/sprite.jpg", "Luigi", 200, 480, 0.07f, 
+        Player luigi("images/sprite.jpg", "Luigi", 200, 480, 0.2f, 
                      sf::Keyboard::M, sf::Keyboard::A, sf::Keyboard::J);
 
         mario.getSprite().setTextureRect(sf::IntRect(8, 139, 28, 47)); // Starting frame
@@ -119,7 +119,9 @@ int main()
         enemies.push_back(std::make_unique<Goomba>(700, 545));
         enemies.push_back(std::make_unique<KoopaTroopa>(750, 530));
         enemies.push_back(std::make_unique<FriendlyMushroom>(400, 540));  // Removed limits
-
+        enemies.push_back(std::make_unique<Goomba>(1000, 545));
+        enemies.push_back(std::make_unique<KoopaTroopa>(1300, 530));
+        enemies.push_back(std::make_unique<FriendlyMushroom>(1500, 540));  // Removed limits
         // Create AI controller for Luigi if in AI mode
         AIPlayer* aiController = nullptr;
         if (isAIMode) {
@@ -127,12 +129,17 @@ int main()
         }
 
         // Coins
-        Coin coin1(300, 500);
-        Coin coin2(400, 500);
-        Coin coin3(500, 500);
-        Coin coin4(600, 500);
-        Coin coin5(700, 500);
-        Coin* coins[] = {&coin1, &coin2, &coin3, &coin4, &coin5};
+        Coin coin1(400, 500);
+        Coin coin2(420, 500);
+        Coin coin3(500, 300);
+        Coin coin4(550, 300);
+        Coin coin5(600, 300);
+        Coin coin6(1300, 400);
+        Coin coin7(1340, 400);
+        Coin coin8(1380, 400);
+        Coin coin9(1420, 400);
+        Coin coin10(1460, 400);
+        Coin* coins[] = {&coin1, &coin2, &coin3, &coin4, &coin5, &coin6, &coin7, &coin8, &coin9, &coin10};
 
         // Camera setup
         Camera camera(800, 600);
@@ -253,11 +260,19 @@ int main()
                 marioRespawnText.setString("Mario respawning in " + std::to_string((marioRespawnTimer / 60) + 1) + "...");
                 marioRespawnText.setPosition(mario.getPosition().x - 50, mario.getPosition().y - 40);
                 
+                // Add debugging
+                std::cout << "Mario respawn countdown: " << marioRespawnTimer << " (isDead=" 
+                          << mario.getIsDead() << ", lives=" << mario.getLives() 
+                          << ", fire power=" << mario.hasFirePowerActive() << ")" << std::endl;
+                
                 if (marioRespawnTimer <= 0) {
+                    std::cout << "Calling mario.respawn()..." << std::endl;
                     mario.respawn();
+                    // Verify respawn worked
+                    std::cout << "After respawn: isDead=" << mario.getIsDead() << std::endl;
                 }
             }
-            
+
             if (luigi.shouldRespawn() && luigiRespawnTimer > 0) {
                 luigiRespawnTimer--;
                 
@@ -708,45 +723,39 @@ int main()
                 }
             }
 
-            // Affichage du score
+            // Score and Lives Display
             sf::View view = gameWindow.getView();
-            float baseX = view.getCenter().x + view.getSize().x/2 - 100;
-            float baseY = view.getCenter().y - view.getSize().y/2 + 10;
-            
-            marioScore.setPosition(baseX, baseY);
-            luigiScore.setPosition(baseX, baseY + 40);
-            
+
+            // Initialize Score displays - regular scores show numbers
+            static Score marioScore("images/mario_score.png", font, false); // false = score display
+            static Score luigiScore("images/luigi_score.png", font, false); // false = score display
+
+            // Initialize Lives displays - these show hearts
+            static Score marioLives("images/mario_score.png", font, true);  // true = lives display 
+            static Score luigiLives("images/luigi_score.png", font, true);  // Use luigi_score.png instead of mario_score.png
+
+            // Position the displays on screen
+            float rightSide = view.getCenter().x + view.getSize().x/2 - 150;
+            float leftSide = view.getCenter().x - view.getSize().x/2 + 20;
+            float topPos = view.getCenter().y - view.getSize().y/2 + 10;
+
+            // Set positions
+            marioScore.setPosition(rightSide, topPos);
+            luigiScore.setPosition(rightSide, topPos + 40);
+            marioLives.setPosition(leftSide, topPos);
+            luigiLives.setPosition(leftSide, topPos + 40);
+
+            // Update values
             marioScore.update(mario.getScore());
             luigiScore.update(luigi.getScore());
-            
+            marioLives.update(mario.getLives());
+            luigiLives.update(luigi.getLives());
+
+            // Draw all UI elements
             marioScore.draw(gameWindow);
             luigiScore.draw(gameWindow);
-
-            // Display lives along with score
-            baseX = view.getCenter().x - view.getSize().x/2 + 20;
-            baseY = view.getCenter().y - view.getSize().y/2 + 10;
-            
-            // Display Mario's lives
-            sf::Text marioLivesText;
-            marioLivesText.setFont(font);
-            marioLivesText.setCharacterSize(24);
-            marioLivesText.setFillColor(sf::Color::White);
-            marioLivesText.setString("Lives: " + std::to_string(mario.getLives()));
-            marioLivesText.setPosition(baseX, baseY);
-            gameWindow.draw(marioLivesText);
-            
-            // Display Luigi's lives
-            sf::Text luigiLivesText;
-            luigiLivesText.setFont(font);
-            luigiLivesText.setCharacterSize(24);
-            luigiLivesText.setFillColor(sf::Color::White);
-            luigiLivesText.setString("Lives: " + std::to_string(luigi.getLives()));
-            luigiLivesText.setPosition(baseX, baseY + 30);
-            gameWindow.draw(luigiLivesText);
-            
-            // Position score displays after the lives
-            marioScore.setPosition(baseX + 120, baseY);
-            luigiScore.setPosition(baseX + 120, baseY + 30);
+            marioLives.draw(gameWindow);
+            luigiLives.draw(gameWindow);
 
             // Draw respawn text if players are respawning
             if (mario.shouldRespawn() && marioRespawnTimer > 0) {
