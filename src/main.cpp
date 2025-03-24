@@ -226,6 +226,54 @@ int main()
                     camera.update({event.size.width, event.size.height});
             }
 
+            
+            // Gestion de la collision entre Mario et Luigi
+            if (mario.getbounds().intersects(luigi.getbounds())) {
+                if (mario.getPosition().y + mario.getbounds().height <= luigi.getPosition().y + 5) {
+                    // Mario saute sur Luigi
+                    mario.getMouvement().jump();
+
+                } 
+                else if (luigi.getPosition().y + luigi.getbounds().height <= mario.getPosition().y + 5) {
+                    // Luigi saute sur Mario
+                    luigi.getMouvement().jump();
+
+                }
+                else {
+
+                    bool marioBouge = mario.isMoving();
+                    bool luigiBouge = luigi.isMoving();
+                    
+                     // Bloquer la traversée horizontale
+                    if (luigiBouge) {
+                        if (luigi.getPosition().x < mario.getPosition().x) {
+                            std::cout << "Luigi va vers la droite, collision avec Mario\n";
+                            luigi.setPosition(mario.getPosition().x - luigi.getbounds().width, luigi.getPosition().y);
+                        } 
+                        else if (luigi.getPosition().x > mario.getPosition().x) {
+                            std::cout << "Luigi va vers la gauche, collision avec Mario\n";
+                            luigi.setPosition(mario.getPosition().x + mario.getbounds().width, luigi.getPosition().y);
+                        }
+                    }
+
+                    if (marioBouge) {
+                        if (mario.getPosition().x < luigi.getPosition().x) {
+                            std::cout << "Mario va vers la droite, collision avec Luigi\n";
+                            mario.setPosition(luigi.getPosition().x - mario.getbounds().width, mario.getPosition().y);
+                        } 
+                        else if (mario.getPosition().x > luigi.getPosition().x) {
+                            std::cout << "Mario va vers la gauche, collision avec Luigi\n";
+                            mario.setPosition(luigi.getPosition().x + luigi.getbounds().width, mario.getPosition().y);
+                        }
+                    }
+
+
+                }
+            }
+
+
+
+
             // Check if a player falls below the lower limit of the screen
             float lowerLimit = gameWindow.getSize().y + 50; // Allow some margin below the screen
             if (mario.getPosition().y > lowerLimit && !mario.getIsDead()) {

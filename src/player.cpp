@@ -94,6 +94,9 @@ bool Player::loadTexture() {
  * @param pipes Les tuyaux avec lesquels vérifier la collision.
  */
 void Player::update(const std::vector<sf::Sprite>& blocks, const std::vector<sf::Sprite>& pipes, const std::vector<sf::Sprite>& questionBlocks) {
+
+    updatePreviousPosition(); // Mémorise la position avant tout mouvement
+    
     if (isDead) return;
 
     // Decrease hit invincibility timer if it's active
