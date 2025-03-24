@@ -3,7 +3,7 @@
 
 
 Camera::Camera(float width, float height) : defaultWidth(width), defaultHeight(height),
-      minX(width/2), maxX(10000), // Adjust these values based on your level size
+      minX(width/2), maxX(9000), // Adjust these values based on your level size
       minY(height/2), maxY(600)  // Adjust these values based on your level size
 {
     view.setSize(width, height); //Définit la taille de la vue avec les dimensions données.

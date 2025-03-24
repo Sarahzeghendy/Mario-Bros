@@ -45,7 +45,7 @@ class Enemy
         }
 
     protected:
-        void handleCollisions(const sf::Vector2f& oldPosition); // New method for collision handling
+        virtual void handleCollisions(const sf::Vector2f& oldPosition); // New method for collision handling
 
         sf::Texture texture;
         sf::Sprite sprite;
@@ -83,6 +83,7 @@ class KoopaTroopa : public Enemy {
         void onJumpedOn() override;
         void onFireballHit() override;
         void reverseDirection();
+        void handleCollisions(const sf::Vector2f& oldPosition) override; // Add this line
     
     private:
         sf::Texture koopaShell;  

@@ -34,7 +34,7 @@ Background::Background()
 
     loadMap("map.txt");
 
-    for (int i = 0; i < 15; i++)
+    for (int i = 0; i < 30; i++)
     {
         sf::Sprite cloud(cloudTexture);
         cloud.setPosition(i * 300, 300);
