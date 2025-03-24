@@ -41,6 +41,7 @@ private:
     float deathX;   // Position where player died
     float deathY;
     int lastLifeThreshold;  // Tracks the last score threshold where a life was earned
+    sf::Vector2f previousPosition; // Stocke la position de la frame précédente
     
 public:
     Player(const std::string& texturePath, const std::string& name, float x, float y, float speed, 
@@ -114,6 +115,11 @@ public:
     void updateInitialPosition(float x, float y); // Update initial spawn position
     bool shouldRespawn() const; // Check if player should respawn (dead but has lives)
     void addScore(int points);  // New method to add score with life threshold checking
-};
+
+
+    void updatePreviousPosition() { previousPosition = sprite.getPosition(); } // Met à jour la position précédente
+    sf::Vector2f getPreviousPosition() const { return previousPosition; } // Récupère la position précédente
+    bool isMoving() const { return sprite.getPosition().x != previousPosition.x; } // Vérifie si le joueur a bougé
+    };
 
 #endif
