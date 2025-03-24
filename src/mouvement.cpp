@@ -10,15 +10,15 @@
 
 Mouvement::Mouvement(sf::Sprite &spr, float spd)
     : sprite(spr), speed(spd), isJumping(false),
-      velocityY(0.0f), gravity(0.002f), jumpStrength(-0.8f), hangTime(20.0f), hangCounter(0.0f) {}
+      velocityY(0.0f), gravity(0.03f), jumpStrength(-4.6f), hangTime(10.0f), hangCounter(0.0f) {}
 
 /**
  * @brief Déplace le joueur vers la droite.
  */
 void Mouvement::moveRight()
-
 {
-    sprite.move(speed, 0);
+    float effectiveSpeed = isJumping ? speed * 0.7f : speed;
+    sprite.move(effectiveSpeed, 0);
 }
 
 /**
@@ -26,7 +26,8 @@ void Mouvement::moveRight()
  */
 void Mouvement::moveLeft()
 {
-    sprite.move(-speed, 0);
+    float effectiveSpeed = isJumping ? speed * 0.7f : speed;
+    sprite.move(-effectiveSpeed, 0);
 }
 
 /**
@@ -41,35 +42,25 @@ void Mouvement::jump()
         hangCounter = hangTime;
     }
 
+    // Gravité ajustée pour une montée et une descente rapide
     if (velocityY < 0)
     {
-        velocityY += gravity * 0.5f;
+        velocityY += gravity * 1.0f; // Montée légèrement freinée
     }
     else
     {
-        velocityY += gravity * 0.7f;
+        velocityY += gravity * 2.5f; // Descente beaucoup plus rapide
     }
 
-    if (velocityY > 0.5f)
+    // Limiter la vitesse verticale pour éviter une descente trop lente
+    if (velocityY > 2.5f)
     {
-        velocityY = 0.5f;
+        velocityY = 2.5f;
     }
-}
-
-/**
- * @brief Vérifie si le joueur est en collision avec un bloc.
- * @param block Bloc avec lequel vérifier la collision.
- * @return Vrai si le joueur est en collision avec le bloc, faux sinon.
- */
-bool Mouvement::checkCollision(const sf::Sprite &object)
-{
-    return sprite.getGlobalBounds().intersects(object.getGlobalBounds());
 }
 
 /**
  * @brief Applique la gravité et gère le saut en l'air.
- * @param blocks Les blocs avec lesquels vérifier la collision.
- * @param pipes Les tuyaux avec lesquels vérifier la collision.
  */
 void Mouvement::applyGravity(const std::vector<sf::Sprite> &blocks, const std::vector<sf::Sprite> &pipes, const std::vector<sf::Sprite> &questionBlocks)
 {
@@ -79,42 +70,29 @@ void Mouvement::applyGravity(const std::vector<sf::Sprite> &blocks, const std::v
 
     if (velocityY < 0)
     {
-        velocityY += gravity * 0.5f;
-
-        // Check for collision with blocks above when jumping
-        for (const auto &block : allBlocks)
-        {
-            if (sprite.getGlobalBounds().intersects(block.getGlobalBounds()))
-            {
-                if (velocityY < 0) // Only when moving upward
-                {
-                    sprite.setPosition(sprite.getPosition().x, block.getPosition().y + block.getGlobalBounds().height);
-                    velocityY = 0;
-                    break;
-                }
-            }
-        }
+        velocityY += gravity * 1.0f;
     }
     else
     {
-        velocityY += gravity * 0.7f;
+        velocityY += gravity * 2.5f; // Augmenté pour une descente rapide
     }
 
-    if (velocityY > 0.5f)
+    // Augmenter la limite de vitesse pour une chute rapide
+    if (velocityY > 2.5f)
     {
-        velocityY = 0.5f;
+        velocityY = 2.5f;
     }
 
     sprite.move(0, velocityY);
 
     bool onGround = false;
 
-    // Check collision with blocks below
+    // Collision avec les blocs sous le joueur
     for (const auto &block : allBlocks)
     {
         if (sprite.getGlobalBounds().intersects(block.getGlobalBounds()))
         {
-            if (velocityY > 0) // Falling
+            if (velocityY > 0) // Chute
             {
                 sprite.setPosition(sprite.getPosition().x, block.getPosition().y - sprite.getGlobalBounds().height);
                 velocityY = 0;
@@ -122,7 +100,7 @@ void Mouvement::applyGravity(const std::vector<sf::Sprite> &blocks, const std::v
                 hangCounter = 0;
                 onGround = true;
             }
-            else if (velocityY < 0) // Moving upward
+            else if (velocityY < 0) // Montée
             {
                 sprite.setPosition(sprite.getPosition().x, block.getPosition().y + block.getGlobalBounds().height);
                 velocityY = 0;
@@ -130,6 +108,7 @@ void Mouvement::applyGravity(const std::vector<sf::Sprite> &blocks, const std::v
         }
     }
 
+    // Vérification des tuyaux
     for (const auto &pipe : pipes)
     {
         sf::FloatRect pipeBounds = pipe.getGlobalBounds();
@@ -170,7 +149,7 @@ void Mouvement::checkForGaps(const std::vector<sf::FloatRect> &gaps)
     {
         if (sprite.getGlobalBounds().intersects(gap))
         {
-        std::cout << "Le joueur est tombé dans un trou !" << std::endl;
+            std::cout << "Le joueur est tombé dans un trou !" << std::endl;
             sprite.setPosition(100, 300);
             break;
         }
