@@ -34,11 +34,11 @@ Background::Background()
 
     loadMap("map.txt");
 
-    for (int i = 0; i < 5; i++)
+    for (int i = 0; i < 15; i++)
     {
         sf::Sprite cloud(cloudTexture);
         cloud.setPosition(i * 300, 300);
-        cloud.setScale(0.2f, 0.2f);
+        cloud.setScale(0.5f, 0.5f);
         clouds.push_back(cloud);
     }
 }

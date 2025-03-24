@@ -30,10 +30,12 @@ public:
 private:
     sf::RectangleShape sky;
     sf::Texture groundBlock;
-    sf::Texture questionBlock;  // Add this line
+    sf::Texture questionBlock;  
     sf::Texture questionBlockTexture;
     sf::Texture pipeTexture;
     sf::Texture cloudTexture;
+    std::vector<sf::Sprite> hills;
+    sf::Texture hillTexture;
 
     std::vector<sf::Sprite> bricks;
     std::vector<sf::Sprite> questionBlocks;
