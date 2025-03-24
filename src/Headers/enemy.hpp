@@ -77,7 +77,7 @@ class Goomba : public Enemy {
 
 class KoopaTroopa : public Enemy {
     public:
-        KoopaTroopa(float x, float y);  // Updated constructor without limits
+        KoopaTroopa(float x, float y); 
         void update() override;
         void interactWithPlayer(Player& player) override;
         void onJumpedOn() override;
