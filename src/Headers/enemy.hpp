@@ -46,7 +46,6 @@ class Enemy
 
     protected:
         virtual void handleCollisions(const sf::Vector2f& oldPosition); // New method for collision handling
-
         sf::Texture texture;
         sf::Sprite sprite;
         bool alive;
@@ -66,7 +65,7 @@ class Enemy
 
 class Goomba : public Enemy {
     public:
-        Goomba(float x, float y);  // Updated constructor without limits
+        Goomba(float x, float y); 
         void update() override;
         void interactWithPlayer(Player& player) override;
         void onJumpedOn() override;
