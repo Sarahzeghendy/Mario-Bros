@@ -10,7 +10,7 @@
 
 Mouvement::Mouvement(sf::Sprite &spr, float spd)
     : sprite(spr), speed(spd), isJumping(false),
-      velocityY(0.0f), gravity(0.03f), jumpStrength(-4.6f), hangTime(10.0f), hangCounter(0.0f) {}
+      velocityY(0.0f), gravity(0.03f), jumpStrength(-4.5f), hangTime(10.0f), hangCounter(0.0f) {}
 
 /**
  * @brief Déplace le joueur vers la droite.
