@@ -19,17 +19,19 @@ int main()
 {
     bool restartGame = true;
 
-    while (restartGame) {
+    while (restartGame) 
+    {
         restartGame = false;
         
         //Musique de fond
         sf::Music music;
-        if (!music.openFromFile("musiques/mario.wav")) {
+        if (!music.openFromFile("musiques/mario.wav")) 
+        {
             std::cerr << "Erreur : impossible de charger la musique !\n";
             return -1;
         }
 
-        music.setLoop(true);
+        music.setLoop(true); //musique en boucle 
         music.play();
 
 
@@ -227,42 +229,68 @@ int main()
             }
 
             
-            // Gestion de la collision entre Mario et Luigi
-            if (mario.getbounds().intersects(luigi.getbounds())) {
-                if (mario.getPosition().y + mario.getbounds().height <= luigi.getPosition().y + 5) {
+            //Gestion de la collision entre Mario et Luigi
+
+            //vérification collision entre Mario et Luigi
+            if (mario.getbounds().intersects(luigi.getbounds())) 
+            {
+                //si mario se retrouve au dessus de luigi -> mario saute sur luigi
+                if (mario.getPosition().y + mario.getbounds().height <= luigi.getPosition().y + 5) 
+                {
                     // Mario saute sur Luigi
                     mario.getMouvement().jump();
 
                 } 
-                else if (luigi.getPosition().y + luigi.getbounds().height <= mario.getPosition().y + 5) {
+                // si Luigi se trouve au-dessus de Mario, Luigi saute sur Mario
+                else if (luigi.getPosition().y + luigi.getbounds().height <= mario.getPosition().y + 5) 
+                {
                     // Luigi saute sur Mario
                     luigi.getMouvement().jump();
 
                 }
-                else {
+                else 
+                {
+                    //gestion des déplacements horizontaux
 
+                    //vérification mario bouge
                     bool marioBouge = mario.isMoving();
+
+                    //vérification luigi bouge
                     bool luigiBouge = luigi.isMoving();
                     
-                     // Bloquer la traversée horizontale
-                    if (luigiBouge) {
-                        if (luigi.getPosition().x < mario.getPosition().x) {
+                     // bloquer la traversée horizontale (qu'ils se chevauchent)
+                    if (luigiBouge) 
+                    {
+                        // si Luigi se déplace vers la droite et entre en collision avec Mario
+                        if (luigi.getPosition().x < mario.getPosition().x) 
+                        {
                             std::cout << "Luigi va vers la droite, collision avec Mario\n";
+                            //Luigi placé juste à gauche de Mario
                             luigi.setPosition(mario.getPosition().x - luigi.getbounds().width, luigi.getPosition().y);
                         } 
-                        else if (luigi.getPosition().x > mario.getPosition().x) {
+                        //si Luigi se déplace vers la gauche et entre en collision avec Mario
+                        else if (luigi.getPosition().x > mario.getPosition().x) 
+                        {
                             std::cout << "Luigi va vers la gauche, collision avec Mario\n";
+                            //Luigi placé juste à droite de Mario
                             luigi.setPosition(mario.getPosition().x + mario.getbounds().width, luigi.getPosition().y);
                         }
                     }
 
-                    if (marioBouge) {
-                        if (mario.getPosition().x < luigi.getPosition().x) {
+                    if (marioBouge) 
+                    {
+                        //si Mario se déplace vers la droite et entre en collision avec Luigi
+                        if (mario.getPosition().x < luigi.getPosition().x) 
+                        {
                             std::cout << "Mario va vers la droite, collision avec Luigi\n";
+                            //Mario placé juste à gauche de Luigi
                             mario.setPosition(luigi.getPosition().x - mario.getbounds().width, mario.getPosition().y);
                         } 
-                        else if (mario.getPosition().x > luigi.getPosition().x) {
+                        //si Mario se déplace vers la gauche et entre en collision avec Luigi
+                        else if (mario.getPosition().x > luigi.getPosition().x) 
+                        {
                             std::cout << "Mario va vers la gauche, collision avec Luigi\n";
+                            //Mario placé juste à droite de Luigi
                             mario.setPosition(luigi.getPosition().x + luigi.getbounds().width, mario.getPosition().y);
                         }
                     }
