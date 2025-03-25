@@ -21,7 +21,7 @@ Ce projet est une version personnalisée de Mario Bros développée en **C++** a
 Pour récupérer le code source, ouvrez un terminal et entrez la commande suivante :
 
 ```bash
-git clone https://github.com/votre-utilisateur/mario-bros.git
+git clone https://github.com/Sarahzeghendy/Mario-Bros.git
 cd mario-bros
 ```
 
