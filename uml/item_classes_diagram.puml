@@ -1,4 +1,4 @@
-@startuml Item Classes Diagram
+@startuml Item_Classes_Diagram
 
 class Coin {
   - sf::Texture texture
@@ -6,7 +6,7 @@ class Coin {
   - bool collected
   - int animationFrame
   - int frameCounter
-  
+
   + Coin(x: float, y: float)
   + draw(window: sf::RenderWindow&): void
   + collect(): void
@@ -20,7 +20,7 @@ class FireFlower {
   - bool collected
   - int animationFrame
   - int frameCounter
-  
+
   + FireFlower(x: float, y: float)
   + draw(window: sf::RenderWindow&): void
   + collect(): void
@@ -31,12 +31,12 @@ class FireFlower {
 class Fireball {
   - sf::Texture texture
   - sf::Sprite sprite
-  - float velocityX
-  - float velocityY
+  - float speed
   - float gravity
+  - float velocityY
   - bool active
-  - int bounceCount
-  
+  - float initialX
+
   + Fireball(x: float, y: float, direction: float)
   + update(blocks: vector<sf::Sprite>&): void
   + draw(window: sf::RenderWindow&): void
@@ -44,5 +44,39 @@ class Fireball {
   + destroy(): void
   + getBounds(): sf::FloatRect
 }
+
+class Etoile {
+  - sf::Texture texture
+  - sf::Sprite sprite
+  - bool collected
+
+  + Etoile(x: float, y: float)
+  + draw(window: sf::RenderWindow&): void
+  + collect(): void
+  + isCollected(): bool
+  + getBounds(): sf::FloatRect
+}
+
+note top of Etoile
+  Objet de puissance qui donne au joueur
+  le pouvoir de l'étoile (invincibilité +
+  augmentation de vitesse) pendant un temps limité
+end note
+
+note top of FireFlower
+  Objet de puissance qui donne au joueur
+  la capacité de lancer des boules de feu
+end note
+
+note top of Fireball
+  Projectile capable de vaincre
+  les ennemis, rebondit sur les surfaces
+  et a une portée limitée
+end note
+
+note top of Coin
+  Objet de collection qui augmente
+  le score du joueur et accorde
+end note
 
 @enduml

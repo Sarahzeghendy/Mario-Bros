@@ -1,15 +1,16 @@
 #!/bin/bash
 
-# Create a directory for tools if it doesn't exist
-mkdir -p ~/Bureau/Mario-Bros/tools
+# Définir le chemin du dossier UML
+UML_DIR="$HOME/Téléchargements/Mario-Bros/uml"
+PLANTUML_JAR="$HOME/Téléchargements/Mario-Bros/tools/plantuml.jar"
 
-# Download PlantUML jar file
-echo "Downloading PlantUML..."
-wget https://sourceforge.net/projects/plantuml/files/plantuml.jar/download -O ~/Bureau/Mario-Bros/tools/plantuml.jar
+# Vérifie si le fichier plantuml.jar existe
+if [ ! -f "$PLANTUML_JAR" ]; then
+    echo "Erreur : plantuml.jar introuvable dans $PLANTUML_JAR"
+    exit 1
+fi
 
-# Make the script executable
-chmod +x ~/Bureau/Mario-Bros/tools/plantuml.jar
+# Trouve et exécute tous les fichiers .puml
+find "$UML_DIR" -name '*.puml' -exec java -jar "$PLANTUML_JAR" {} \;
 
-echo "PlantUML has been downloaded to ~/Bureau/Mario-Bros/tools/plantuml.jar"
-echo "You can now generate UML diagrams with:"
-echo "java -jar ~/Bureau/Mario-Bros/tools/plantuml.jar ~/Bureau/Mario-Bros/uml/*.puml"
+echo "Tous les fichiers .puml ont été traités avec succès !"

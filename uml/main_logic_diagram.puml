@@ -1,0 +1,113 @@
+@startuml Main_Game_Logic
+
+title Mario Bros Game - Main Logic Flow
+
+|Initialization|
+start
+:Initialize game restart loop;
+while (Restart game?) is (Yes)
+  :Load music;
+  
+  |Menu System|
+  :Create menu window;
+  :Display menu options;
+  while (Game started?) is (No)
+    :Handle menu navigation;
+    if (Option selected?) then (Yes)
+      if (Play option?) then (Normal Mode)
+        :Set game mode to normal;
+        :Close menu window;
+        :Start game;
+      elseif (Play vs AI?) then (AI Mode)
+        :Set game mode to AI;
+        :Close menu window;
+        :Start game;
+      elseif (Rules?) then (Show Rules)
+        :Display rules window;
+        :Wait for close;
+      else (Quit)
+        :Exit game;
+        stop
+      endif
+    endif
+  end while
+  
+  |Game Setup|
+  :Create game window;
+  :Initialize background;
+  :Initialize game state controller;
+  :Create power-ups (fire flowers, stars);
+  :Initialize players (Mario and Luigi);
+  :Create enemies (Goombas, Koopas, Mushrooms);
+  :Create coins;
+  if (AI Mode?) then (Yes)
+    :Initialize AI controller for Luigi;
+  endif
+  :Setup camera;
+  :Load font;
+  :Setup score and lives displays;
+
+  |Main Game Loop|
+  while (Game window open?) is (Yes)
+    :Handle window events;
+    
+    |Player Interactions|
+    :Check player collision with each other;
+    :Check if players fell out of bounds;
+    :Handle player respawn timers;
+    
+    if (Game Over?) then (Yes)
+      |Game Over|
+      :Display winner;
+      :Show return to menu button;
+      if (Menu button clicked?) then (Yes)
+        :Set restart game flag;
+        :Close game window;
+      endif
+    else (No)
+      |Player Updates|
+      :Update Mario;
+      if (AI Mode?) then (Yes)
+        :Update AI controller;
+        :Apply AI decisions to Luigi;
+      else (No)
+        :Update Luigi with player input;
+      endif
+      
+      |Collectables|
+      :Check coin collection;
+      :Check fire flower collection;
+      :Check star collection;
+      
+      |Enemy Interactions|
+      :Update all enemies;
+      :Check player-enemy collisions;
+      :Handle fireball-enemy collisions;
+      
+      |Win Condition|
+      if (Player reached flag?) then (Yes)
+        :Set winner;
+        :Set game over flag;
+      endif
+      
+      |Rendering|
+      :Clear window;
+      :Draw background;
+      :Draw players;
+      :Draw player fireballs;
+      :Draw power-ups;
+      :Draw coins;
+      :Draw enemies;
+      :Draw score and lives;
+      :Display window;
+    endif
+  end while
+  
+  |Cleanup|
+  :Delete AI controller if exists;
+  
+end while
+
+stop
+
+@enduml

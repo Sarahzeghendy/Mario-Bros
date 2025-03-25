@@ -1,4 +1,4 @@
-@startuml Movement Class Diagram
+@startuml Movement_Class_Diagram
 
 class Mouvement {
   - sf::Sprite& sprite
@@ -9,16 +9,40 @@ class Mouvement {
   - float jumpStrength
   - float hangTime
   - float hangCounter
-  
+
   + Mouvement(spr: sf::Sprite&, spd: float)
   + moveRight(): void
   + moveLeft(): void
   + jump(): void
-  + checkCollision(object: sf::Sprite&): bool
-  + applyGravity(blocks: vector<sf::Sprite>&, pipes: vector<sf::Sprite>&): void
-  + checkForGaps(gaps: vector<sf::FloatRect>&): void
-  + blockMovement(obstacles: vector<sf::Sprite>&, pipes: vector<sf::Sprite>&): pair<bool, bool>
-  + bounce(): void
+  + checkCollision(object: const sf::Sprite&): bool
+  + applyGravity(blocks: const vector<sf::Sprite>&, pipes: const vector<sf::Sprite>&, questionBlocks: const vector<sf::Sprite>&): void
+  + checkForGaps(gaps: const vector<sf::FloatRect>&): void
+  + blockMovement(obstacles: const vector<sf::Sprite>&, pipes: const vector<sf::Sprite>&, questionBlocks: const vector<sf::Sprite>&): pair<bool, bool>
+  + setSpeed(newSpeed: float): void
+  + isInAir(): bool
 }
+
+note right of Mouvement::moveRight
+Vitesse réduite lors d'un saut
+end note
+
+note right of Mouvement::moveLeft
+Vitesse réduite lors d'un saut
+end note
+
+note right of Mouvement::jump
+Applique une gravité variable en fonction
+du mouvement ascendant/descendant
+end note
+
+note right of Mouvement::applyGravity
+Gère les collisions complexes avec
+les plateformes, les tuyaux et les blocs de question
+end note
+
+note right of Mouvement::blockMovement
+Rend la capacité de se déplacer
+dans les deux directions
+end note
 
 @enduml

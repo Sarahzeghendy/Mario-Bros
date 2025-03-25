@@ -13,10 +13,10 @@ AIPlayer::AIPlayer(Player *character, const std::vector<std::unique_ptr<Enemy>> 
       currentAction("idle"),
       actionDuration(0),
       jumpTimer(0),
-      shouldJump(false),
-      shouldMoveRight(true),
-      shouldMoveLeft(false),
-      shouldShootFireball(false)
+      m_shouldJump(false),
+      m_shouldMoveRight(true),
+      m_shouldMoveLeft(false),
+      m_shouldShootFireball(false)
 
 { // Ajout de la référence aux ennemis
     for (const auto &enemy : enemies)
@@ -59,8 +59,8 @@ void AIPlayer::update(const std::vector<sf::Sprite> &groundTiles,
 
     if (detectGapAhead(groundTiles))
     {
-        shouldJump = true;
-        shouldMoveRight = true;
+        m_shouldJump = true;
+        m_shouldMoveRight = true;
     }
 
     executeAction();
@@ -68,12 +68,12 @@ void AIPlayer::update(const std::vector<sf::Sprite> &groundTiles,
     if (jumpTimer > 0)
     {
         jumpTimer--;
-        shouldJump = (jumpTimer > 0);
+        m_shouldJump = (jumpTimer > 0);
     }
 
     if (character->hasFirePowerActive() && std::bernoulli_distribution(0.01)(rng))
     {
-        shouldShootFireball = true;
+        m_shouldShootFireball = true;
     }
 }
 
@@ -98,9 +98,9 @@ void AIPlayer::makeDecision()
     actionDuration = std::uniform_int_distribution<>(minActionDuration, maxActionDuration)(rng);
     decisionCooldown = actionDuration;
 
-    shouldMoveRight = (currentAction == "move_right");
-    shouldMoveLeft = (currentAction == "move_left");
-    shouldJump = (currentAction == "jump");
+    m_shouldMoveRight = (currentAction == "move_right");
+    m_shouldMoveLeft = (currentAction == "move_left");
+    m_shouldJump = (currentAction == "jump");
 
     std::cout << "AI Decision: " << currentAction << " for " << actionDuration << " frames" << std::endl;
 }
@@ -116,26 +116,26 @@ void AIPlayer::makeDecision()
 void AIPlayer::executeAction()
 {
 
-    if (shouldJump && !character->isInAir())
+    if (m_shouldJump && !character->isInAir())
     {
         character->jump();
         std::cout << "Luigi AI executed jump!" << std::endl;
         jumpTimer = jumpTimer > 0 ? jumpTimer : 10;
     }
 
-    character->setMovingRight(shouldMoveRight);
-    character->setMovingLeft(shouldMoveLeft);
+    character->setMovingRight(m_shouldMoveRight);
+    character->setMovingLeft(m_shouldMoveLeft);
 
     std::cout << "Luigi position: (" << character->getPosition().x << ", "
               << character->getPosition().y << ") right="
-              << (shouldMoveRight ? "true" : "false")
-              << " left=" << (shouldMoveLeft ? "true" : "false")
+              << (m_shouldMoveRight ? "true" : "false")
+              << " left=" << (m_shouldMoveLeft ? "true" : "false")
               << std::endl;
 
-    if (shouldShootFireball)
+    if (m_shouldShootFireball)
     {
         character->shootFireball();
-        shouldShootFireball = false;
+        m_shouldShootFireball = false;
     }
 }
 
@@ -178,19 +178,19 @@ void AIPlayer::avoidEnemies()
 
                     if (distanceX < 80 && !character->isInAir() && jumpTimer <= 0)
                     {
-                        shouldJump = true;
+                        m_shouldJump = true;
                         jumpTimer = 20;
                     }
 
                     if (character->hasFirePowerActive())
                     {
-                        shouldShootFireball = true;
+                        m_shouldShootFireball = true;
                     }
 
                     if (std::bernoulli_distribution(0.4)(rng))
                     {
-                        shouldMoveLeft = true;
-                        shouldMoveRight = false;
+                        m_shouldMoveLeft = true;
+                        m_shouldMoveRight = false;
                     }
                 }
             }
@@ -203,34 +203,34 @@ void AIPlayer::avoidEnemies()
 
                     if (distanceX > -80 && !character->isInAir() && jumpTimer <= 0)
                     {
-                        shouldJump = true;
+                        m_shouldJump = true;
                         jumpTimer = 20;
                     }
 
-                    shouldMoveRight = true;
-                    shouldMoveLeft = false;
+                    m_shouldMoveRight = true;
+                    m_shouldMoveLeft = false;
 
                     if (character->hasFirePowerActive())
                     {
-                        shouldShootFireball = true;
+                        m_shouldShootFireball = true;
                     }
                 }
             }
 
             if (distance < 50 && !character->isInAir())
             {
-                shouldJump = true;
+                m_shouldJump = true;
                 jumpTimer = 25;
 
-                shouldMoveRight = (distanceX < 0);
-                shouldMoveLeft = (distanceX > 0);
+                m_shouldMoveRight = (distanceX < 0);
+                m_shouldMoveLeft = (distanceX > 0);
             }
         }
     }
 
     if (enemyDetected && !character->isInAir() && std::bernoulli_distribution(0.3)(rng))
     {
-        shouldJump = true;
+        m_shouldJump = true;
         jumpTimer = 15;
     }
 
@@ -261,13 +261,13 @@ void AIPlayer::avoidObstacles(const std::vector<sf::Sprite> &obstacles, const st
     sf::FloatRect characterBounds = character->getbounds();
 
     sf::FloatRect aheadBounds = characterBounds;
-    aheadBounds.left += (shouldMoveRight ? 50.0f : -50.0f);
+    aheadBounds.left += (m_shouldMoveRight ? 50.0f : -50.0f);
 
     for (const auto &obstacle : obstacles)
     {
         if (aheadBounds.intersects(obstacle.getGlobalBounds()))
         {
-            shouldJump = true;
+            m_shouldJump = true;
             jumpTimer = 15;
             break;
         }
@@ -277,7 +277,7 @@ void AIPlayer::avoidObstacles(const std::vector<sf::Sprite> &obstacles, const st
     {
         if (aheadBounds.intersects(pipe.getGlobalBounds()))
         {
-            shouldJump = true;
+            m_shouldJump = true;
             jumpTimer = 15;
             break;
         }
@@ -298,7 +298,7 @@ bool AIPlayer::detectGapAhead(const std::vector<sf::Sprite> &groundTiles)
     float charBottom = pos.y + character->getbounds().height;
     float checkDistance = gapDetectionRange;
 
-    sf::Vector2f checkPoint(pos.x + (shouldMoveRight ? checkDistance : -checkDistance), charBottom + 30);
+    sf::Vector2f checkPoint(pos.x + (m_shouldMoveRight ? checkDistance : -checkDistance), charBottom + 30);
     bool groundFound = false;
     for (const auto &tile : groundTiles)
     {
@@ -366,8 +366,8 @@ void AIPlayer::moveTowardsFlag(const sf::Sprite &flag)
     {
         if (std::bernoulli_distribution(0.8)(rng))
         {
-            shouldMoveRight = true;
-            shouldMoveLeft = false;
+            m_shouldMoveRight = true;
+            m_shouldMoveLeft = false;
         }
     }
 }

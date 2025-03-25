@@ -92,8 +92,7 @@ Le gagnant est celui qui **atteint le drapeau en premier** ou qui a le **meilleu
 
 * Le joueur commence avec 3 vies .
 * Le score augmente en :
-  * Collectant des pièces
-  * Tuant des ennemis
+  * Collectant des pièces (+10)es ennemis en sautant sur eux (+30) ou en tirant une boulle de feu (+50)
 * **À chaque 100 points** , le joueur  **gagne une vie supplémentaire**.
 * Si le joueur meurt mais a encore une vie disponible, il **revient à l'endroit où il est mort** sans recommencer le niveau depuis le début.
 * S’il n’a plus de vies, c’est Game Over !
