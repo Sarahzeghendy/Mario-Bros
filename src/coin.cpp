@@ -13,10 +13,7 @@ Coin::Coin(float x, float y) : collected(false)
     {
         std::cerr << "Erreur : Impossible de charger coin.png" << std::endl;
     }
-    else
-    {
-        std::cout << "Pièce chargée" << std::endl;
-    }
+    
     sprite.setTexture(texture);
     sprite.setPosition(x, y);
     sprite.setScale(0.9f, 0.9f);

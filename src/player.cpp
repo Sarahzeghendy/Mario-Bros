@@ -14,7 +14,6 @@
  * @param jump Touche pour faire sauter le joueur
  * @details Ce constructeur initialise les attributs du joueur
  */
-
 Player::Player(const std::string &texturePath, const std::string &name, float x, float y, float speed,
                sf::Keyboard::Key right, sf::Keyboard::Key left, sf::Keyboard::Key jump)
     : normalTexture(),
@@ -47,12 +46,13 @@ Player::Player(const std::string &texturePath, const std::string &name, float x,
       deathY(y),
       lastLifeThreshold(0)
 {
-
+    // Charger la texture normale du joueur
     if (!normalTexture.loadFromFile(texturePath))
     {
         std::cerr << "Erreur : Impossible de charger " << texturePath << std::endl;
     }
 
+    // Determiner la texture de feu en fonction du personnage
     std::string fireTexturePath;
     if (characterName == "Mario")
     {
@@ -64,23 +64,20 @@ Player::Player(const std::string &texturePath, const std::string &name, float x,
     }
     else
     {
-
         fireTexturePath = "images/mario_fire.png";
     }
 
+    // Charger la texture de feu
     if (!fireTexture.loadFromFile(fireTexturePath))
     {
         std::cerr << "Erreur : Impossible de charger " << fireTexturePath << std::endl;
-        fireTexture = normalTexture;
-    }
-    else
-    {
-        std::cout << "Fire texture loaded successfully: " << fireTexturePath << std::endl;
+        fireTexture = normalTexture; // Utiliser la texture normale en cas d'erreur
     }
 
+    // Configurer le sprite du joueur
     sprite.setTexture(normalTexture);
-    sprite.setScale(1.2f, 1.2f);
-    sprite.setPosition(x, y);
+    sprite.setScale(1.2f, 1.2f); // Agrandir le sprite
+    sprite.setPosition(x, y);    // Position initiale
 }
 
 /**
@@ -92,7 +89,7 @@ bool Player::loadTexture()
 }
 
 /**
- * @brief Met a jour les droit de mouvement du joueur
+ * @brief Met a jour les droits de mouvement du joueur
  * @param blocks Les blocs avec lesquels verifier la collision
  * @param pipes Les tuyaux avec lesquels verifier la collision
  * @param questionBlocks Les blocs de question avec lesquels verifier la collision
@@ -100,43 +97,50 @@ bool Player::loadTexture()
  */
 void Player::update(const std::vector<sf::Sprite> &blocks, const std::vector<sf::Sprite> &pipes, const std::vector<sf::Sprite> &questionBlocks)
 {
-
+    // Sauvegarder la position precedente
     updatePreviousPosition();
 
     if (isDead)
         return;
 
+    // timer de collision
     if (hitTimer > 0)
     {
         hitTimer--;
 
+        // Alterner la transparence comme si ca clignote
         if (hitTimer % 10 < 5)
         {
-            sprite.setColor(sf::Color(255, 255, 255, 128));
+            sprite.setColor(sf::Color(255, 255, 255, 128)); // semi-transparent
         }
         else
         {
-            sprite.setColor(sf::Color(255, 255, 255, 255));
+            sprite.setColor(sf::Color(255, 255, 255, 255)); // opaque
         }
 
         if (hitTimer == 0)
         {
-            sprite.setColor(sf::Color(255, 255, 255, 255));
+            sprite.setColor(sf::Color(255, 255, 255, 255)); // etat normal
         }
     }
 
+    // cooldown des boules de feu
     if (fireballCooldown > 0)
     {
         fireballCooldown--;
     }
 
+    // Touches de deplacement
     movingRight = sf::Keyboard::isKeyPressed(rightKey);
     movingLeft = sf::Keyboard::isKeyPressed(leftKey);
 
+    // Mettre a jour les boules de feu
     updateFireballs(blocks);
 
+    // Verifier collisions pour les mouvements
     auto [canMoveRight, canMoveLeft] = mouvement.blockMovement(blocks, pipes, questionBlocks);
 
+    // Deplacement vers la droite
     if (sf::Keyboard::isKeyPressed(rightKey) && canMoveRight)
     {
         mouvement.moveRight();
@@ -144,6 +148,7 @@ void Player::update(const std::vector<sf::Sprite> &blocks, const std::vector<sf:
         movingLeft = false;
     }
 
+    // Deplacement vers la gauche
     if (sf::Keyboard::isKeyPressed(leftKey) && canMoveLeft)
     {
         mouvement.moveLeft();
@@ -151,26 +156,29 @@ void Player::update(const std::vector<sf::Sprite> &blocks, const std::vector<sf:
         movingRight = false;
     }
 
+    // Sauter
     if (sf::Keyboard::isKeyPressed(jumpKey))
     {
         mouvement.jump();
     }
 
+    // pouvoir etoile
     if (isStarPowered)
     {
         starPowerFrames--;
 
         if (starPowerFrames <= 0)
         {
-
-            currentSpeed = baseSpeed;
+            currentSpeed = baseSpeed; // Revenir a la vitesse normale
             mouvement.setSpeed(currentSpeed);
             isStarPowered = false;
         }
     }
 
+    // Appliquer la gravite
     applyGravity(blocks, pipes, questionBlocks);
 
+    // Mise a jour de l'animation
     animate();
 }
 
@@ -228,9 +236,11 @@ void Player::addScore(int points)
     int oldScore = score;
     score += points;
 
+    // Calculer les seuils de vie
     int oldThreshold = oldScore / 100;
     int newThreshold = score / 100;
 
+    // Gagner de vie si un nouveau seuil est atteint
     if (newThreshold > oldThreshold)
     {
         int livesGained = newThreshold - oldThreshold;
@@ -238,7 +248,7 @@ void Player::addScore(int points)
         {
             gainLife();
         }
-        lastLifeThreshold = newThreshold * 100;
+        lastLifeThreshold = newThreshold * 100; // mise a jour du dernier seuil
     }
 }
 
@@ -254,7 +264,7 @@ void Player::getCoins()
 
 /**
  * @brief Perd une vie
- * @details Si le joueur na plus de vies, affiche "Game Over !
+ * @details Si le joueur n'a plus de vies, affiche "Game Over !""
  */
 
 void Player::loseLife()
@@ -263,7 +273,6 @@ void Player::loseLife()
     if (lives <= 0)
     {
         isDead = true;
-        std::cout << characterName << " lost all lives! Game over!" << std::endl;
     }
     else
     {
@@ -307,7 +316,7 @@ void Player::die()
 
 /**
  * @brief Fait grandir le joueur
- * @details Le joueur est grand si il a la taille normale
+ * @details Le joueur devient grand si il a la taille petite
  * La taille du joueur est modifiee
  */
 void Player::grow()
@@ -319,7 +328,7 @@ void Player::grow()
 
 /**
  * @brief Fait retrecir le joueur
- * @details Le joueur est petit si il est grand
+ * @details Le joueur devient petit si il est grand
  * La taille du joueur est modifiee
  */
 void Player::shrink()
@@ -334,8 +343,6 @@ void Player::shrink()
         sprite.setPosition(sprite.getPosition().x, 480.0f);
 
         hitTimer = 120;
-
-        std::cout << characterName << " lost fire power!" << std::endl;
     }
 
     else if (big)
@@ -349,7 +356,6 @@ void Player::shrink()
     else
     {
         die();
-        std::cout << characterName << " was already small and died!" << std::endl;
     }
 }
 
@@ -462,6 +468,8 @@ void Player::animate()
                 }
             }
         }
+
+        // meme chose pour luigi
         else if (characterName == "Luigi")
         {
             if (movingRight)
@@ -495,7 +503,6 @@ void Player::animate()
 
 void Player::collectEtoile()
 {
-    std::cout << characterName << " est maintenant avec le pouvoir étoile !" << std::endl;
     currentSpeed = baseSpeed * 3;
     mouvement.setSpeed(currentSpeed);
 
@@ -535,13 +542,15 @@ sf::Sprite &Player::getSprite()
  */
 bool Player::checkWin(const sf::Sprite &flag)
 {
+    // Calculer les positions du joueur et du drapeau
     float playerX = sprite.getPosition().x + sprite.getGlobalBounds().width / 2;
     float playerY = sprite.getPosition().y + sprite.getGlobalBounds().height / 2;
     float flagX = flag.getPosition().x;
     float flagY = flag.getPosition().y;
+
+    // Verifier si le joueur est proche du drapeau
     if (std::abs(playerX - flagX) < 10.0f && std::abs(playerY - flagY) < 15.0f)
     {
-        std::cout << "Victoire !" << std::endl;
         return true;
     }
     return false;
@@ -642,8 +651,6 @@ void Player::respawn()
             sprite.setScale(scaleValue, scaleValue);
 
             sprite.setTextureRect(sf::IntRect(0, 0, fireTexture.getSize().x, fireTexture.getSize().y));
-
-            std::cout << characterName << " respawned with fire power at death position!" << std::endl;
         }
         else
         {
@@ -673,9 +680,6 @@ void Player::respawn()
         hitTimer = 180;
 
         sprite.setColor(sf::Color(255, 255, 255, 180));
-
-        std::cout << characterName << " respawned at death position (" << deathX << ", " << deathY
-                  << ")! Remaining lives: " << lives << std::endl;
     }
     else
     {

@@ -95,7 +95,6 @@ void KoopaTroopa::interactWithPlayer(Player& player)
         //si koopatroopa dans sa carapace -> rien ne se passe
         if (inShellState) 
         {
-            std::cout << "Le joueur touche la carapace sans danger" << std::endl;
             return;
         }
         //si joueur grand
@@ -103,13 +102,11 @@ void KoopaTroopa::interactWithPlayer(Player& player)
         {
             //joueur devient petit
             player.shrink();
-            std::cout << "Mario devient petit après avoir touché un Koopa!" << std::endl;
         } 
         else //si joueur petit
         {
             //joueur meurt
             player.die();
-            std::cout << "Mario est tué par le Koopa!" << std::endl;
         }
     }
 }
@@ -136,7 +133,6 @@ void KoopaTroopa::onJumpedOn()
         }
      
         speed = 0.7f;
-        std::cout << "Koopa shell kicked in other direction with boost!" << std::endl;
         return;
     }
     
@@ -172,7 +168,6 @@ void KoopaTroopa::onFireballHit()
 {
    //koopatroopa est tué
     alive = false;
-    std::cout << "Koopa defeated by fireball!" << std::endl;
     
     //changement orientation du sprite lorsqu'il est tué
     sprite.setScale(0.15f, -0.15f);  

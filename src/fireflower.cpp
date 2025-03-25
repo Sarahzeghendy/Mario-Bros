@@ -57,5 +57,4 @@ bool FireFlower::isCollected() const
 void FireFlower::collect()
 {
     collected = true;
-    std::cout << "Mario a collecté une Fleur de Feu !" << std::endl;
 }
