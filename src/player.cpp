@@ -384,15 +384,6 @@ bool Player::isHit() const
     return hitTimer > 0;
 }
 
-/**
- * @brief Verifie si le joueur est invincible
- */
-bool Player::isInvincible() const
-{
-
-    return hitTimer > 0;
-}
-
 void Player::animate()
 {
     frameCounter++;

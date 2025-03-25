@@ -77,7 +77,6 @@ class Player {
   + getMouvement(): Mouvement&
   + isSmall(): bool
   + isHit(): bool
-  + isInvincible(): bool
   + getIsDead(): bool
   + setIsDead(dead: bool): void
   + collectEtoile(): void

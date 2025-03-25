@@ -159,9 +159,6 @@ void Enemy::interactWithPlayer(Player &player)
     if (player.getIsDead() || !isAlive())
         return; // Skip if player is dead or enemy is dead
 
-    // Don't interact if player is invincible after a hit
-    if (player.isInvincible())
-        return;
 
     sf::FloatRect playerBounds = player.getbounds();
     sf::FloatRect enemyBounds = sprite.getGlobalBounds();

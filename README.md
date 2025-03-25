@@ -2,7 +2,7 @@
 
 ## **Description du Projet**
 
-Ce projet est une version personnalisée de **Mario Bros** développée en **C++** avec l'utilisation de la bibliothèque  SFML . Il inclut un menu de démarrage avec plusieurs modes de jeu :
+Ce projet est une version personnalisée de Mario Bros développée en **C++** avec l'utilisation de la bibliothèque  SFML . Il inclut un menu de démarrage avec plusieurs modes de jeu :
 
 * **2 vs 2** : Mario contre Luigi (chaque personnage est contrôlé par un joueur).
 * **Joueur vs IA** : Mario est contrôlé par le joueur tandis que Luigi est contrôlé par une IA.
@@ -12,6 +12,7 @@ Ce projet est une version personnalisée de **Mario Bros** développée en **C++
 * **SFML** : Gestion des graphiques, audio et événements.
 * **C++** : Langage de programmation principal.
 * **Makefile** : Pour automatiser la compilation.
+* **Java** : Pour les diagramme UML.
 
 ## **Installation**
 
@@ -82,18 +83,18 @@ Le but du jeu est de **collecter le plus de pièces** et d’atteindre le drapea
 
 * Collecter le plus de pièces pour augmenter votre score.
 * Éviter les obstacles (trous, blocks, pipe) pour ne pas perdre et continuer à avancer.
-* Échapper aux ennemis ou les éliminer si possible en sautant dessus.
+* Échapper aux ennemis ou les éliminer si possible soit en sautant dessus soit tirer des boules de feux si vous avez le pouvoir de la fleur.
 * Récupérer des pouvoirs (champignons, étoiles, fleur) pour gagner des avantages temporaires (devenir plus grand, super vitesse, lancer des boules de feu).
-* **Atteindre le drapeau en premier **: Le premier joueur à toucher le drapeau remporte la partie !
+* Atteindre le drapeau en premier : Le premier joueur à toucher le drapeau remporte la partie !
 
-Le gagnant est celui qui **atteint le drapeau en premier** ou qui a le **meilleur score** en cas d’égalité !
+Le gagnant est celui qui atteint le drapeau en premier  !
 
 ## **Gestion des Vies et du Score**
 
 * Le joueur commence avec 3 vies .
 * Le score augmente en :
   * Collectant des pièces (+10)es ennemis en sautant sur eux (+30) ou en tirant une boulle de feu (+50)
-* **À chaque 100 points** , le joueur  **gagne une vie supplémentaire**.
+* À chaque 100 pointsÀ chaque 100 points , le joueur  gagne une vie supplémentaire.
 * Si le joueur meurt mais a encore une vie disponible, il **revient à l'endroit où il est mort** sans recommencer le niveau depuis le début.
 * S’il n’a plus de vies, c’est Game Over !
 
@@ -139,8 +140,6 @@ La classe `Player` représente les joueurs dans le jeu Mario Bros. Elle permet d
 
 **Diagramme UML de la Classe `Player`**
 
-![Diagramme UML](uml/Player_class_diagram.png)
-
 ### Classe Enemy
 
 - Classe de base pour tous les ennemis
@@ -148,50 +147,48 @@ La classe `Player` représente les joueurs dans le jeu Mario Bros. Elle permet d
 - Gère l'état de vie et la logique de défaite
 - Inclut des méthodes virtuelles pour les comportements spécifiques
 
-  ![Diagramme UML](uml/Enemy_class_diagram.png)
-
-#### Classe FriendlyMushroom
+### Classe FriendlyMushroom
 
 - Hérite de Enemy mais agit comme un power-up
 - Fait grandir le joueur lors de la collecte
 - Se déplace horizontalement et change de direction aux obstacles
 
-#### Classe FireFlower
+### Classe FireFlower
 
 - Power-up qui donne au joueur la capacité de lancer des boules de feu
 - Apparaît dans certains blocs spéciaux
 - Reste statique et attend d'être collectée
 
-#### Classe Fireball
+### Classe Fireball
 
 - Projectile lancé par le joueur avec le power-up feu
 - Se déplace dans la direction du lancement
 - Rebondit sur les surfaces et détruit les ennemis au contact
 
-#### Classe Coin
+### Classe Coin
 
 - Objet collectible qui augmente le score du joueur
 - Apparaît dans les niveaux ou sort des blocs frappés
 
-#### Classe Camera
+### Classe Camera
 
 - Gère la vue du jeu et suit le joueur
 - Implémente des limites pour ne pas montrer hors du niveau
 - Adapte la vue à la taille de la fenêtre
 
-#### Classe Background
+### Classe Background
 
 - Charge et affiche l'environnement du jeu
 - Gère les tuiles de sol, les tuyaux, les blocs et le ciel
 - Fournit des méthodes pour accéder aux éléments du niveau
 
-#### Classe AIPlayer
+### Classe AIPlayer
 
 - Contrôle un personnage secondaire (Luigi) par IA
 - Prend des décisions basées sur l'environnement et les ennemis
 - Implémente différentes stratégies (éviter les ennemis, sauter les obstacles)
 
-### Logique du jeu
+## Logique du jeu
 
 1. **Boucle principale**:
 

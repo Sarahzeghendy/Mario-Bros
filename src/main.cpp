@@ -121,7 +121,7 @@ int main()
         Player mario("images/sprite.jpg", "Mario", 100, 483, 0.7f,
                      sf::Keyboard::Right, sf::Keyboard::Left, sf::Keyboard::Up);
         Player luigi("images/sprite.jpg", "Luigi", 150, 480, 0.7f,
-                     sf::Keyboard::M, sf::Keyboard::A, sf::Keyboard::J);
+                     sf::Keyboard::D, sf::Keyboard::Q, sf::Keyboard::Z);
 
         mario.getSprite().setTextureRect(sf::IntRect(8, 139, 28, 47));
         luigi.getSprite().setTextureRect(sf::IntRect(8, 191, 28, 47));
