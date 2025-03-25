@@ -1,4 +1,4 @@
-@startuml Movement_Class_Diagram
+@startuml Movement
 
 class Mouvement {
   - sf::Sprite& sprite
@@ -22,27 +22,5 @@ class Mouvement {
   + isInAir(): bool
 }
 
-note right of Mouvement::moveRight
-Vitesse réduite lors d'un saut
-end note
-
-note right of Mouvement::moveLeft
-Vitesse réduite lors d'un saut
-end note
-
-note right of Mouvement::jump
-Applique une gravité variable en fonction
-du mouvement ascendant/descendant
-end note
-
-note right of Mouvement::applyGravity
-Gère les collisions complexes avec
-les plateformes, les tuyaux et les blocs de question
-end note
-
-note right of Mouvement::blockMovement
-Rend la capacité de se déplacer
-dans les deux directions
-end note
 
 @enduml

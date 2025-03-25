@@ -146,14 +146,14 @@ int Menu::getSelectedIndex() const
  */
 void Menu::showRules()
 {
-    sf::RenderWindow rulesWindow(sf::VideoMode(600, 400), "Règles du jeu");
+    sf::RenderWindow rulesWindow(sf::VideoMode(900, 500), "Regles du jeu");
 
     sf::Text rulesText;
     rulesText.setFont(font);
     rulesText.setString(
         "Regles du jeu Mario Bros :\n\n"
-        "1. Deplacez Mario avec les fleches gauche, droite pour bouger et jump pour sauter.\n"
-        "2. Deplacez luigi avec les touches d, q pour bouger et z pour sauter.\n"
+        "1. Deplacez Mario avec les fleches gauche, droite et la fleche up pour sauter.\n"
+        "2. Deplacez luigi avec les touches D, Q et Z pour sauter.\n"
         "3. Evitez les trous et les ennemis pour ne pas perdre de vies.\n"
         "4. Ramassez les pieces pour gagner des points et des vies.\n"
         "5. Atteignez le drapeau pour gagner le niveau.\n"

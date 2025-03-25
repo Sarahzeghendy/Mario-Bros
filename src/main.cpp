@@ -741,8 +741,7 @@ int main()
                             {
                                 enemy->onFireballHit();
                                 fireball.destroy();
-                                player.addScore(50); 
-                                std::cout << playerName << " a tué un ennemi avec une boule de feu! +50 points" << std::endl;
+                                player.addScore(30); 
                                 break;
                             }
                         }
@@ -833,16 +832,14 @@ int main()
                     {
                         enemy->onJumpedOn();
                         mario.bounce();
-                        mario.addScore(30); 
-                        std::cout << "Mario a sauté sur l'ennemi! +100 points" << std::endl;
+                        mario.addScore(20); 
                     }
                     else if (luigiRect.intersects(enemyRect) &&
                              luigiRect.top + luigiRect.height <= enemyRect.top + 10)
                     {
                         enemy->onJumpedOn();
                         luigi.bounce();
-                        luigi.addScore(30); 
-                        std::cout << "Luigi a sauté sur l'ennemi! +100 points" << std::endl;
+                        luigi.addScore(20); 
                     }
 
                     if (enemy->isAlive())

@@ -243,18 +243,13 @@ void Player::addScore(int points)
 }
 
 /**
- * @brief Recupere une piece.
- * @details Si le joueur a plus de 100 il gagne une vie.
+ * @brief Recupere une piece
+ * @details Il gagne 5 points
  */
 void Player::getCoins()
 {
     coins++;
-    addScore(10);
-    if (coins > 100)
-    {
-        gainLife();
-        coins = 0;
-    }
+    addScore(5);
 }
 
 /**

@@ -1,4 +1,4 @@
-@startuml Enemy_class_diagram
+@startuml Enemy
 
 abstract class Enemy {
   # sf::Texture texture
@@ -63,42 +63,43 @@ class FriendlyMushroom {
 }
 
 ' Inheritance relationships showing polymorphism
-Enemy <|-- Goomba : implements >
-Enemy <|-- KoopaTroopa : implements >
-Enemy <|-- FriendlyMushroom : implements >
+Enemy <|-- Goomba : Hérite de <
+Enemy <|-- KoopaTroopa : Hérite de <
+Enemy <|-- FriendlyMushroom : Hérite de <
 
 ' Component relationships
 Enemy *-- Mouvement : uses >
 
 note top of Enemy
   <b>Classe de base abstraite</b>
-  Définit le comportement commun et l'interface
-  pour tous les types d'ennemis avec des méthodes virtuelles pures
+  Définit le comportement commun
+  pour tous les types d'ennemis 
+  avec des méthodes virtuelles 
 end note
 
-note right of Goomba
+note top of Goomba
   Ennemi qui se déplace horizontalement
   et meurt lorsqu'on lui saute dessus
+  Il peut tuer ou diminuer la taille 
+  du joueur s'il le touche
 end note
 
-note right of KoopaTroopa
+note top of KoopaTroopa
   Ennemi complexe avec des changements d'état :
-  - État de marche
-  - État de carapace (après avoir été sauté dessus)
-  - Comportement différent dans chaque état
+  - État de marche -> Il peut tuer le joueur
+  - État de carapace (après avoir été sauté dessus) -> Pas d'effet sur le joueur
 end note
 
-note right of FriendlyMushroom
+note top of FriendlyMushroom
   Ennemi bénéfique qui fait grandir
-  le joueur lorsqu'il est ramassé
+  le joueur petit lorsqu'il est ramassé
 end note
 
 note bottom of Enemy
-  <b>Polymorphisme en action :</b>
+  <b>Polymorphisme :</b>
   - Tous les types d'ennemis implémentent leur propre version de update()
   - Le comportement de onJumpedOn() varie en fonction du type d'ennemi
-  - interactWithPlayer() peut être redéfini pour un comportement personnalisé
-  - Le code de rendu commun est hérité de la classe de base
+  - interactWithPlayer() diffère pour chaque type d'ennemi
 end note
 
 @enduml

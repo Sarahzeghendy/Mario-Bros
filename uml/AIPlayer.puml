@@ -1,4 +1,4 @@
-@startuml AIPlayer_class_diagram
+@startuml AIPlayer
 
 class AIPlayer {
   - Player* character
@@ -40,15 +40,14 @@ class Player {
 class Enemy {
 }
 
-AIPlayer --> Player : controls >
-AIPlayer --> Enemy : tracks >
+AIPlayer --> Player : contrôle >
+AIPlayer --> Enemy : évite >
 
 note top of AIPlayer
-  Controls Luigi AI behavior:
-  - Detects and avoids enemies
-  - Jumps over obstacles and gaps
-  - Uses powerups like fireballs
-  - Moves toward the goal flag
+  <b>Contrôle du comportement de Luigi par l'IA:</b>
+  - Détecte et évite les ennemis
+  - Saute par-dessus les obstacles et les trous
+  - Se déplace vers le drapeau d'arrivée
 end note
 
 @enduml

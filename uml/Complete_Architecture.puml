@@ -1,4 +1,4 @@
-@startuml Complete_Mario_Bros_Class_Diagram
+@startuml Complete_Architecture
 
 ' Use better styling
 skinparam classFontSize 12
@@ -295,32 +295,25 @@ package "Collectibles" {
   }
 }
 
-' Relationships between classes
-Player --> Mouvement : uses >
-Player o--> "0..*" Fireball : contains >
-Enemy --> Mouvement : uses >
-Enemy <|-- Goomba : extends
-Enemy <|-- KoopaTroopa : extends
-Enemy <|-- FriendlyMushroom : extends
+' Relationships with annotations
+Player --> Mouvement : utilise pour se déplacer >
+Player --> Fireball : tire >
+Enemy --> Mouvement : utilise pour se déplacer >
+Enemy <|-- Goomba : est un <
+Enemy <|-- KoopaTroopa : est un <
+Enemy <|-- FriendlyMushroom : est un <
 
-AIPlayer --> Player : controls >
-AIPlayer --> "0..*" Enemy : monitors >
+AIPlayer --> Player : contrôle >
+AIPlayer --> Enemy : évite >
 
-Game ..> Player : manages >
-Game ..> Enemy : manages >
-Game ..> Menu : displays >
-Game ..> Score : updates >
 
-' Collectible relationships
-Player ..> Coin : collects >
-Player ..> FireFlower : collects >
-Player ..> Etoile : collects >
-FireFlower ..> Player : gives fire power >
-Etoile ..> Player : gives star power >
+Player ..> Coin : collecte >
+Player <.. Coin : augmente le score <
+Player ..> FireFlower : collecte >
+Player ..> Etoile : collecte >
+FireFlower ..> Player : donne pouvoir de feu >
+Etoile ..> Player : donne rapidité >
 
-' Environment relationships
-Background o--> "1" Camera : viewed by >
-Player ..> Background : interacts with >
-Enemy ..> Background : interacts with >
+Background <-- Camera : défile avec >
 
 @enduml

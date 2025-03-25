@@ -1,4 +1,4 @@
-@startuml Item_Classes_Diagram
+@startuml Collactables
 
 class Coin {
   - sf::Texture texture
@@ -59,8 +59,8 @@ class Etoile {
 
 note top of Etoile
   Objet de puissance qui donne au joueur
-  le pouvoir de l'étoile (invincibilité +
-  augmentation de vitesse) pendant un temps limité
+  le pouvoir de l'étoile : augmentation de vitesse 
+  pendant un temps limité
 end note
 
 note top of FireFlower
@@ -76,7 +76,7 @@ end note
 
 note top of Coin
   Objet de collection qui augmente
-  le score du joueur et accorde
+  le score du joueur lorsqu'il est collecté
 end note
 
 @enduml

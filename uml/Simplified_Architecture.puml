@@ -1,0 +1,75 @@
+@startuml Simplified_Architecture
+
+' Styling
+skinparam packageStyle rectangle
+skinparam classBackgroundColor LightCyan
+skinparam classArrowColor DeepSkyBlue
+skinparam classBorderColor Navy
+skinparam noteBorderColor Gray
+skinparam noteFontStyle italic
+skinparam noteFontSize 11
+skinparam arrowFontSize 10
+skinparam arrowColor #33A8FF
+
+package "Moteur de Jeu" {
+  class Game
+  class Menu
+  class Camera
+  class Background
+  class Score
+}
+
+package "Système de Joueur" {
+  class Player
+  class Mouvement
+  class AIPlayer
+  class Fireball
+}
+
+package "Système d'Ennemis" {
+  abstract class Enemy
+  class Goomba
+  class KoopaTroopa
+  class FriendlyMushroom
+}
+
+package "Collectibles" {
+  class Coin
+  class FireFlower
+  class Etoile
+}
+
+' Relationships with annotations
+Player --> Mouvement : utilise pour se déplacer >
+Player --> Fireball : tire >
+Enemy --> Mouvement : utilise pour se déplacer >
+Enemy <|-- Goomba : est un <
+Enemy <|-- KoopaTroopa : est un <
+Enemy <|-- FriendlyMushroom : est un <
+
+AIPlayer --> Player : contrôle >
+AIPlayer --> Enemy : évite >
+
+
+Player ..> Coin : collecte >
+Player ..> FireFlower : collecte >
+Player ..> Etoile : collecte >
+FireFlower ..> Player : donne pouvoir de feu >
+Etoile ..> Player : donne rapidité >
+
+Background <-- Camera : défile avec >
+
+note top of Enemy 
+  <b>Classe Abstraite</b>
+  Enemy est une classe abstraite avec des méthodes
+  virtuelles pures comme update() et onJumpedOn().
+end note
+
+note bottom of Goomba
+  <b>Polymorphisme</b>
+  Les classes Goomba, KoopaTroopa et FriendlyMushroom
+  implémentent différemment les méthodes héritées
+  d'Enemy.
+end note
+
+@enduml

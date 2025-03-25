@@ -1,10 +1,16 @@
 # Mario Bros (SFML, C++, Makefile)
 
+## **Auteurs du Projet :**
+
+1. Sarah EL ZEGHENDY
+2. Evinia ANASTASOPOULOU
+3. Julie MAUGUIT
+
 ## **Description du Projet**
 
-Ce projet est une version personnalisée de Mario Bros développée en **C++** avec l'utilisation de la bibliothèque  SFML . Il inclut un menu de démarrage avec plusieurs modes de jeu :
+Ce projet est une version personnalisée de Mario Bros développée en **C++** avec l'utilisation de la bibliothèque SFML . Il inclut un menu de démarrage avec plusieurs modes de jeu :
 
-* **2 vs 2** : Mario contre Luigi (chaque personnage est contrôlé par un joueur).
+* **1 vs 1** : Mario contre Luigi (chaque personnage est contrôlé par un joueur).
 * **Joueur vs IA** : Mario est contrôlé par le joueur tandis que Luigi est contrôlé par une IA.
 
 ## **Dépendances**
@@ -16,32 +22,39 @@ Ce projet est une version personnalisée de Mario Bros développée en **C++** a
 
 ## **Installation**
 
-### 1. **Cloner le dépôt**
-
-Pour récupérer le code source, ouvrez un terminal et entrez la commande suivante :
-
-```bash
-git clone https://github.com/Sarahzeghendy/Mario-Bros.git
-cd mario-bros
-```
-
-### 2. **Installer les dépendances**
+### 1. **Installer les Dépendances**
 
 Assurez-vous d’avoir installé  **SFML** , **g++** et  **Make** .
 
-#### Installation sur Linux (Ubuntu/Debian) :
+    1.1 - Installation G++ et make sur Linux :
+
+```bash
+sudo apt update
+sudo apt install build-essential
+```
+
+    1.2 - Installation SFML sur Ubuntu :
 
 ```bash
 sudo apt update
 sudo apt install libsfml-dev build-essential
 ```
 
-### 3. **Compilation et Lancement**
+### 2. **Cloner le Dépôt**
+
+Pour récupérer le code source, ouvrez un terminal et entrez la commande suivante :
+
+```bash
+git clone https://github.com/Sarahzeghendy/Mario-Bros.git
+cd Mario-Bros
+```
+
+### 3. **Compilation et Lancement du Jeu**
 
 Pour compiler le projet, utilisez le Makefile inclus :
 
 ```bash
-cd Mario_Bros/src
+cd Mario-Bros/src
 make
 ```
 
@@ -57,35 +70,40 @@ Si vous voulez nettoyer les fichiers générés :
 make clean
 ```
 
-## **Comment Jouer**
+### **4. Création diagrammes UML**
 
-### **Menu Principal**
+Les images des diagrammes UML existent déjà dans le dossier  "uml" mais si vous souhaitez réexecuter suivez es étapes suivantes :
 
-Lorsque le jeu démarre, vous accédez à un **menu** avec plusieurs options :
+Pour la création des diagrammes UML il faut tout d'abord, modifier le fichier setup_plantuml.sh situé dans le dossier Marios-Bros. Il faudra modifier les 2 chemins suivants :
 
-**Jouer en 2 vs 2** :
+```bash
+UML_DIR="$HOME/Téléchargements/Mario-Bros/uml"
+PLANTUML_JAR="$HOME/Téléchargements/Mario-Bros/tools/plantuml.jar"
+```
 
-* Mario et Luigi sont contrôlés par deux joueurs.
-* Les contrôles sont les suivants :
-  * **Mario** : Flèches directionnelles + touches de saut/tir.
-  * **Luigi** : Touches **WASD** + touches de saut/tir.
+Le premier chemin correspond à l'emplacement du dossier "uml". Le deuxième chemin correspond à l'emplacement du fichier "plantuml.jar".
 
-**Joueur vs IA** :
+Une fois que vous avez précisé les bons chemins, vous pouver lancer la génération de tous vos diagramme UML avet la commande suivante :
 
-* Mario est contrôlé par le joueur.
-* Luigi est contrôlé par une IA programmée pour réagir intelligemment à l'environnement du jeu.
+```bash
+cd Mario-Bros/
+./setup_plantuml.sh
+```
 
 ## **But du Jeu**
 
-Le but du jeu est de **collecter le plus de pièces** et d’atteindre le drapeau en premier tout en surmontant les obstacles !
+Le but du jeu est  d'arriver en premier au drapeau tout en surmontant les obstacleq ! Pour avoir le plus de vies possible pour arriver à la fin il faut collecter le plus de pièces et tuer les ennemis.
 
-### **Objectifs principaux** :
+Attention : Mario et Luigi ne peuvent pas se traverser !
+
+### **Objectifs Principaux** :
 
 * Collecter le plus de pièces pour augmenter votre score.
-* Éviter les obstacles (trous, blocks, pipe) pour ne pas perdre et continuer à avancer.
+* Éviter les trous pour ne pas perdre de vies.
+* Éviter les obstacles comme les bricks et pipes pour continuer à avancer.
 * Échapper aux ennemis ou les éliminer si possible soit en sautant dessus soit tirer des boules de feux si vous avez le pouvoir de la fleur.
 * Récupérer des pouvoirs (champignons, étoiles, fleur) pour gagner des avantages temporaires (devenir plus grand, super vitesse, lancer des boules de feu).
-* Atteindre le drapeau en premier : Le premier joueur à toucher le drapeau remporte la partie !
+* Atteindre le drapeau en premier.
 
 Le gagnant est celui qui atteint le drapeau en premier  !
 
@@ -93,16 +111,29 @@ Le gagnant est celui qui atteint le drapeau en premier  !
 
 * Le joueur commence avec 3 vies .
 * Le score augmente en :
-  * Collectant des pièces (+10)es ennemis en sautant sur eux (+30) ou en tirant une boulle de feu (+50)
-* À chaque 100 pointsÀ chaque 100 points , le joueur  gagne une vie supplémentaire.
-* Si le joueur meurt mais a encore une vie disponible, il **revient à l'endroit où il est mort** sans recommencer le niveau depuis le début.
-* S’il n’a plus de vies, c’est Game Over !
+  * Collectant des pièces (+5 points)
+  * Sautant sur les ennemis (+20 points)
+  * Tirant une boule de feu sur les ennemis (+30 points)
+* À chaque 100 points , le joueur  gagne une vie supplémentaire.
+* Si le joueur meurt mais a encore une vie disponible, il revient à l'endroit où il est mort sans recommencer le niveau depuis le début.
+* S’il n’a plus de vies, c’est Game Over pour lui, l'autre joueur gagne. Vous avez l'option de revenir au Menu pour recommencer une nouvelle partie.
 
 ## **Comment jouer?**
 
+### **Menu Principal**
+
+Lorsque le jeu démarre, vous accédez à un menu avec plusieurs options :
+
+* Jouer.
+* Jouer contre IA.
+* Règles du jeu.
+* Quitter.
+
+Pour se déplacer dans le menu vous appuyez sur les fleches up et down. Une fois que vous avez choisi votre option appuyer sur entrée pour y acceder et sur échap pour sortir.
+
 ### **Contrôles**
 
-*(Mode Joueur vs Joueur)*
+***Mode Joueur vs Joueur***
 
 | Action                         | Mario (Joueur 1) | Luigi (Joueur 2) |
 | ------------------------------ | ---------------- | ---------------- |
@@ -111,7 +142,7 @@ Le gagnant est celui qui atteint le drapeau en premier  !
 | **Sauter**               | Flèche ↑       | **Z**      |
 | **Tirer (Boule de feu)** | **Espace** | **F**      |
 
-*(Mode Joueur vs IA)*
+***Mode Joueur vs IA***
 
 * Mario est contrôlé par le joueur :
 
@@ -122,97 +153,67 @@ Le gagnant est celui qui atteint le drapeau en premier  !
   Sauter → Flèche ↑
 
   Tirer (Boule de feu) → Espace
-* **Luigi** est contrôlé par une IA qui se déplace automatiquement.
+* Luigi est contrôlé par une IA qui se déplace automatiquement.
 
-## Description des classes principales
+### Les Défis
 
-### Classe Player
+#### Goomba
 
-La classe `Player` représente les joueurs dans le jeu Mario Bros. Elle permet de gérer toutes les fonctionnalités liées au personnage :
+Le joueur peut tuer le Goomba en lui sautant dessus.
 
-* Déplacement (droite, gauche, saut)
-* Gestion des collisions (avec les blocs, les tuyaux, les trous)
-* Animation du personnage (en fonction de la direction et de l'état)
-* Gestion de la vie, des pièces et des pouvoirs
-* Lancer de boules de feu (si le joueur a le pouvoir de feu)
-* Gestion de l'état (grand, petit, étoile, mort)
-* Détection de la victoire (atteinte du drapeau)
+Dans le cas contraire, au contact du Goomba avec le joueur :
 
-**Diagramme UML de la Classe `Player`**
+* Si le Joueur est grand il devient petit.
+* Si le Joueur est petit il meurt.
+* Si le Joueur a le pouvoir du feu il le perd.
 
-### Classe Enemy
+#### Koopa Troopa
 
-- Classe de base pour tous les ennemis
-- Implémente le comportement de base (mouvement, collision)
-- Gère l'état de vie et la logique de défaite
-- Inclut des méthodes virtuelles pour les comportements spécifiques
+Le joueur fait rentrer le Koopa Troopa dans sa carapasse en lui sautant dessus. Le Koopa dans sa carapasse continue à bouger sans effet sur le joueur.
 
-### Classe FriendlyMushroom
+D'autre part, au contact du Koopa Troopa avec le joueur :
 
-- Hérite de Enemy mais agit comme un power-up
-- Fait grandir le joueur lors de la collecte
-- Se déplace horizontalement et change de direction aux obstacles
+* Si le Joueur est grand il devient petit.
+* Si le Joueur est petit il meurt.
+* Si le Joueur a le pouvoir du feu il le perd.
 
-### Classe FireFlower
+### Les Aides
 
-- Power-up qui donne au joueur la capacité de lancer des boules de feu
-- Apparaît dans certains blocs spéciaux
-- Reste statique et attend d'être collectée
+#### Friendly Mushroom
 
-### Classe Fireball
+Le joueur petit en récupérant le Friendly Mushroom devient grand. S'il est déjà grand celle-ci n'a pas d'effet sur lui.
 
-- Projectile lancé par le joueur avec le power-up feu
-- Se déplace dans la direction du lancement
-- Rebondit sur les surfaces et détruit les ennemis au contact
+#### Fire Flower
 
-### Classe Coin
+Lorsque le joueur collecte une fleur il a désormais le pouvoir de lancer des boules de feu. En lançant ces boules de feu il peut éliminer les ennemis.
 
-- Objet collectible qui augmente le score du joueur
-- Apparaît dans les niveaux ou sort des blocs frappés
+#### Etloile
 
-### Classe Camera
+Lorsque le joueur collecte une étoile sa vitesse augmente pour un temps limité.
 
-- Gère la vue du jeu et suit le joueur
-- Implémente des limites pour ne pas montrer hors du niveau
-- Adapte la vue à la taille de la fenêtre
+## Description des Classes
 
-### Classe Background
+Pour construire le jeu nous avons créé les classes suivantes:
 
-- Charge et affiche l'environnement du jeu
-- Gère les tuiles de sol, les tuyaux, les blocs et le ciel
-- Fournit des méthodes pour accéder aux éléments du niveau
+* Classe Player
+* Classe Mouvement
+* Classe Enemy
+* Classe FriendlyMushroom
+* Classe FireFlower
+* Classe Fireball
+* Classe Etoile
+* Classe Coin
+* Classe Camera
+* Classe Background
+* Classe AIPlayer
+* Classe KoopaTroopa
+* Classe Goomba
+* Classe Menu
+* Classe Score
+* Classe Game
 
-### Classe AIPlayer
+Pour consulter les détails de chaque classe et comment elles intéragissent entre elles, vous pouvez aller voir les diagrammes UML disponibles dans le dossier UML.
 
-- Contrôle un personnage secondaire (Luigi) par IA
-- Prend des décisions basées sur l'environnement et les ennemis
-- Implémente différentes stratégies (éviter les ennemis, sauter les obstacles)
+## Lien GitHub
 
-## Logique du jeu
-
-1. **Boucle principale**:
-
-   - Gestion des entrées utilisateur
-   - Mise à jour des états des objets
-   - Détection des collisions
-   - Rendu graphique
-2. **Système de collision**:
-
-   - Détection précise avec des rectangles englobants
-   - Traitement différent selon le type d'objet
-   - Gestion des collisions latérales et verticales
-3. **Système de power-ups**:
-
-   - Les champignons rendent Mario plus grand
-   - Les fleurs de feu permettent de lancer des projectiles
-   - Effets temporaires et permanents
-4. **Système d'IA**:
-
-   - Prise de décision basée sur des probabilités
-   - Détection d'obstacles et d'ennemis
-   - Comportement adaptatif selon la situation
-5. **Gestion des niveaux**:
-
-   - Chargement à partir de fichiers texte
-   - Placement des objets selon une grille
-   - Vérification des conditions de victoire
+https://github.com/Sarahzeghendy/Mario-Bros.git

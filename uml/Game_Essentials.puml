@@ -1,4 +1,4 @@
-@startuml Game_Classes_Diagram
+@startuml Game_Essentials
 
 class Game {
   - bool isOver
@@ -95,39 +95,35 @@ class Score {
 }
 
 note top of Game
-  Controls game state, win conditions,
-  and displays final results
+  Contrôle l'état du jeu (IA), les conditions de victoire,
+  et affiche les résultats finaux
 end note
 
 note top of Background
-  Manages level layout including
-  ground, pipes, question blocks,
-  decorative elements and gaps
+  Gère la disposition du niveau incluant le sol,
+  les tuyaux, les blocs à questions, les éléments
+  décoratifs et les trous
 end note
 
 note top of Camera
-  Controls the view that follows
-  players through the level with
-  boundary constraints
+  Contrôle la vue qui suit les joueurs à travers
+  le niveau avec des limites de bordure
 end note
 
 note top of Menu
-  Handles the main menu UI with
-  animated background and
-  navigation between options
+  Gère l'interface du menu principal avec un
+  arrière-plan animé et la navigation entre
+  les options
 end note
 
 note top of Score
-  Displays either numeric scores
-  or heart-based life counter
-  for each player
+  Affiche soit les scores numériques soit
+  le compteur de vies basé sur des cœurs
+  pour chaque joueur
 end note
 
 ' Relationships
-Game ..> Score : displays >
-Game ..> Background : uses >
-Menu ..> Game : starts >
-Camera ..> Background : views >
-Score ..> Player : tracks stats >
+Menu ..> Game : démarre >
+Camera ..> Background : observe >
 
 @enduml

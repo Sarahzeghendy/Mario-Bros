@@ -1,4 +1,4 @@
-@startuml Player_class_diagram
+@startuml Player
 
 class Player {
   - static const int MAX_LIVES = 5
@@ -91,8 +91,19 @@ class Player {
 }
 
 note top of Player
-  Now includes maximum
-  lives limit = 5
+  <b>Caractéristiques Principales:</b>
+  - Peut collecter des power-ups (fleur de feu, étoile)
+  - Gestion des collisions avec le niveau
+  - Animations selon la direction 
+  - Système de points et de vies
+  - Mécanisme de respawn après la mort
+end note
+
+note bottom of Player
+  <b>Interaction avec d'autres classes:</b>
+  - Utilise Mouvement pour les déplacements
+  - Lance des Fireballs
+  - Collecte des objets (Coin, FireFlower, Etoile)
 end note
 
 class Mouvement {
@@ -101,7 +112,7 @@ class Mouvement {
 class Fireball {
 }
 
-Player -- Mouvement : has >
-Player -- Fireball : contains >
+Player -- Mouvement : utilise >
+Player -- Fireball : peut utiliser >
 
 @enduml

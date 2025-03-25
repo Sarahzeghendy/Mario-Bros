@@ -1,4 +1,4 @@
-@startuml Main_Game_Logic
+@startuml Main_Logic
 
 title Mario Bros Game - Main Logic Flow
 
@@ -35,7 +35,6 @@ while (Restart game?) is (Yes)
   |Game Setup|
   :Create game window;
   :Initialize background;
-  :Initialize game state controller;
   :Create power-ups (fire flowers, stars);
   :Initialize players (Mario and Luigi);
   :Create enemies (Goombas, Koopas, Mushrooms);
@@ -44,7 +43,6 @@ while (Restart game?) is (Yes)
     :Initialize AI controller for Luigi;
   endif
   :Setup camera;
-  :Load font;
   :Setup score and lives displays;
 
   |Main Game Loop|
