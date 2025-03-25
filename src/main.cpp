@@ -714,7 +714,7 @@ int main()
             luigi.updateFireballs(background.getGroundTiles());
 
             // Gestion des collisions boules de feu - ennemis
-            auto checkFireballCollisions = [&](Player &player, const std::string &playerName)
+            auto checkFireballCollisions = [&](Player &player)
             {
                 // Logique de detection et traitement des collisions
                 auto &fireballs = player.getFireballs();
@@ -736,8 +736,8 @@ int main()
                 }
             };
 
-            checkFireballCollisions(mario, "Mario");
-            checkFireballCollisions(luigi, "Luigi");
+            checkFireballCollisions(mario);
+            checkFireballCollisions(luigi);
 
             /**
              * Gestion des power-ups: etoiles
