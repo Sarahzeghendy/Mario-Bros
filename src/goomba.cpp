@@ -79,20 +79,17 @@ void Goomba::interactWithPlayer(Player& player)
         {
             //joueur perd son pouvoir
             player.shrink();
-            std::cout << "Mario a perdu son pouvoir de feu en touchant un Goomba!" << std::endl;
         }
         //vérification taille du joueur 
         else if (player.isBig()) 
         {
             //joueur grand devient petit
             player.shrink();
-            std::cout << "Mario devient petit après avoir touché un Goomba!" << std::endl;
         } 
         else 
         {
             //joueur petit -> meurt
             player.die();
-            std::cout << "Mario est tué par le Goomba!" << std::endl;
         }
     }
 }
@@ -108,8 +105,6 @@ void Goomba::onJumpedOn()
 
     //écrasement plus plat que les autres ennemis
     sprite.setScale(0.1f, 0.05f);  
-
-    std::cout << "Goomba écrasé !" << std::endl;
 }
 
 /**
@@ -123,7 +118,6 @@ void Goomba::onFireballHit()
 
     //goomba se retourne pour simuler sa chute
     sprite.setScale(0.1f, -0.1f);  // Flip upside down
-    std::cout << "Goomba touché par une boule de feu et vaincu!" << std::endl;
 }
 
 /**

@@ -65,7 +65,6 @@ void FriendlyMushroom::interactWithPlayer(Player& player)
         if (!player.isBig()) 
         {
             player.grow();
-            std::cout << "Le joueur devient grand grâce au champignon gentil!" << std::endl;
             alive = false; // disparition champignon
         }
     }
@@ -81,7 +80,6 @@ void FriendlyMushroom::onJumpedOn()
     if (alive) 
     {
         alive = false; //champignon meurt
-        std::cout << "Champignon gentil collecté en sautant dessus!" << std::endl;
     }
 }
 

@@ -58,5 +58,4 @@ bool Etoile::isCollected() const
 void Etoile::collect()
 {
     collected = true;
-    std::cout << "Mario a collecté une étoile !" << std::endl;
 }

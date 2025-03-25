@@ -85,7 +85,6 @@ void Enemy::onFireballHit()
 {
     //ennemi meurt
     alive = false;
-    std::cout << "Enemy defeated by fireball!" << std::endl;
 }
 
 
@@ -117,7 +116,6 @@ void Enemy::checkForGaps(const std::vector<sf::FloatRect> &gaps)
             //ennemi commence à tomber
             isFalling = true;
             fallSpeed = 0.0f;
-            std::cout << "Enemy fell into a gap!" << std::endl;
             return;
         }
     }
@@ -143,7 +141,6 @@ void Enemy::fall()
         {
             //ennemi meurt
             alive = false;
-            std::cout << "Ennemi tombé hors de la fenêtre" << std::endl;
         }
     }
 }
