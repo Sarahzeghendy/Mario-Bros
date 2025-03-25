@@ -13,8 +13,6 @@
 #include "Headers/etoile.hpp"
 #include "Headers/score.hpp"
 
-
-
 int main()
 {
     bool restartGame = true;
@@ -22,8 +20,8 @@ int main()
     while (restartGame) 
     {
         restartGame = false;
-        
-        //Musique de fond
+
+        // Musique de fond
         sf::Music music;
         if (!music.openFromFile("musiques/mario.wav")) 
         {
@@ -33,7 +31,6 @@ int main()
 
         music.setLoop(true); //musique en boucle 
         music.play();
-
 
         // Menu window
         sf::RenderWindow menuWindow(sf::VideoMode(800, 600), "Mario Bros - Menu");
@@ -92,73 +89,67 @@ int main()
             menu.draw(menuWindow);
             menuWindow.display();
         }
-
-        // If the menu was closed without selecting an option, exit the game
-        if (!startGame) {
+        // Si on ne commence pas le jeu on quitte
+        if (!startGame)
+        {
             return 0;
         }
 
-        // Main game window and setup
-        sf::RenderWindow gameWindow(sf::VideoMode(1280, 720), 
-                                   isAIMode ? "Mario Bros - Joueur contre IA" : "Mario Bros");
+        // Main game window
+        sf::RenderWindow gameWindow(sf::VideoMode(1280, 720),
+                                    isAIMode ? "Mario Bros - Joueur contre IA" : "Mario Bros");
 
         Background background;
         Game game;
-        
-        // Add more fire flowers at different positions
+
+        // Les fleurs de feu
         FireFlower flower(900, 370);
         FireFlower flower1(1940, 370);
-        FireFlower flower2(6550, 370);  // New flower
-        //FireFlower flower3(4100, 300);  // New flower
-        //FireFlower flower4(1200, 410);  // New flower
-        FireFlower* flowers[] = {&flower, &flower1, &flower2} ;//&flower2, &flower3, &flower4};
-        
-        // Add more stars at different positions
+        FireFlower flower2(6550, 370);
+        FireFlower *flowers[] = {&flower, &flower1, &flower2};
+
+        // Les étoiles
         Etoile etoile(520, 410);
         Etoile etoile2(3185, 410);
-        Etoile etoile3(6235, 410);  // New star
-        Etoile etoile4(6870, 410);  // New star
-        Etoile etoile5(1190, 410);  // New star
-        Etoile etoile6(8485, 410);  // New star
-        Etoile* etoiles[] = {&etoile, &etoile2, &etoile5, &etoile3, &etoile4, &etoile6};
-        // Initialize players
-        Player mario("images/sprite.jpg", "Mario", 100, 483, 0.7f, 
+        Etoile etoile3(6235, 410);
+        Etoile etoile4(6870, 410);
+        Etoile etoile5(1190, 410);
+        Etoile etoile6(8485, 410);
+        Etoile *etoiles[] = {&etoile, &etoile2, &etoile5, &etoile3, &etoile4, &etoile6};
+
+        // Initialisation des joueurs
+        Player mario("images/sprite.jpg", "Mario", 100, 483, 0.7f,
                      sf::Keyboard::Right, sf::Keyboard::Left, sf::Keyboard::Up);
-        Player luigi("images/sprite.jpg", "Luigi", 150, 480, 0.7f, 
-                     sf::Keyboard::M, sf::Keyboard::A, sf::Keyboard::J);
+        Player luigi("images/sprite.jpg", "Luigi", 150, 480, 0.7f,
+                     sf::Keyboard::D, sf::Keyboard::Q, sf::Keyboard::Z);
 
-        mario.getSprite().setTextureRect(sf::IntRect(8, 139, 28, 47)); // Starting frame
-        luigi.getSprite().setTextureRect(sf::IntRect(8, 191, 28, 47)); // Starting frame
+        mario.getSprite().setTextureRect(sf::IntRect(8, 139, 28, 47));
+        luigi.getSprite().setTextureRect(sf::IntRect(8, 191, 28, 47));
 
-        // Enemies
+        // Les ennemies : Koopa goombe et friendly mushroom
         std::vector<std::unique_ptr<Enemy>> enemies;
         enemies.push_back(std::make_unique<Goomba>(700, 545));
         enemies.push_back(std::make_unique<KoopaTroopa>(750, 530));
         enemies.push_back(std::make_unique<Goomba>(1000, 545));
         enemies.push_back(std::make_unique<KoopaTroopa>(1300, 530));
-        enemies.push_back(std::make_unique<FriendlyMushroom>(1500, 540));  // Removed limits
+        enemies.push_back(std::make_unique<FriendlyMushroom>(1500, 540));
         enemies.push_back(std::make_unique<Goomba>(3250, 545));
         enemies.push_back(std::make_unique<KoopaTroopa>(3350, 530));
-        enemies.push_back(std::make_unique<FriendlyMushroom>(3300, 540));  // Removed limits
+        enemies.push_back(std::make_unique<FriendlyMushroom>(3300, 540));
         enemies.push_back(std::make_unique<Goomba>(3200, 545));
         enemies.push_back(std::make_unique<KoopaTroopa>(3190, 530));
         enemies.push_back(std::make_unique<Goomba>(4550, 545));
         enemies.push_back(std::make_unique<KoopaTroopa>(4600, 530));
-        enemies.push_back(std::make_unique<FriendlyMushroom>(4700, 540)); 
+        enemies.push_back(std::make_unique<FriendlyMushroom>(4700, 540));
         enemies.push_back(std::make_unique<Goomba>(5100, 545));
         enemies.push_back(std::make_unique<KoopaTroopa>(5200, 530));
-        enemies.push_back(std::make_unique<FriendlyMushroom>(5300, 540)); 
+        enemies.push_back(std::make_unique<FriendlyMushroom>(5300, 540));
         enemies.push_back(std::make_unique<Goomba>(7500, 545));
         enemies.push_back(std::make_unique<KoopaTroopa>(7600, 530));
-        enemies.push_back(std::make_unique<FriendlyMushroom>(7700, 540)); 
+        enemies.push_back(std::make_unique<FriendlyMushroom>(7700, 540));
         enemies.push_back(std::make_unique<Goomba>(8500, 545));
         enemies.push_back(std::make_unique<KoopaTroopa>(8600, 530));
-        enemies.push_back(std::make_unique<FriendlyMushroom>(8700, 540)); 
-        // Create AI controller for Luigi if in AI mode
-        AIPlayer* aiController = nullptr;
-        if (isAIMode) {
-            aiController = new AIPlayer(&luigi, enemies);
-        }
+        enemies.push_back(std::make_unique<FriendlyMushroom>(8700, 540));
 
         // Coins
         Coin coin1(400, 500);
@@ -183,28 +174,36 @@ int main()
         Coin coin20(6860, 400);
         Coin coin21(6900, 400);
         Coin coin22(6940, 400);
-        Coin* coins[] = {&coin1, &coin2, &coin3, &coin4, &coin5, &coin6, &coin7, &coin8, &coin9, &coin10, &coin11, &coin12, &coin13, &coin14, &coin15, &coin16, &coin17, &coin18, &coin19, &coin20, &coin21, &coin22};
+        Coin *coins[] = {&coin1, &coin2, &coin3, &coin4, &coin5, &coin6, &coin7, &coin8, &coin9, &coin10, &coin11, &coin12, &coin13, &coin14, &coin15, &coin16, &coin17, &coin18, &coin19, &coin20, &coin21, &coin22};
+
+        // Si en mode IA c'est l'IA qui controle Luigi
+        AIPlayer *aiController = nullptr;
+        if (isAIMode)
+        {
+            aiController = new AIPlayer(&luigi, enemies);
+        }
 
         // Camera setup
         Camera camera(800, 600);
 
+        // Chargement de la police
         sf::Font font;
-        if (!font.loadFromFile("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf")) // Chargement du font pour l'affichage du score
+        if (!font.loadFromFile("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf")) 
         {
             std::cout << "Error loading font" << std::endl;
             return -1;
         }
 
-        // Replace scoreText with Score objects
+        // Mettre les images des joueurs dans le score
         Score marioScore("images/mario_score.png", font);
         Score luigiScore("images/luigi_score.png", font);
 
-        // Add a respawn timer
-        const int respawnDelay = 120; // 2 seconds at 60 FPS
+        // Ajouter un temps de reaparission des joueurs
+        const int respawnDelay = 120; 
         int marioRespawnTimer = 0;
         int luigiRespawnTimer = 0;
-        
-        // Add status text for respawning players
+
+        // Debeugage pour voir si les joueurs respawnent
         sf::Text marioRespawnText;
         sf::Text luigiRespawnText;
         marioRespawnText.setFont(font);
@@ -246,7 +245,6 @@ int main()
                 {
                     // Luigi saute sur Mario
                     luigi.getMouvement().jump();
-
                 }
                 else 
                 {
@@ -294,150 +292,146 @@ int main()
                             mario.setPosition(luigi.getPosition().x + luigi.getbounds().width, mario.getPosition().y);
                         }
                     }
-
-
                 }
             }
 
-
-
-
-            // Check if a player falls below the lower limit of the screen
-            float lowerLimit = gameWindow.getSize().y + 50; // Allow some margin below the screen
-            if (mario.getPosition().y > lowerLimit && !mario.getIsDead()) {
+            // Si le joueur tombe
+            float lowerLimit = gameWindow.getSize().y + 50; 
+            if (mario.getPosition().y > lowerLimit && !mario.getIsDead())
+            {
                 mario.loseLife();
-                if (mario.getLives() <= 0) {
-                    game.handleWin(2); // Luigi wins if Mario has no lives
-                } else {
+                if (mario.getLives() <= 0)
+                {
+                    game.handleWin(2); 
+                }
+                else
+                {
                     marioRespawnTimer = respawnDelay;
                 }
             }
-            
-            if (luigi.getPosition().y > lowerLimit && !luigi.getIsDead()) {
+
+            if (luigi.getPosition().y > lowerLimit && !luigi.getIsDead())
+            {
                 luigi.loseLife();
-                if (luigi.getLives() <= 0) {
-                    game.handleWin(1); // Mario wins if Luigi has no lives
-                } else {
+                if (luigi.getLives() <= 0)
+                {
+                    game.handleWin(1); 
+                }
+                else
+                {
                     luigiRespawnTimer = respawnDelay;
                 }
             }
 
-            // Handle respawning
-            if (mario.shouldRespawn() && marioRespawnTimer > 0) {
+            // Raparition des joueurs
+            if (mario.shouldRespawn() && marioRespawnTimer > 0)
+            {
                 marioRespawnTimer--;
-                
-                // Show respawn countdown
+
                 marioRespawnText.setString("Mario respawning in " + std::to_string((marioRespawnTimer / 60) + 1) + "...");
                 marioRespawnText.setPosition(mario.getPosition().x - 50, mario.getPosition().y - 40);
-                
-                // Add debugging
-                std::cout << "Mario respawn countdown: " << marioRespawnTimer << " (isDead=" 
-                          << mario.getIsDead() << ", lives=" << mario.getLives() 
-                          << ", fire power=" << mario.hasFirePowerActive() << ")" << std::endl;
-                
-                if (marioRespawnTimer <= 0) {
-                    std::cout << "Calling mario.respawn()..." << std::endl;
+
+                if (marioRespawnTimer <= 0)
+                {
                     mario.respawn();
-                    // Verify respawn worked
-                    std::cout << "After respawn: isDead=" << mario.getIsDead() << std::endl;
                 }
             }
 
-            if (luigi.shouldRespawn() && luigiRespawnTimer > 0) {
+            if (luigi.shouldRespawn() && luigiRespawnTimer > 0)
+            {
                 luigiRespawnTimer--;
-                
-                // Show respawn countdown
+
                 luigiRespawnText.setString("Luigi respawning in " + std::to_string((luigiRespawnTimer / 60) + 1) + "...");
                 luigiRespawnText.setPosition(luigi.getPosition().x - 50, luigi.getPosition().y - 40);
-                
-                if (luigiRespawnTimer <= 0) {
+
+                if (luigiRespawnTimer <= 0)
+                {
                     luigi.respawn();
                 }
             }
 
-            // If the game is over, display the winner and return to the menu
-            if (game.isGameOver()) {
-                // Create a more visual button rather than just text
+            // Si le jeu est fini afficher qui a gagner et donner la possibilitr de revenir au menu
+            if (game.isGameOver())
+            {
                 sf::Text returnToMenuText;
                 returnToMenuText.setFont(font);
                 returnToMenuText.setString("Return to Menu");
                 returnToMenuText.setCharacterSize(30);
                 returnToMenuText.setFillColor(sf::Color::White);
 
-                // Create button background
                 sf::RectangleShape menuButton;
                 menuButton.setSize(sf::Vector2f(300, 60));
-                menuButton.setFillColor(sf::Color(50, 50, 200, 230)); // Blue semi-transparent 
+                menuButton.setFillColor(sf::Color(50, 50, 200, 230)); 
                 menuButton.setOutlineThickness(3);
                 menuButton.setOutlineColor(sf::Color::White);
 
-                // Position the elements
                 sf::Vector2f viewCenter = gameWindow.getView().getCenter();
-                
-                // Center the button
+
                 menuButton.setOrigin(menuButton.getSize().x / 2, menuButton.getSize().y / 2);
                 menuButton.setPosition(viewCenter.x, viewCenter.y + 80);
-                
-                // Center the text on the button
+
                 sf::FloatRect textBounds = returnToMenuText.getLocalBounds();
                 returnToMenuText.setOrigin(textBounds.width / 2, textBounds.height / 2);
                 returnToMenuText.setPosition(viewCenter.x, viewCenter.y + 80);
 
                 // Game over loop
                 bool buttonHovered = false;
-                while (gameWindow.isOpen()) {
+                while (gameWindow.isOpen())
+                {
                     sf::Event event;
-                    while (gameWindow.pollEvent(event)) {
-                        if (event.type == sf::Event::Closed) {
+                    while (gameWindow.pollEvent(event))
+                    {
+                        if (event.type == sf::Event::Closed)
+                        {
                             gameWindow.close();
                             return 0;
                         }
-                        
-                        // Check for mouse position for hover effect
+
                         sf::Vector2i mousePos = sf::Mouse::getPosition(gameWindow);
                         sf::Vector2f worldPos = gameWindow.mapPixelToCoords(mousePos);
-                        
-                        if (menuButton.getGlobalBounds().contains(worldPos)) {
-                            if (!buttonHovered) {
-                                // Mouse entered the button - highlight it
-                                menuButton.setFillColor(sf::Color(100, 100, 255, 230)); // Lighter blue
+
+                        if (menuButton.getGlobalBounds().contains(worldPos))
+                        {
+                            if (!buttonHovered)
+                            {
+                                menuButton.setFillColor(sf::Color(100, 100, 255, 230)); 
                                 menuButton.setOutlineColor(sf::Color::Yellow);
                                 returnToMenuText.setFillColor(sf::Color::Yellow);
                                 buttonHovered = true;
                             }
-                            
-                            // Check for click
-                            if (event.type == sf::Event::MouseButtonPressed && 
-                                event.mouseButton.button == sf::Mouse::Left) {
-                                // Button clicked - return to menu
+
+                            if (event.type == sf::Event::MouseButtonPressed &&
+                                event.mouseButton.button == sf::Mouse::Left)
+                            {
                                 std::cout << "Return to menu button clicked!" << std::endl;
-                                gameWindow.close(); // Close the game window
-                                restartGame = true; // Set flag to restart from menu
+                                gameWindow.close(); 
+                                restartGame = true; 
                                 break;
                             }
-                        } else if (buttonHovered) {
-                            // Mouse left the button - reset it
-                            menuButton.setFillColor(sf::Color(50, 50, 200, 230)); // Back to original color
+                        }
+                        else if (buttonHovered)
+                        {
+                            menuButton.setFillColor(sf::Color(50, 50, 200, 230)); 
                             menuButton.setOutlineColor(sf::Color::White);
                             returnToMenuText.setFillColor(sf::Color::White);
                             buttonHovered = false;
                         }
                     }
 
-                    if (restartGame) {
-                        break; // Exit the game over loop if returning to menu
+                    if (restartGame)
+                    {
+                        break; 
                     }
 
-                    // Draw the game over screen
+                    // Dessiner le fond
                     gameWindow.clear();
                     background.draw(gameWindow);
                     game.drawResult(gameWindow);
-                    
-                    // Draw the button first, then the text on top
+
                     gameWindow.draw(menuButton);
                     gameWindow.draw(returnToMenuText);
-                    
-                    // Add instructions
+
+                    // Ajouter les instructions
                     sf::Text instructionText;
                     instructionText.setFont(font);
                     instructionText.setString("Click the button to return to menu");
@@ -445,45 +439,47 @@ int main()
                     instructionText.setFillColor(sf::Color::White);
                     instructionText.setPosition(viewCenter.x - 150, viewCenter.y + 130);
                     gameWindow.draw(instructionText);
-                    
+
                     gameWindow.display();
                 }
-                
-                if (restartGame) {
-                    break; // Exit the main game loop if returning to menu
+
+                if (restartGame)
+                {
+                    break; 
                 }
             }
 
-            // Process game logic based on mode
-            if (isAIMode) {
-                // AI mode - update AI controller for Luigi
+            // En mode IA on met a jour le controleur de l'IA
+            if (isAIMode)
+            {
                 aiController->update(background.getGroundTiles(), background.getPipes(), background.getFlag()); // Fixed argument
-                
-                // Handle human input for Mario only
+
                 mario.setMovingRight(sf::Keyboard::isKeyPressed(sf::Keyboard::Right));
                 mario.setMovingLeft(sf::Keyboard::isKeyPressed(sf::Keyboard::Left));
-                
-                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) && !mario.isInAir()) {
+
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) && !mario.isInAir())
+                {
                     mario.jump();
                 }
-                
-                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && mario.hasFirePowerActive()) {
+
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && mario.hasFirePowerActive())
+                {
                     mario.shootFireball();
                 }
-            } else {
-                // Normal 2-player mode
-                // Both players respond to their respective controls
             }
-
-            // Common code for both modes - check coin collection
-            for (Coin* coin : coins) {
-                if (!coin->isCollected()) {
-                    if (mario.getbounds().intersects(coin->getBounds())) {
+   
+            for (Coin *coin : coins)
+            {
+                if (!coin->isCollected())
+                {
+                    if (mario.getbounds().intersects(coin->getBounds()))
+                    {
                         coin->collect();
                         mario.getCoins();
                         std::cout << "Mario a collecté une pièce !" << std::endl;
                     }
-                    if (luigi.getbounds().intersects(coin->getBounds())) {
+                    if (luigi.getbounds().intersects(coin->getBounds()))
+                    {
                         coin->collect();
                         luigi.getCoins();
                         std::cout << "Luigi a collecté une pièce !" << std::endl;
@@ -491,7 +487,7 @@ int main()
                 }
             }
 
-            // Camera handling
+            // LAisser les 2 joueurs dans le meme cadre un peu pas partir sans l'autre
             sf::Vector2f viewCenter = gameWindow.getView().getCenter();
             float viewWidth = gameWindow.getView().getSize().x;
             float screenLeft = viewCenter.x - (viewWidth / 2);
@@ -500,77 +496,83 @@ int main()
             sf::Vector2f marioPos = mario.getPosition();
             sf::Vector2f luigiPos = luigi.getPosition();
 
-            // Keep players on screen
             float margin = 80.0f;
-            if (marioPos.x < screenLeft + margin) {
+            if (marioPos.x < screenLeft + margin)
+            {
                 mario.setPosition(screenLeft + margin, marioPos.y);
             }
-            if (marioPos.x > screenRight - margin) {
+            if (marioPos.x > screenRight - margin)
+            {
                 mario.setPosition(screenRight - margin, marioPos.y);
             }
 
-            if (luigiPos.x < screenLeft + margin) {
+            if (luigiPos.x < screenLeft + margin)
+            {
                 luigi.setPosition(screenLeft + margin, luigiPos.y);
             }
-            if (luigiPos.x > screenRight - margin) {
+            if (luigiPos.x > screenRight - margin)
+            {
                 luigi.setPosition(screenRight - margin, luigiPos.y);
             }
 
-            // Update camera position
             float camX = (marioPos.x + luigiPos.x) / 2.0f;
             float camY = 350.0f;
 
             float playerDistance = std::abs(marioPos.x - luigiPos.x);
-            if (playerDistance < viewWidth * 0.8f) { 
+            if (playerDistance < viewWidth * 0.8f)
+            {
                 camera.setCenter(camX, camY);
                 gameWindow.setView(camera.getView());
             }
 
-            // Process enemy interactions
-            for (auto &enemy : enemies) {
-                if (enemy->isAlive()) {
-                    // Check if Mario is already dead
-                    if (!mario.getIsDead()) {
-                        bool wasAlive = true; // Mario is alive at this point
+            // Interaction ennemy-joueur
+            for (auto &enemy : enemies)
+            {
+                if (enemy->isAlive())
+                {
+                    if (!mario.getIsDead())
+                    {
+                        bool wasAlive = true; 
                         enemy->interactWithPlayer(mario);
-                        
-                        // If Mario is now dead but was alive before the collision
-                        if (mario.getIsDead() && wasAlive) {
+
+                        if (mario.getIsDead() && wasAlive)
+                        {
                             std::cout << "Mario died from enemy collision!" << std::endl;
-                            // Only set the respawn timer if player still has lives
-                            if (mario.getLives() > 0) {
+                            if (mario.getLives() > 0)
+                            {
                                 marioRespawnTimer = respawnDelay;
-                                std::cout << "Mario will respawn in " << respawnDelay/60 << " seconds" << std::endl;
-                            } else {
-                                // Game over - Luigi wins
+                                std::cout << "Mario will respawn in " << respawnDelay / 60 << " seconds" << std::endl;
+                            }
+                            else
+                            {
                                 game.handleWin(2);
                             }
                         }
                     }
-                    
-                    // Same logic for Luigi
-                    if (!luigi.getIsDead()) {
-                        bool wasAlive = true; // Luigi is alive at this point
+
+                    if (!luigi.getIsDead())
+                    {
+                        bool wasAlive = true; 
                         enemy->interactWithPlayer(luigi);
-                        
-                        // If Luigi died from this hit
-                        if (luigi.getIsDead() && wasAlive) {
+
+                        if (luigi.getIsDead() && wasAlive)
+                        {
                             std::cout << "Luigi died from enemy collision!" << std::endl;
-                            // Only set the respawn timer if player still has lives
-                            if (luigi.getLives() > 0) {
+                            if (luigi.getLives() > 0)
+                            {
                                 luigiRespawnTimer = respawnDelay;
-                                std::cout << "Luigi will respawn in " << respawnDelay/60 << " seconds" << std::endl;
-                            } else {
-                                // Game over - Mario wins
+                                std::cout << "Luigi will respawn in " << respawnDelay / 60 << " seconds" << std::endl;
+                            }
+                            else
+                            {
                                 game.handleWin(1);
                             }
                         }
                     }
                 }
             }
-
-            // If the game is over, display the winner and return to the menu
-            if (game.isGameOver()) {
+            if (game.isGameOver())
+            {
                 sf::Text returnToMenuText;
                 returnToMenuText.setFont(font);
                 returnToMenuText.setString("Return to the Menu");
@@ -582,27 +584,32 @@ int main()
                 returnToMenuText.setOrigin(textBounds.width / 2, textBounds.height / 2);
                 returnToMenuText.setPosition(viewCenter.x, viewCenter.y + 50);
 
-                while (gameWindow.isOpen()) {
+                while (gameWindow.isOpen())
+                {
                     sf::Event event;
-                    while (gameWindow.pollEvent(event)) {
-                        if (event.type == sf::Event::Closed) {
+                    while (gameWindow.pollEvent(event))
+                    {
+                        if (event.type == sf::Event::Closed)
+                        {
                             gameWindow.close();
                             return 0;
                         }
-                        if (event.type == sf::Event::MouseButtonPressed) {
+                        if (event.type == sf::Event::MouseButtonPressed)
+                        {
                             sf::Vector2i mousePos = sf::Mouse::getPosition(gameWindow);
                             sf::FloatRect buttonBounds = returnToMenuText.getGlobalBounds();
-                            if (buttonBounds.contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
-                                // Return to the menu
-                                gameWindow.close(); // Close the game window
-                                restartGame = true; // Set flag to restart from menu
+                            if (buttonBounds.contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y)))
+                            {
+                                gameWindow.close(); 
+                                restartGame = true;
                                 break;
                             }
                         }
                     }
 
-                    if (restartGame) {
-                        break; // Exit the game over loop if returning to menu
+                    if (restartGame)
+                    {
+                        break; 
                     }
 
                     gameWindow.clear();
@@ -611,97 +618,130 @@ int main()
                     gameWindow.draw(returnToMenuText);
                     gameWindow.display();
                 }
-                
-                if (restartGame) {
-                    break; // Exit the main game loop if returning to menu
+
+                if (restartGame)
+                {
+                    break; 
                 }
             }
 
-            if (!game.isGameOver()) {
-                // Update Mario
-                mario.update(background.getGroundTiles(), background.getPipes(), background.getQuestionBlocks()); // Added questionBlocks
-                
-                if (isAIMode) {
-                    // Skip AI update if Luigi is dead
-                    if (!luigi.getIsDead()) { // Use getter instead of isDead()
-                        // For AI mode, Luigi is updated by the AI controller
-                        auto [canMoveRight, canMoveLeft] = luigi.getMouvement().blockMovement(
-                            background.getGroundTiles(), background.getPipes(), background.getQuestionBlocks()); // Added questionBlocks
+            if (!game.isGameOver())
+            {
+                mario.update(background.getGroundTiles(), background.getPipes(), background.getQuestionBlocks());
 
-                        // Apply movement based on flags set by AI
-                        if (luigi.isMovingRight() && canMoveRight) {
+                if (isAIMode)
+                {
+                    if (!luigi.getIsDead()) 
+                    { 
+                       
+                        aiController->update(
+                            background.getGroundTiles(), 
+                            background.getPipes(), 
+                            background.getFlag()
+                        );
+                        
+                      
+                        auto [canMoveRight, canMoveLeft] = luigi.getMouvement().blockMovement(
+                            background.getGroundTiles(), 
+                            background.getPipes(), 
+                            background.getQuestionBlocks()
+                        );
+
+                        
+                        if (aiController->shouldMoveRight() && canMoveRight) {
                             luigi.moveRight();
                         }
-                        if (luigi.isMovingLeft() && canMoveLeft) {
+                        if (aiController->shouldMoveLeft() && canMoveLeft) {
                             luigi.moveLeft();
                         }
+                        
+                        if (aiController->shouldJump() && !luigi.isInAir()) {
+                            luigi.jump();
+                        }
+                        
+                        if (aiController->shouldShootFireball() && luigi.hasFirePowerActive()) {
+                            luigi.shootFireball();
+                        }
 
-                        // Apply physics
-                        luigi.applyGravity(background.getGroundTiles(), background.getPipes(), background.getQuestionBlocks()); // Added questionBlocks
-
-                        // Animate Luigi
+                        luigi.applyGravity(background.getGroundTiles(), background.getPipes(), background.getQuestionBlocks());
                         luigi.animate();
                     }
-                } else {
-                    // Normal mode - update Luigi normally
-                    luigi.update(background.getGroundTiles(), background.getPipes(), background.getQuestionBlocks()); // Added questionBlocks
+                } 
+                else 
+                {
+                    // Normal mode 
+                    luigi.update(background.getGroundTiles(), background.getPipes(), background.getQuestionBlocks());
                 }
 
-                // Check win conditions
-                if (mario.checkWin(background.getFlag()) && !game.isGameOver()) {
-                    game.handleWin(1); 
+                if (mario.checkWin(background.getFlag()) && !game.isGameOver())
+                {
+                    game.handleWin(1);
                     std::cout << "Mario has reached the flag! Player 1 wins!" << std::endl;
                 }
 
-                if (luigi.checkWin(background.getFlag()) && !game.isGameOver()) {
-                    game.handleWin(2); 
-                    if (isAIMode) {
+                if (luigi.checkWin(background.getFlag()) && !game.isGameOver())
+                {
+                    game.handleWin(2);
+                    if (isAIMode)
+                    {
                         std::cout << "Luigi has reached the flag! AI wins!" << std::endl;
-                    } else {
+                    }
+                    else
+                    {
                         std::cout << "Luigi has reached the flag! Player 2 wins!" << std::endl;
                     }
                 }
             }
 
-            // Fire flower collection - check all flowers for both players
-            for (FireFlower* flower : flowers) {
-                if (!flower->isCollected()) {
-                    if (mario.getbounds().intersects(flower->getBounds())) {
+            // Fire flower 
+            for (FireFlower *flower : flowers)
+            {
+                if (!flower->isCollected())
+                {
+                    if (mario.getbounds().intersects(flower->getBounds()))
+                    {
                         flower->collect();
                         mario.collectFireFlower();
                         std::cout << "Mario a collecté une fleur de feu !" << std::endl;
                     }
-                    else if (luigi.getbounds().intersects(flower->getBounds())) {
+                    else if (luigi.getbounds().intersects(flower->getBounds()))
+                    {
                         flower->collect();
                         luigi.collectFireFlower();
                         std::cout << "Luigi a collecté une fleur de feu !" << std::endl;
                     }
                 }
             }
-            
-            // Fireball input handling
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
+
+            // Fireball
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
+            {
                 mario.shootFireball();
             }
 
-            if (!isAIMode && sf::Keyboard::isKeyPressed(sf::Keyboard::F)) {
+            if (!isAIMode && sf::Keyboard::isKeyPressed(sf::Keyboard::F))
+            {
                 luigi.shootFireball();
             }
 
-            // Update fireballs
             mario.updateFireballs(background.getGroundTiles());
             luigi.updateFireballs(background.getGroundTiles());
 
-            // Check fireball collisions with enemies
-            auto checkFireballCollisions = [&](Player& player, const std::string& playerName) {
-                auto& fireballs = player.getFireballs();
-                for (auto& fireball : fireballs) {
-                    if (fireball.isActive()) {
-                        for (auto& enemy : enemies) {
-                            if (enemy->isAlive() && fireball.getBounds().intersects(enemy->getBounds())) {
-                                enemy->onFireballHit(); 
+            // fireball collision
+            auto checkFireballCollisions = [&](Player &player, const std::string &playerName)
+            {
+                auto &fireballs = player.getFireballs();
+                for (auto &fireball : fireballs)
+                {
+                    if (fireball.isActive())
+                    {
+                        for (auto &enemy : enemies)
+                        {
+                            if (enemy->isAlive() && fireball.getBounds().intersects(enemy->getBounds()))
+                            {
+                                enemy->onFireballHit();
                                 fireball.destroy();
-                                player.addScore(50);  // Award 50 points for killing an enemy with fireball
+                                player.addScore(50); 
                                 std::cout << playerName << " a tué un ennemi avec une boule de feu! +50 points" << std::endl;
                                 break;
                             }
@@ -709,20 +749,23 @@ int main()
                     }
                 }
             };
-            
+
             checkFireballCollisions(mario, "Mario");
             checkFireballCollisions(luigi, "Luigi");
 
-            
-            // Star collection - check all stars for both players
-            for (Etoile* star : etoiles) {
-                if (!star->isCollected()) {
-                    if (mario.getbounds().intersects(star->getBounds())) {
+            // Star collection 
+            for (Etoile *star : etoiles)
+            {
+                if (!star->isCollected())
+                {
+                    if (mario.getbounds().intersects(star->getBounds()))
+                    {
                         star->collect();
                         mario.collectEtoile();
                         std::cout << "Mario a collecté une étoile!" << std::endl;
                     }
-                    else if (luigi.getbounds().intersects(star->getBounds())) {
+                    else if (luigi.getbounds().intersects(star->getBounds()))
+                    {
                         star->collect();
                         luigi.collectEtoile();
                         std::cout << "Luigi a collecté une étoile!" << std::endl;
@@ -730,132 +773,132 @@ int main()
                 }
             }
 
-
-
-
-            // Rendering
             gameWindow.clear();
             background.draw(gameWindow);
             mario.draw(gameWindow);
-            
-            // Only draw Luigi if he's not dead
-            if (!isAIMode || !luigi.getIsDead()) { // Use getter instead of isDead()
+
+
+            if (!isAIMode || !luigi.getIsDead())
+            { 
                 luigi.draw(gameWindow);
                 luigi.drawFireballs(gameWindow);
             }
-            
+
             mario.drawFireballs(gameWindow);
 
-            // Draw all flowers
-            for (FireFlower* flower : flowers) {
+            for (FireFlower *flower : flowers)
+            {
                 flower->draw(gameWindow);
             }
-            
-            // Draw all stars
-            for (Etoile* star : etoiles) {
+
+            for (Etoile *star : etoiles)
+            {
                 star->draw(gameWindow);
             }
-            
-            // Draw coins
-            for (Coin *coin : coins) {
+
+            for (Coin *coin : coins)
+            {
                 coin->draw(gameWindow);
             }
 
-            // Inside the game loop, before updating enemies
-            std::vector<Enemy*> enemyPtrs;
-            for (auto& enemy : enemies) {
+            std::vector<Enemy *> enemyPtrs;
+            for (auto &enemy : enemies)
+            {
                 enemyPtrs.push_back(enemy.get());
             }
 
-            // Update each enemy with current level information
-            for (auto& enemy : enemies) {
-                enemy->setCurrentLevel(background.getGroundTiles(), 
+  
+            for (auto &enemy : enemies)
+            {
+                enemy->setCurrentLevel(background.getGroundTiles(),
                                        background.getPipes(),
-                                       enemyPtrs); // Call setCurrentLevel
+                                       enemyPtrs); 
                 enemy->checkForGaps(background.getGaps());
-                enemy->update(); 
+                enemy->update();
             }
 
-            for (auto &enemy : enemies) {
-                if (enemy->isAlive()) {
+            for (auto &enemy : enemies)
+            {
+                if (enemy->isAlive())
+                {
                     enemy->checkForGaps(background.getGaps());
                     enemy->update();
-                    
-                    // Check if players are jumping on enemies
+
                     sf::FloatRect marioRect = mario.getbounds();
                     sf::FloatRect luigiRect = luigi.getbounds();
                     sf::FloatRect enemyRect = enemy->getBounds();
-                    
-                    if (marioRect.intersects(enemyRect) && 
-                        marioRect.top + marioRect.height <= enemyRect.top + 10) {
+
+                    if (marioRect.intersects(enemyRect) &&
+                        marioRect.top + marioRect.height <= enemyRect.top + 10)
+                    {
                         enemy->onJumpedOn();
                         mario.bounce();
-                        mario.addScore(30);  // Award 100 points for stomping an enemy
+                        mario.addScore(30); 
                         std::cout << "Mario a sauté sur l'ennemi! +100 points" << std::endl;
                     }
-                    else if (luigiRect.intersects(enemyRect) && 
-                             luigiRect.top + luigiRect.height <= enemyRect.top + 10) {
+                    else if (luigiRect.intersects(enemyRect) &&
+                             luigiRect.top + luigiRect.height <= enemyRect.top + 10)
+                    {
                         enemy->onJumpedOn();
                         luigi.bounce();
-                        luigi.addScore(30);  // Award 100 points for stomping an enemy
+                        luigi.addScore(30); 
                         std::cout << "Luigi a sauté sur l'ennemi! +100 points" << std::endl;
                     }
-                    
-                    if (enemy->isAlive()) {
+
+                    if (enemy->isAlive())
+                    {
                         enemy->render(gameWindow);
                     }
                 }
             }
 
-            // Score and Lives Display
+            // l'affichage des scores et vies
+        
             sf::View view = gameWindow.getView();
 
-            // Initialize Score displays - regular scores show numbers
-            static Score marioScore("images/mario_score.png", font, false); // false = score display
-            static Score luigiScore("images/luigi_score.png", font, false); // false = score display
+            static Score marioScore("images/mario_score.png", font, false); 
+            static Score luigiScore("images/luigi_score.png", font, false); 
 
-            // Initialize Lives displays - these show hearts
-            static Score marioLives("images/mario_score.png", font, true);  // true = lives display 
-            static Score luigiLives("images/luigi_score.png", font, true);  // Use luigi_score.png instead of mario_score.png
+           
+            static Score marioLives("images/mario_score.png", font, true); 
+            static Score luigiLives("images/luigi_score.png", font, true); 
+        
+            float rightSide = view.getCenter().x + view.getSize().x / 2 - 150;
+            float leftSide = view.getCenter().x - view.getSize().x / 2 + 20;
+            float topPos = view.getCenter().y - view.getSize().y / 2 + 10;
 
-            // Position the displays on screen
-            float rightSide = view.getCenter().x + view.getSize().x/2 - 150;
-            float leftSide = view.getCenter().x - view.getSize().x/2 + 20;
-            float topPos = view.getCenter().y - view.getSize().y/2 + 10;
-
-            // Set positions
             marioScore.setPosition(rightSide, topPos);
             luigiScore.setPosition(rightSide, topPos + 40);
             marioLives.setPosition(leftSide, topPos);
             luigiLives.setPosition(leftSide, topPos + 40);
 
-            // Update values
             marioScore.update(mario.getScore());
             luigiScore.update(luigi.getScore());
             marioLives.update(mario.getLives());
             luigiLives.update(luigi.getLives());
 
-            // Draw all UI elements
             marioScore.draw(gameWindow);
             luigiScore.draw(gameWindow);
             marioLives.draw(gameWindow);
             luigiLives.draw(gameWindow);
 
-            // Draw respawn text if players are respawning
-            if (mario.shouldRespawn() && marioRespawnTimer > 0) {
-                gameWindow.draw(marioRespawnText);
-            }
-            
-            if (luigi.shouldRespawn() && luigiRespawnTimer > 0) {
-                gameWindow.draw(luigiRespawnText);
-            }
+            // Message degegage pour les joueurs
+            // if (mario.shouldRespawn() && marioRespawnTimer > 0)
+            // {
+            //     gameWindow.draw(marioRespawnText);
+            // }
+
+            // if (luigi.shouldRespawn() && luigiRespawnTimer > 0)
+            // {
+            //     gameWindow.draw(luigiRespawnText);
+            // }
 
             game.drawResult(gameWindow);
             gameWindow.display();
         }
 
-        // Clean up resources
-        if (aiController) {
+        if (aiController)
+        {
             delete aiController;
             aiController = nullptr;
         }

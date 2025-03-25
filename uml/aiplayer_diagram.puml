@@ -1,0 +1,54 @@
+@startuml AIPlayer_class_diagram
+
+class AIPlayer {
+  - Player* character
+  - std::vector<const Enemy*> enemies
+  - std::mt19937 rng
+  - int decisionCooldown
+  - std::string currentAction
+  - int actionDuration
+  - float jumpTimer
+  - bool m_shouldJump
+  - bool m_shouldMoveRight
+  - bool m_shouldMoveLeft
+  - bool m_shouldShootFireball
+  - const float enemyDetectionRange = 200.0f
+  - const float gapDetectionRange = 100.0f
+  - const int minActionDuration = 30
+  - const int maxActionDuration = 90
+  
+  + AIPlayer(character: Player*, enemies: vector<unique_ptr<Enemy>>&)
+  + update(groundTiles: vector<sf::Sprite>&, pipes: vector<sf::Sprite>&, flag: sf::Sprite&): void
+  + updateEnemyReferences(newEnemies: vector<unique_ptr<Enemy>>&): void
+  + shouldMoveRight(): bool
+  + shouldMoveLeft(): bool
+  + shouldJump(): bool
+  + shouldShootFireball(): bool
+  
+  - makeDecision(): void
+  - executeAction(): void
+  - avoidEnemies(): void
+  - avoidObstacles(obstacles: vector<sf::Sprite>&, pipes: vector<sf::Sprite>&): void
+  - detectGapAhead(groundTiles: vector<sf::Sprite>&): bool
+  - isEnemyNearby(distance: float): bool
+  - moveTowardsFlag(flag: sf::Sprite&): void
+}
+
+class Player {
+}
+
+class Enemy {
+}
+
+AIPlayer --> Player : controls >
+AIPlayer --> Enemy : tracks >
+
+note top of AIPlayer
+  Controls Luigi AI behavior:
+  - Detects and avoids enemies
+  - Jumps over obstacles and gaps
+  - Uses powerups like fireballs
+  - Moves toward the goal flag
+end note
+
+@enduml

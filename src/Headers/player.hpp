@@ -103,7 +103,6 @@ public:
 
     bool isSmall() const;
     bool isHit() const;
-    bool isInvincible() const;
     bool getIsDead() const { return isDead; }
     void setIsDead(bool dead) { isDead = dead; }
 

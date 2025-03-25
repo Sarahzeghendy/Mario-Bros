@@ -1,52 +1,74 @@
-@startuml Game Classes Diagram
+@startuml Game_Classes_Diagram
 
 class Game {
-  - bool gameOver
+  - bool isOver
   - int winner
+  - bool aiDead_
   - sf::Font font
-  - sf::Text resultText
+  - std::vector<sf::Text> results
   
   + Game()
-  + handleWin(playerNumber: int): void
+  + handleWin(playerId: int): void
   + isGameOver(): bool
   + drawResult(window: sf::RenderWindow&): void
+  + handleAIDeath(): void
+  + isAIDead(): bool
 }
 
 class Background {
-  - sf::Texture groundTexture
-  - sf::Texture skyTexture
+  - sf::RectangleShape sky
+  - sf::Texture groundBlock
+  - sf::Texture questionBlock
+  - sf::Texture questionBlockTexture
   - sf::Texture pipeTexture
+  - sf::Texture cloudTexture
+  - sf::Texture hillTexture
   - sf::Texture flagTexture
   - std::vector<sf::Sprite> groundTiles
-  - std::vector<sf::Sprite> skyTiles
+  - std::vector<sf::Sprite> questionBlocks
   - std::vector<sf::Sprite> pipes
-  - sf::Sprite flag
+  - std::vector<sf::Sprite> hills
+  - std::vector<sf::Sprite> clouds
+  - std::vector<sf::Sprite> bricks
   - std::vector<sf::FloatRect> gaps
+  - sf::Sprite flag
+  - bool flagPlaced
   
   + Background()
   + draw(window: sf::RenderWindow&): void
-  + getGroundTiles(): const vector<sf::Sprite>&
-  + getPipes(): const vector<sf::Sprite>&
+  + getGroundTiles(): const std::vector<sf::Sprite>&
+  + getPipes(): const std::vector<sf::Sprite>&
+  + getQuestionBlocks(): const std::vector<sf::Sprite>&
   + getFlag(): const sf::Sprite&
-  + getGaps(): const vector<sf::FloatRect>&
+  + getGaps(): std::vector<sf::FloatRect>
+  - loadMap(filePath: string): void
 }
 
 class Camera {
   - sf::View view
+  - float defaultWidth
+  - float defaultHeight
+  - float minX
+  - float maxX
+  - float minY
+  - float maxY
   
-  + Camera(width: unsigned int, height: unsigned int)
-  + update(size: sf::Vector2u): void
-  + setCenter(x: float, y: float): void
+  + Camera(width: float, height: float)
+  + update(windowSize: sf::Vector2u): void
   + getView(): const sf::View&
+  + setCenter(x: float, y: float): void
+  - clampPosition(x: float&, y: float&): void
 }
 
 class Menu {
   - sf::Font font
-  - std::vector<sf::Text> options
-  - int selectedItemIndex
-  - sf::Text title
-  - sf::Text rulesText
-  - bool showingRules
+  - std::vector<sf::Text> menuOptions
+  - int selectedIndex
+  - sf::RectangleShape selector
+  - std::vector<sf::Texture> frames
+  - sf::Sprite backgroundSprite
+  - sf::Clock frameClock
+  - int currentFrame
   
   + Menu(width: float, height: float)
   + draw(window: sf::RenderWindow&): void
@@ -54,7 +76,58 @@ class Menu {
   + moveDown(): void
   + getSelectedIndex(): int
   + showRules(): void
-  + hideRules(): void
 }
+
+class Score {
+  - sf::Texture iconTexture
+  - sf::Texture heartTexture
+  - sf::Sprite icon
+  - sf::Text scoreText
+  - sf::Font font
+  - bool isLivesDisplay
+  - std::vector<sf::Sprite> hearts
+  - const int MAX_HEARTS = 5
+  
+  + Score(iconPath: string, font: sf::Font&, isLivesDisplay: bool)
+  + setPosition(x: float, y: float): void
+  + update(value: int): void
+  + draw(window: sf::RenderWindow&): void
+}
+
+note top of Game
+  Controls game state, win conditions,
+  and displays final results
+end note
+
+note top of Background
+  Manages level layout including
+  ground, pipes, question blocks,
+  decorative elements and gaps
+end note
+
+note top of Camera
+  Controls the view that follows
+  players through the level with
+  boundary constraints
+end note
+
+note top of Menu
+  Handles the main menu UI with
+  animated background and
+  navigation between options
+end note
+
+note top of Score
+  Displays either numeric scores
+  or heart-based life counter
+  for each player
+end note
+
+' Relationships
+Game ..> Score : displays >
+Game ..> Background : uses >
+Menu ..> Game : starts >
+Camera ..> Background : views >
+Score ..> Player : tracks stats >
 
 @enduml

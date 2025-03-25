@@ -1,193 +1,326 @@
-@startuml Complete Class Diagram
+@startuml Complete_Mario_Bros_Class_Diagram
 
-' Player-related classes
-class Player {
-  ' Key attributes
-  - normalTexture: sf::Texture
-  - fireTexture: sf::Texture
-  - sprite: sf::Sprite
-  - mouvement: Mouvement
-  - bool big
-  - bool hasFirePower
-  - std::vector<Fireball> fireballs
-  - int lives
-  - int score
-  - float initialX, initialY
-  - float deathX, deathY
-  - int lastLifeThreshold
-  - bool isStarPowered
-  - int hitTimer
-  
-  ' Key methods
-  + update()
-  + draw()
-  + collectFireFlower()
-  + shootFireball()
-  + grow()
-  + shrink()
-  + die()
-  + respawn()
-  + addScore(points: int)
-  + loseLife()
-  + collectEtoile()
-  + shouldRespawn()
-  + getIsDead()
+' Use better styling
+skinparam classFontSize 12
+skinparam classAttributeFontSize 11
+skinparam classFontStyle bold
+skinparam packageStyle rectangle
+skinparam packageFontSize 14
+
+package "Core Game" {
+  class Game {
+    - bool isOver
+    - int winner
+    - bool aiDead_
+    - sf::Font font
+    - std::vector<sf::Text> results
+    
+    + Game()
+    + handleWin(playerId: int): void
+    + isGameOver(): bool
+    + drawResult(window: sf::RenderWindow&): void
+    + handleAIDeath(): void
+    + isAIDead(): bool
+  }
+
+  class Menu {
+    - sf::Font font
+    - std::vector<sf::Text> menuOptions
+    - int selectedIndex
+    - sf::RectangleShape selector
+    - std::vector<sf::Texture> frames
+    - sf::Sprite backgroundSprite
+    - sf::Clock frameClock
+    - int currentFrame
+    
+    + Menu(width: float, height: float)
+    + draw(window: sf::RenderWindow&): void
+    + moveUp(): void
+    + moveDown(): void
+    + getSelectedIndex(): int
+    + showRules(): void
+  }
+
+  class Camera {
+    - sf::View view
+    - float defaultWidth, defaultHeight
+    - float minX, maxX, minY, maxY
+    
+    + Camera(width: float, height: float)
+    + update(windowSize: sf::Vector2u): void
+    + getView(): const sf::View&
+    + setCenter(x: float, y: float): void
+    - clampPosition(x: float&, y: float&): void
+  }
+
+  class Background {
+    - sf::RectangleShape sky
+    - std::vector<sf::Sprite> groundTiles
+    - std::vector<sf::Sprite> questionBlocks
+    - std::vector<sf::Sprite> pipes
+    - std::vector<sf::Sprite> hills
+    - std::vector<sf::Sprite> clouds
+    - std::vector<sf::FloatRect> gaps
+    - sf::Sprite flag
+    
+    + Background()
+    + draw(window: sf::RenderWindow&): void
+    + getGroundTiles(): const std::vector<sf::Sprite>&
+    + getPipes(): const std::vector<sf::Sprite>&
+    + getQuestionBlocks(): const std::vector<sf::Sprite>&
+    + getFlag(): const sf::Sprite&
+    + getGaps(): std::vector<sf::FloatRect>
+    - loadMap(filePath: string): void
+  }
+
+  class Score {
+    - sf::Texture iconTexture
+    - sf::Texture heartTexture
+    - sf::Sprite icon
+    - sf::Text scoreText
+    - sf::Font font
+    - bool isLivesDisplay
+    - std::vector<sf::Sprite> hearts
+    - const int MAX_HEARTS = 5
+    
+    + Score(iconPath: string, font: sf::Font&, isLivesDisplay: bool)
+    + setPosition(x: float, y: float): void
+    + update(value: int): void
+    + draw(window: sf::RenderWindow&): void
+  }
 }
 
-class Mouvement {
-  - sf::Sprite& sprite
-  - float speed
-  - bool isJumping
-  - float velocityY
-  
-  + moveRight()
-  + moveLeft()
-  + jump()
-  + applyGravity()
+package "Player System" {
+  class Player {
+    - static const int MAX_LIVES = 5
+    - sf::Texture normalTexture
+    - sf::Texture fireTexture
+    - sf::Sprite sprite
+    - std::string characterName
+    - Mouvement mouvement
+    - bool big
+    - bool isDead
+    - bool hasFirePower
+    - int lives
+    - int coins
+    - int score
+    - std::vector<Fireball> fireballs
+    - bool isStarPowered
+    - int starPowerFrames
+    - float baseSpeed
+    - float currentSpeed
+    - float deathX, deathY
+    
+    + Player(texturePath: string, name: string, x: float, y: float, speed: float, ...)
+    + update(blocks: vector<sf::Sprite>&, ...): void
+    + draw(window: sf::RenderWindow&): void
+    + animate(): void
+    + moveRight(): void
+    + moveLeft(): void
+    + jump(): void
+    + collectFireFlower(): void
+    + shootFireball(): void
+    + updateFireballs(blocks: vector<sf::Sprite>&): void
+    + getCoins(): void
+    + loseLife(): void
+    + addLife(): void
+    + grow(): void
+    + shrink(): void
+    + collectEtoile(): void
+    + respawn(): void
+    + addScore(points: int): void
+    + shouldRespawn(): bool
+  }
+
+  class Mouvement {
+    - sf::Sprite& sprite
+    - float speed
+    - bool isJumping
+    - float velocityY
+    - float gravity
+    - float jumpStrength
+    - float hangTime
+    - float hangCounter
+    
+    + Mouvement(spr: sf::Sprite&, spd: float)
+    + moveRight(): void
+    + moveLeft(): void
+    + jump(): void
+    + applyGravity(blocks: vector<sf::Sprite>&, ...): void
+    + checkForGaps(gaps: vector<sf::FloatRect>&): void
+    + blockMovement(obstacles: vector<sf::Sprite>&, ...): pair<bool, bool>
+    + setSpeed(newSpeed: float): void
+    + isInAir(): bool
+  }
+
+  class AIPlayer {
+    - Player* character
+    - std::vector<const Enemy*> enemies
+    - std::mt19937 rng
+    - int decisionCooldown
+    - std::string currentAction
+    - int actionDuration
+    - float jumpTimer
+    - bool m_shouldJump
+    - bool m_shouldMoveRight
+    - bool m_shouldMoveLeft
+    - bool m_shouldShootFireball
+    
+    + AIPlayer(character: Player*, enemies: vector<unique_ptr<Enemy>>&)
+    + update(groundTiles: vector<sf::Sprite>&, ...): void
+    + shouldMoveRight(): bool
+    + shouldMoveLeft(): bool
+    + shouldJump(): bool
+    + shouldShootFireball(): bool
+    - makeDecision(): void
+    - executeAction(): void
+    - avoidEnemies(): void
+    - avoidObstacles(obstacles: vector<sf::Sprite>&, ...): void
+    - detectGapAhead(groundTiles: vector<sf::Sprite>&): bool
+    - moveTowardsFlag(flag: sf::Sprite&): void
+  }
+
+  class Fireball {
+    - sf::Texture texture
+    - sf::Sprite sprite
+    - float speed
+    - float gravity
+    - float velocityY
+    - bool active
+    - float initialX
+    
+    + Fireball(x: float, y: float, direction: float)
+    + update(blocks: vector<sf::Sprite>&): void
+    + draw(window: sf::RenderWindow&): void
+    + isActive(): bool
+    + destroy(): void
+    + getBounds(): sf::FloatRect
+  }
 }
 
-' Enemy-related classes
-abstract class Enemy {
-  # texture: sf::Texture
-  # sprite: sf::Sprite
-  # mouvement: Mouvement
-  # bool alive
-  
-  + {abstract} onJumpedOn()
-  + interactWithPlayer()
-  + update()
-  + isAlive()
+package "Enemy System" {
+  abstract class Enemy {
+    # sf::Texture texture
+    # sf::Sprite sprite
+    # bool alive
+    # bool movingRight
+    # Mouvement mouvement
+    # float speed
+    # bool isFalling
+    # float fallSpeed
+    # const float GRAVITY
+    # std::vector<sf::Sprite> currentBlocks
+    # std::vector<sf::Sprite> currentPipes
+    
+    + {abstract} update(): void
+    + interactWithPlayer(player: Player&): void
+    + {abstract} onJumpedOn(): void
+    + onFireballHit(): void
+    + checkForGaps(gaps: vector<sf::FloatRect>&): void
+    + fall(): void
+    + isAlive(): bool
+    + getBounds(): sf::FloatRect
+    + draw(window: sf::RenderWindow&): void
+    + reverseDirection(): void
+    # handleCollisions(oldPosition: sf::Vector2f&): void
+  }
+
+  class Goomba {
+    + Goomba(x: float, y: float)
+    + update(): void
+    + interactWithPlayer(player: Player&): void
+    + onJumpedOn(): void
+    + onFireballHit(): void
+    + reverseDirection(): void
+    - handleCollisionsGoomba(oldPosition: sf::Vector2f&): void
+  }
+
+  class KoopaTroopa {
+    - sf::Texture koopaShell
+    - bool inShellState
+    
+    + KoopaTroopa(x: float, y: float)
+    + update(): void
+    + interactWithPlayer(player: Player&): void
+    + onJumpedOn(): void
+    + onFireballHit(): void
+    + reverseDirection(): void
+    # handleCollisions(oldPosition: sf::Vector2f&): void
+  }
+
+  class FriendlyMushroom {
+    + FriendlyMushroom(x: float, y: float)
+    + update(): void
+    + interactWithPlayer(player: Player&): void
+    + onJumpedOn(): void
+    + reverseDirection(): void
+  }
 }
 
-class Goomba {
-  + onJumpedOn()
-  + interactWithPlayer()
+package "Collectibles" {
+  class Coin {
+    - sf::Texture texture
+    - sf::Sprite sprite
+    - bool collected
+    
+    + Coin(x: float, y: float)
+    + draw(window: sf::RenderWindow&): void
+    + collect(): void
+    + isCollected(): bool
+    + getBounds(): sf::FloatRect
+  }
+
+  class FireFlower {
+    - sf::Texture texture
+    - sf::Sprite sprite
+    - bool collected
+    
+    + FireFlower(x: float, y: float)
+    + draw(window: sf::RenderWindow&): void
+    + collect(): void
+    + isCollected(): bool
+    + getBounds(): sf::FloatRect
+  }
+
+  class Etoile {
+    - sf::Texture texture
+    - sf::Sprite sprite
+    - bool collected
+    
+    + Etoile(x: float, y: float)
+    + draw(window: sf::RenderWindow&): void
+    + collect(): void
+    + isCollected(): bool
+    + getBounds(): sf::FloatRect
+  }
 }
 
-class KoopaTroopa {
-  - bool inShellState
-  + onJumpedOn()
-  + interactWithPlayer()
-}
+' Relationships between classes
+Player --> Mouvement : uses >
+Player o--> "0..*" Fireball : contains >
+Enemy --> Mouvement : uses >
+Enemy <|-- Goomba : extends
+Enemy <|-- KoopaTroopa : extends
+Enemy <|-- FriendlyMushroom : extends
 
-class FriendlyMushroom {
-  + onJumpedOn()
-  + interactWithPlayer()
-}
+AIPlayer --> Player : controls >
+AIPlayer --> "0..*" Enemy : monitors >
 
-' Item classes
-class Coin {
-  - sprite: sf::Sprite
-  - bool collected
-  
-  + draw()
-  + collect()
-  + isCollected()
-}
+Game ..> Player : manages >
+Game ..> Enemy : manages >
+Game ..> Menu : displays >
+Game ..> Score : updates >
 
-class FireFlower {
-  - sprite: sf::Sprite
-  - bool collected
-  
-  + draw()
-  + collect()
-}
+' Collectible relationships
+Player ..> Coin : collects >
+Player ..> FireFlower : collects >
+Player ..> Etoile : collects >
+FireFlower ..> Player : gives fire power >
+Etoile ..> Player : gives star power >
 
-class Fireball {
-  - sprite: sf::Sprite
-  - velocityX: float
-  - active: bool
-  
-  + update()
-  + destroy()
-}
-
-class Etoile {
-  - sprite: sf::Sprite
-  - bool collected
-  
-  + draw()
-  + collect()
-}
-
-' Game management classes
-class Game {
-  - bool isOver
-  - int winner
-  - bool aiDead_
-  - std::vector<sf::Text> results
-  
-  + handleWin(playerId: int)
-  + isGameOver()
-  + drawResult(window: sf::RenderWindow&)
-  + handleAIDeath()
-}
-
-class Background {
-  - groundTiles: vector<sf::Sprite>
-  - pipes: vector<sf::Sprite>
-  - flag: sf::Sprite
-  - gaps: vector<sf::FloatRect>
-  - questionBlocks: vector<sf::Sprite>
-  
-  + draw()
-  + getGroundTiles()
-  + getPipes()
-  + getGaps()
-  + getQuestionBlocks()
-}
-
-class Camera {
-  - view: sf::View
-  
-  + setCenter()
-  + getView()
-}
-
-class Menu {
-  - options: vector<sf::Text>
-  - selectedItemIndex: int
-  
-  + draw()
-  + moveUp()
-  + moveDown()
-}
-
-class AIPlayer {
-  - Player* character
-  - vector<const Enemy*> enemies
-  - bool shouldJump
-  - bool shouldMoveRight
-  - bool shouldMoveLeft
-  - bool shouldShootFireball
-  
-  + update()
-  + makeDecision()
-  + avoidEnemies()
-}
-
-class Score {
-  - sf::Sprite icon
-  - sf::Text scoreText
-  - int score
-  
-  + update(newScore: int)
-  + draw(window: sf::RenderWindow&)
-}
-
-' Relationships
-Player -- Mouvement : has >
-Player -- Fireball : contains >
-
-Enemy <|-- Goomba
-Enemy <|-- KoopaTroopa
-Enemy <|-- FriendlyMushroom
-Enemy -- Mouvement : has >
-
-AIPlayer -- Player : controls >
-AIPlayer -- Enemy : tracks >
-
-Game -- Player : manages >
-Game -- Enemy : manages >
+' Environment relationships
+Background o--> "1" Camera : viewed by >
+Player ..> Background : interacts with >
+Enemy ..> Background : interacts with >
 
 @enduml

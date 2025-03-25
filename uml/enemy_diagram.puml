@@ -8,47 +8,97 @@ abstract class Enemy {
   # bool movingRight
   # float leftLimit
   # float rightLimit
-  
+  # float speed
+  # bool isFalling
+  # float fallSpeed
+  # const float GRAVITY
+  # std::vector<sf::Sprite> currentBlocks
+  # std::vector<sf::Sprite> currentPipes
+  # std::vector<Enemy*> currentEnemies
+
   + Enemy(texturePath: string, x: float, y: float, leftLim: float, rightLim: float)
-  + virtual update(): void
+  + {abstract} virtual update(): void
   + render(window: sf::RenderWindow&): void
   + isAlive(): bool
   + getBounds(): sf::FloatRect
   + virtual interactWithPlayer(player: Player&): void
   + checkForGaps(gaps: vector<sf::FloatRect>&): void
+  + fall(): void
+  + setCurrentLevel(blocks: vector<sf::Sprite>&, pipes: vector<sf::Sprite>&, enemies: vector<Enemy*>&): void
   + {abstract} virtual onJumpedOn(): void
   + virtual onFireballHit(): void
+  # virtual handleCollisions(oldPosition: sf::Vector2f&): void
+  + virtual reverseDirection(): void
 }
 
 class Goomba {
-  + Goomba(x: float, y: float, leftLim: float, rightLim: float)
-  + update(): void
-  + interactWithPlayer(player: Player&): void
-  + onJumpedOn(): void
+  + Goomba(x: float, y: float)
+  + update(): void override
+  + interactWithPlayer(player: Player&): void override
+  + onJumpedOn(): void override
+  + onFireballHit(): void override
+  + reverseDirection(): void
+  - handleCollisionsGoomba(oldPosition: sf::Vector2f&): void
 }
 
 class KoopaTroopa {
-  - bool isShell
-  - int shellTimer
-  
-  + KoopaTroopa(x: float, y: float, leftLim: float, rightLim: float)
-  + update(): void
-  + interactWithPlayer(player: Player&): void
-  + onJumpedOn(): void
-  + onFireballHit(): void
+  - sf::Texture koopaShell
+  - bool inShellState = false
+
+  + KoopaTroopa(x: float, y: float)
+  + update(): void override
+  + interactWithPlayer(player: Player&): void override
+  + onJumpedOn(): void override
+  + onFireballHit(): void override
+  + reverseDirection(): void
+  # handleCollisions(oldPosition: sf::Vector2f&): void override
 }
 
 class FriendlyMushroom {
-  + FriendlyMushroom(x: float, y: float, leftLim: float, rightLim: float)
-  + update(): void
-  + interactWithPlayer(player: Player&): void
-  + onJumpedOn(): void
+  + FriendlyMushroom(x: float, y: float)
+  + update(): void override
+  + interactWithPlayer(player: Player&): void override
+  + onJumpedOn(): void override
+  + reverseDirection(): void
 }
 
-Enemy <|-- Goomba
-Enemy <|-- KoopaTroopa
-Enemy <|-- FriendlyMushroom
+' Inheritance relationships showing polymorphism
+Enemy <|-- Goomba : implements >
+Enemy <|-- KoopaTroopa : implements >
+Enemy <|-- FriendlyMushroom : implements >
 
-Enemy -- Mouvement : has >
+' Component relationships
+Enemy *-- Mouvement : uses >
+
+note top of Enemy
+  <b>Classe de base abstraite</b>
+  Définit le comportement commun et l'interface
+  pour tous les types d'ennemis avec des méthodes virtuelles pures
+end note
+
+note right of Goomba
+  Ennemi qui se déplace horizontalement
+  et meurt lorsqu'on lui saute dessus
+end note
+
+note right of KoopaTroopa
+  Ennemi complexe avec des changements d'état :
+  - État de marche
+  - État de carapace (après avoir été sauté dessus)
+  - Comportement différent dans chaque état
+end note
+
+note right of FriendlyMushroom
+  Ennemi bénéfique qui fait grandir
+  le joueur lorsqu'il est ramassé
+end note
+
+note bottom of Enemy
+  <b>Polymorphisme en action :</b>
+  - Tous les types d'ennemis implémentent leur propre version de update()
+  - Le comportement de onJumpedOn() varie en fonction du type d'ennemi
+  - interactWithPlayer() peut être redéfini pour un comportement personnalisé
+  - Le code de rendu commun est hérité de la classe de base
+end note
 
 @enduml

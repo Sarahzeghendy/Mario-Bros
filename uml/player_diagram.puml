@@ -1,6 +1,7 @@
 @startuml Player_class_diagram
 
 class Player {
+  - static const int MAX_LIVES = 5
   - sf::Texture normalTexture
   - sf::Texture fireTexture
   - sf::Sprite sprite
@@ -49,9 +50,12 @@ class Player {
   + getCoins(): void
   + loseLife(): void
   + gainLife(): void
+  + addLife(): void
   + getLives(): int
+  + setLives(numLives: int): void
   + grow(): void
   + shrink(): void
+  + bounce(): void
   + isBig(): bool
   + die(): void
   + loadTexture(): bool
@@ -64,8 +68,7 @@ class Player {
   + drawFireballs(window: sf::RenderWindow&): void
   + getFireballs(): vector<Fireball>&
   + hasFirePowerActive(): bool
-  + loseFirePower(): void
-  + bounce(): void
+  + loseFirePower(): bool
   + getScore(): int
   + getName(): string
   + setMovingRight(move: bool): void
@@ -74,7 +77,6 @@ class Player {
   + getMouvement(): Mouvement&
   + isSmall(): bool
   + isHit(): bool
-  + isInvincible(): bool
   + getIsDead(): bool
   + setIsDead(dead: bool): void
   + collectEtoile(): void
@@ -85,7 +87,13 @@ class Player {
   + updateInitialPosition(x: float, y: float): void
   + shouldRespawn(): bool
   + addScore(points: int): void
+  + updatePreviousPosition(): void
 }
+
+note top of Player
+  Now includes maximum
+  lives limit = 5
+end note
 
 class Mouvement {
 }
