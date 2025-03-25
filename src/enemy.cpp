@@ -8,10 +8,10 @@ Enemy::Enemy(const std::string &imagePath, float x, float y, float leftLim, floa
       sprite(),
       alive(true),
       movingRight(false),
-      mouvement(sprite, 0.5f), // Keep the mouvement speed at 0.5f
+      mouvement(sprite, 0.5f), 
       leftLimit(leftLim),
       rightLimit(rightLim),
-      speed(1.0f), // Default speed increased to 1.0f
+      speed(1.0f), 
       isFalling(false),
       fallSpeed(0.0f),
       GRAVITY(0.5f)
@@ -106,12 +106,12 @@ void Enemy::reverseDirection()
 
 void Enemy::handleCollisions(const sf::Vector2f &oldPosition)
 {
-    // Define larger bounding boxes for right and left collision detection
+    (void)oldPosition;
+
     sf::FloatRect globalBounds = sprite.getGlobalBounds();
     sf::FloatRect rightBounds(globalBounds.left + globalBounds.width - 10, globalBounds.top + 5, 10, globalBounds.height - 10); // Right edge
     sf::FloatRect leftBounds(globalBounds.left, globalBounds.top + 5, 10, globalBounds.height - 10);                            // Left edge
 
-    // Check pipe collisions
     for (const auto &pipe : currentPipes)
     {
         sf::FloatRect pipeBounds = pipe.getGlobalBounds();
@@ -121,21 +121,18 @@ void Enemy::handleCollisions(const sf::Vector2f &oldPosition)
 
         if (movingRight && rightBounds.intersects(fixedPipeBounds))
         {
-            // Corrige seulement la position horizontale
             sprite.setPosition(fixedPipeBounds.left - sprite.getGlobalBounds().width - 1, sprite.getPosition().y);
             reverseDirection();
             return;
         }
         else if (!movingRight && leftBounds.intersects(fixedPipeBounds))
         {
-            // Corrige seulement la position horizontale
             sprite.setPosition(fixedPipeBounds.left + fixedPipeBounds.width + 1, sprite.getPosition().y);
             reverseDirection();
             return;
         }
     }
 
-    // Check block collisions
     for (const auto &block : currentBlocks)
     {
         if (movingRight && rightBounds.intersects(block.getGlobalBounds()))
@@ -190,3 +187,4 @@ void Enemy::interactWithPlayer(Player &player)
         }
     }
 }
+

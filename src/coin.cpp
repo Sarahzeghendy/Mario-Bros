@@ -2,54 +2,61 @@
 #include <iostream>
 
 /**
- * @brief Constructeur de la classe Coin.
- * @param x Position horizontale de la pièce.
- * @param y Position verticale de la pièce.
- * @param texturePath Chemin de l'image de la pièce.
+ * @brief Constructeur de la classe Coin
+ * @param x Position horizontale de la piece
+ * @param y Position verticale de la piece
+ * @param texturePath Chemin de limage de la piece
  */
-Coin::Coin(float x, float y) : collected(false) {
-    if (!texture.loadFromFile("images/coins.png")) {
+Coin::Coin(float x, float y) : collected(false)
+{
+    if (!texture.loadFromFile("images/coins.png"))
+    {
         std::cerr << "Erreur : Impossible de charger coin.png" << std::endl;
-    } else {
+    }
+    else
+    {
         std::cout << "Pièce chargée" << std::endl;
     }
     sprite.setTexture(texture);
     sprite.setPosition(x, y);
     sprite.setScale(0.9f, 0.9f);
-
-    
 }
 
 /**
- * @brief Dessine la pièce.
+ * @brief Dessine la piece
  */
-void Coin::draw(sf::RenderWindow& window) {
-    if (!collected) {
+void Coin::draw(sf::RenderWindow &window)
+{
+    if (!collected)
+    {
         window.draw(sprite);
     }
 }
 
 /**
- * @brief Renvoie les limites de la pièce.
- * @return Les limites de la pièce.
+ * @brief Renvoie les limites de la piece
+ * @return Les limites de la piece
  */
-sf::FloatRect Coin::getBounds() const {
+sf::FloatRect Coin::getBounds() const
+{
     return sprite.getGlobalBounds();
 }
 
-
 /**
- * @brief Indique si la pièce a été collectée.
- * @return true si la pièce a été collectée, false sinon.
+ * @brief Indique si la piece a ete collectee
+ * @return true si la piece a ete collectee false sinon
  */
-bool Coin::isCollected() const {
+bool Coin::isCollected() const
+{
     return collected;
 }
 
 /**
- * @brief Collecte la pièce.
+ * @brief Collecte la piece
+ * @details Cette methode est appelee lorsque le joueur entre en collision avec la piece
+ * La piece est alors marquee comme collectee
  */
-void Coin::collect() {
+void Coin::collect()
+{
     collected = true;
-    std::cout << "Pièce collectée" << std::endl;
 }

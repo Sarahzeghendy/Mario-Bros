@@ -1,34 +1,33 @@
 #include "Headers/camera.hpp"
 
-
-
 Camera::Camera(float width, float height) : defaultWidth(width), defaultHeight(height),
-      minX(width/2), maxX(8500), // Adjust these values based on your level size
-      minY(height/2), maxY(600)  // Adjust these values based on your level size
+                                            minX(width / 2), maxX(8400), // Adjust these values based on your level size
+                                            minY(height / 2), maxY(600)  // Adjust these values based on your level size
 {
-    view.setSize(width, height); //Définit la taille de la vue avec les dimensions données.
-    view.setCenter(width / 2.0f, height / 2.0f); //vue au centre
+    view.setSize(width, height);                 // Définit la taille de la vue avec les dimensions données.
+    view.setCenter(width / 2.0f, height / 2.0f); // vue au centre
 }
 
-
-void Camera::update(const sf::Vector2u& windowSize) 
+void Camera::update(const sf::Vector2u &windowSize)
 {
     float aspectRatio = static_cast<float>(windowSize.x) / static_cast<float>(windowSize.y);
     view.setSize(defaultHeight * aspectRatio, defaultHeight);
 }
 
-const sf::View& Camera::getView() const 
+const sf::View &Camera::getView() const
 {
     return view;
 }
 
-void Camera::clampPosition(float& x, float& y) {
+void Camera::clampPosition(float &x, float &y)
+{
 
     x = std::max(minX, std::min(x, maxX));
     y = std::max(minY, std::min(y, maxY));
 }
 
-void Camera::setCenter(float x, float y) {
+void Camera::setCenter(float x, float y)
+{
     clampPosition(x, y);
     view.setCenter(x, y);
 }

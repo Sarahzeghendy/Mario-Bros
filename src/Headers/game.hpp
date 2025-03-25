@@ -6,9 +6,9 @@
 
 class Game {
 private:
+    bool aiDead_;   
     bool isOver;
     int winner;
-    bool aiDead_;   
     sf::Font font;
     std::vector<sf::Text> results;
 

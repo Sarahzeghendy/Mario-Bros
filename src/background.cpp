@@ -3,13 +3,17 @@
 #include <iostream>
 
 const float TILE_SIZE = 40.0f;
-
+/**
+ * @brief Constructeur de la classe Background
+ * @details Ce constructeur initialise les textures des blocs et charge la map du niveau
+ * Il initialise également les nuages et le drapeau de fin de niveau
+ */
 Background::Background()
 {
 
-    sky.setSize(sf::Vector2f(10000, 720));  
+    sky.setSize(sf::Vector2f(10000, 720));
     sky.setPosition(-1000, 0);
-    sky.setFillColor(sf::Color(135, 206, 250)); 
+    sky.setFillColor(sf::Color(135, 206, 250));
 
     if (!groundBlock.loadFromFile("images/blocks.png"))
     {
@@ -32,6 +36,7 @@ Background::Background()
         throw std::runtime_error("Erreur : Impossible de charger flag.png");
     }
 
+    // load la map du niveau qui est un fichier texte avec chaque caractere representant une partie du niveau
     loadMap("map.txt");
 
     for (int i = 0; i < 30; i++)
@@ -43,6 +48,12 @@ Background::Background()
     }
 }
 
+/**
+ * @brief Charge la map du niveau
+ * @param filePath Chemin du fichier texte contenant la map du niveau
+ * @details Cette methode charge la map du niveau a partir d un fichier texte
+ * Chaque caractere du fichier texte represente un pbjet specifique du niveau
+ */
 void Background::loadMap(const std::string &filePath)
 {
     std::ifstream file(filePath);
@@ -86,7 +97,7 @@ void Background::loadMap(const std::string &filePath)
             else if (tile == 'P' || tile == 'p')
             {
                 sf::Sprite pipe(pipeTexture);
-                pipe.setPosition(x, y-17);
+                pipe.setPosition(x, y - 17);
                 pipe.setScale(0.3f, 0.3f);
 
                 pipes.push_back(pipe);
@@ -108,13 +119,19 @@ void Background::loadMap(const std::string &filePath)
                     flag.setTexture(flagTexture);
                     flag.setPosition(x, 530);
                     flag.setOrigin(flag.getGlobalBounds().width / 2, flag.getGlobalBounds().height / 2);
-                    flag.setScale(0.3f, 0.3f); 
+                    flag.setScale(0.3f, 0.3f);
                     flagPlaced = true;
                 }
             }
         }
     }
 }
+
+/**
+ * @brief Dessine les elements du niveau
+ * @param window Fenetre de rendu
+ * @details Cette methode dessine les elements du niveau
+ */
 
 void Background::draw(sf::RenderWindow &window)
 {
@@ -151,7 +168,12 @@ void Background::draw(sf::RenderWindow &window)
     }
 }
 
-const sf::Sprite& Background::getFlag() const {
+/**
+ * @brief Retourne les blocs de sol du niveau
+ * @return Vector contenant les sprites des blocs de sol
+ */
+const sf::Sprite &Background::getFlag() const
+{
     return flag;
 }
 std::vector<sf::FloatRect> Background::getGaps() const
