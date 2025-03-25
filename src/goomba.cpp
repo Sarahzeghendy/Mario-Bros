@@ -1,120 +1,191 @@
 #include "Headers/enemy.hpp"
 #include <iostream>
 
-Goomba::Goomba(float x, float y)
-    : Enemy("images/goomba.png", x, y, 0, 0)  // Set limits to 0 in parent class
+
+
+/**
+ * @brief Constructeur de la classe Goomba
+ * @param x Position horizontale de départ du Goomba
+ * @param y Position verticale de départ du Goomba
+ * @details Initialise le Goomba avec une position et une image de base, 
+ *          en s'assurant que sa direction de déplacement initiale est vers la droite
+ */
+Goomba::Goomba(float x, float y): 
+    Enemy("images/goomba.png", x, y, 0, 0) // limites à 0 dans la classe parente Enemy
 {
-    movingRight = true; // Ensure Goomba starts moving to the right
-    speed = 1.0f; // Increase the speed (default was likely around 0.5-1.0)
+    //Goomba se déplace en 1er vers la droite
+    movingRight = true; 
+    speed = 1.0f; 
 }
 
+/**
+ * @brief Met à jour l'état du goomba
+ * @details Gère les mouvements et les collisions uniquement si le champignon est en vie
+ */
 void Goomba::update() 
 {
+    //ne fait rien -> goomba mort
     if (!alive) return;
+
+    // vérification goomba en train de tomber 
     if (isFalling)
     {
-        fall();
+        fall();//applique gravité
         return;
     }
 
-    // Store current position
+    //stockage position actuelle avant mouvement
     sf::Vector2f oldPosition = sprite.getPosition();
 
-    // Move based on direction and flip the sprite correctly
-    if (movingRight) {
+    //déplacement goomba
+    if (movingRight) 
+    {
         mouvement.moveRight();
-        if (sprite.getScale().x > 0) {
-            sprite.setScale(-0.1f, 0.1f); // Negative scale faces right
+
+        //vérification si goomba déjà orienté à droite
+        if (sprite.getScale().x > 0) 
+        {
+            sprite.setScale(-0.1f, 0.1f); 
         }
-    } else {
+    } 
+    else 
+    {
         mouvement.moveLeft();
-        if (sprite.getScale().x < 0) {
-            sprite.setScale(0.1f, 0.1f); // Positive scale faces left
+
+        //vérification si goomba déjà orienté à gauche
+        if (sprite.getScale().x < 0) 
+        {
+            sprite.setScale(0.1f, 0.1f);
         }
     }
 
-    // Handle collisions without checking limits
+    // gestion collision + ajustage position
     handleCollisionsGoomba(oldPosition);
 }
 
+/**
+ * @brief Interaction avec le joueur
+ * @param player Référence au joueur
+ * @details Si le joueur entre en contact avec le Goomba, les effets sont appliqués selon 
+ *          l'état du joueur (s'il est grand, petit, ou a un pouvoir spécial)
+ */
 void Goomba::interactWithPlayer(Player& player) 
 {
+    //vérification collision
     if (sprite.getGlobalBounds().intersects(player.getbounds())) 
     {
-
-
-        if (player.hasFirePowerActive()) {
+        //vérification si joueur a le pouvoir du feu
+        if (player.hasFirePowerActive()) 
+        {
+            //joueur perd son pouvoir
             player.shrink();
             std::cout << "Mario a perdu son pouvoir de feu en touchant un Goomba!" << std::endl;
         }
-        else if (player.isBig()) {
+        //vérification taille du joueur 
+        else if (player.isBig()) 
+        {
+            //joueur grand devient petit
             player.shrink();
             std::cout << "Mario devient petit après avoir touché un Goomba!" << std::endl;
         } 
-        else {
+        else 
+        {
+            //joueur petit -> meurt
             player.die();
             std::cout << "Mario est tué par le Goomba!" << std::endl;
         }
     }
 }
 
+/**
+ * @brief Réaction du goomba lorsqu'on saute dessus
+ * @details goomba disparaît lorsqu'il est écrasé par le joueur
+ */
 void Goomba::onJumpedOn() 
 {
+    //goomba meurt
     alive = false;
-    sprite.setScale(0.1f, 0.05f);  // Écrasé plus plat que les autres ennemis
+
+    //écrasement plus plat que les autres ennemis
+    sprite.setScale(0.1f, 0.05f);  
+
     std::cout << "Goomba écrasé !" << std::endl;
 }
 
+/**
+ * @brief Gère l'interaction de Goomba lorsqu'il est touché par une boule de feu
+ * @details Lorsque Goomba est touché par une boule de feu, il meurt et se retourne
+ */
 void Goomba::onFireballHit() 
 {
+    //goomba meurt
     alive = false;
-    // Add a special death animation when hit by fireball
+
+    //goomba se retourne pour simuler sa chute
     sprite.setScale(0.1f, -0.1f);  // Flip upside down
     std::cout << "Goomba touché par une boule de feu et vaincu!" << std::endl;
 }
 
-void Goomba::reverseDirection() {
+/**
+ * @brief Inverse la direction du déplacement du goomba
+ * @details Change l'orientation du mouvement lorsqu'il heurte un obstacle
+ */
+void Goomba::reverseDirection() 
+{
     movingRight = !movingRight;
 }
 
-void Goomba::handleCollisionsGoomba(const sf::Vector2f& oldPosition) {
-    // Define larger bounding boxes for right and left collision detection
+/**
+ * @brief Gère les collisions du Goomba avec les tuyaux et blocs
+ * @param oldPosition Position du Goomba avant le mouvement, utilisée pour le restaurer en cas de collision
+ * @details Vérifie les collisions avec les tuyaux et blocs et ajuste la position et la direction 
+ *          du Goomba en cas de collision
+ */
+void Goomba::handleCollisionsGoomba(const sf::Vector2f& oldPosition) 
+{
+    // définition boîtes englobantes plus larges pour détection des collisions à droite et à gauche
     sf::FloatRect globalBounds = sprite.getGlobalBounds();
     sf::FloatRect rightBounds(globalBounds.left + globalBounds.width - 10, globalBounds.top + 5, 10, globalBounds.height - 10); // Right edge
     sf::FloatRect leftBounds(globalBounds.left, globalBounds.top + 5, 10, globalBounds.height - 10); // Left edge
 
-    // Check pipe collisions
-    for (const auto& pipe : currentPipes) {
+    // vérification des collisions avec tuyaux
+    for (const auto& pipe : currentPipes) 
+    {
         sf::FloatRect pipeBounds = pipe.getGlobalBounds();
         float pipeLeft = pipeBounds.left + 60.0f;
         float pipeWidth = 35.4f;
         sf::FloatRect fixedPipeBounds(pipeLeft, pipeBounds.top, pipeWidth, pipeBounds.height);
 
-        if (movingRight && rightBounds.intersects(fixedPipeBounds)) {
-            // Restore position, reverse direction, and adjust position
-            sprite.setPosition(oldPosition.x - 30.0f, oldPosition.y);
+        //si goomba se déplace vers droite et touche tuyau -> inversion direction
+        if (movingRight && rightBounds.intersects(fixedPipeBounds)) 
+        {
+            sprite.setPosition(oldPosition.x - 30.0f, oldPosition.y);//restaurer position
             reverseDirection();
             return; 
         }
-        else if (!movingRight && leftBounds.intersects(fixedPipeBounds)) {
-            // Restore position, reverse direction, and adjust position slightly
-            sprite.setPosition(oldPosition.x + 30.0f, oldPosition.y);
+         //si goomba se déplace vers gauche et touche tuyau -> inversion direction
+        else if (!movingRight && leftBounds.intersects(fixedPipeBounds)) 
+        {
+            sprite.setPosition(oldPosition.x + 30.0f, oldPosition.y);//restaurer position
             reverseDirection();
             return; 
         }
     }
 
-    // Check block collisions
-    for (const auto& block : currentBlocks) {
-        if (movingRight && rightBounds.intersects(block.getGlobalBounds())) {
-            // Restore position, reverse direction, and adjust position
-            sprite.setPosition(oldPosition.x - 25.0f, oldPosition.y);
+    //vérification collisions avec blocs
+    for (const auto& block : currentBlocks) 
+    {
+        //si goomba se déplace vers droite et touche bloc -> inversion direction
+        if (movingRight && rightBounds.intersects(block.getGlobalBounds())) 
+        {
+            sprite.setPosition(oldPosition.x - 25.0f, oldPosition.y);//restaurer position
             reverseDirection();
             return; 
         }
-        else if (!movingRight && leftBounds.intersects(block.getGlobalBounds())) {
-            // Restore position, reverse direction, and adjust position
-            sprite.setPosition(oldPosition.x + 25.0f, oldPosition.y);
+        //si goomba se déplace vers gauche et touche blocc -> inversion direction
+        else if (!movingRight && leftBounds.intersects(block.getGlobalBounds())) 
+        {
+            sprite.setPosition(oldPosition.x + 25.0f, oldPosition.y);//restaurer position
             reverseDirection();
             return;  
         }

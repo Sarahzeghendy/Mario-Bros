@@ -384,58 +384,85 @@ bool Player::isHit() const
     return hitTimer > 0;
 }
 
+
+/**
+ * @brief Gère l'animation du player (Mario ou Luigi)
+ * @details Cette fonction met à jour l'animation en fonction du mouvement du personnage, des pouvoirs et des directions
+ */
 void Player::animate()
 {
-    frameCounter++;
+    //incrémentation du compteur de frames
+    frameCounter++; 
+    //si compteur atteint 40 -> réinitialisation du compteur
     if (frameCounter >= 40)
     {
         frameCounter = 0;
+
+        //passage à la frame suivante en fonction du mouvement
         currentFrame = (currentFrame + 1) % (movingLeft ? (characterName == "luigi" ? 3 : 3) : 4);
     }
 
+    //si joueur a le pouvoir de feu
     if (hasFirePower)
     {
+        //si joueur se déplace vers droite
         if (movingRight)
         {
+            //si sprite orienté à gauche
             if (sprite.getScale().x < 0)
             {
+                //mettre sprite à droite 
                 sprite.setScale(std::abs(sprite.getScale().x), sprite.getScale().y);
             }
         }
+        //si joueur se déplace vers gauche 
         else if (movingLeft)
         {
+            //si sprite orienté à gauche 
             if (sprite.getScale().x > 0)
             {
+                //mettre sprite à gauche
                 sprite.setScale(-sprite.getScale().x, sprite.getScale().y);
             }
         }
     }
-    else
+    else //si joueur pas pouvoir de feu
     {
+        //si joueur mario
         if (characterName == "Mario")
         {
+            //si déplacement droite 
             if (movingRight)
             {
+                //texture Mario allant vers droite
                 sprite.setTextureRect(sf::IntRect(8 + currentFrame * 28, 139, 26, 47));
+                //si sprite orienté à gauche
                 if (sprite.getScale().x < 0)
                 {
+                    //mettre sprite à droite 
                     sprite.setScale(std::abs(sprite.getScale().x), sprite.getScale().y);
                 }
             }
+            //si déplacement gauche
             else if (movingLeft)
             {
+                //texture Mario allant vers gauche
                 sprite.setTextureRect(sf::IntRect(202 + currentFrame * 32, 191, 26, 47));
+                //si sprite orienté à gauche
                 if (sprite.getScale().x < 0)
                 {
+                    //mettre sprite à droite 
                     sprite.setScale(std::abs(sprite.getScale().x), sprite.getScale().y);
                 }
             }
-            else
+            else //si mario ne se déplace pas
             {
-                sprite.setTextureRect(sf::IntRect(8, 139, 28, 47));
+                sprite.setTextureRect(sf::IntRect(8, 139, 28, 47)); //textue statique Mario
 
-                if (sprite.getScale().x < 0)
+                //si sprite orienté à gauche
+                if (sprite.getScale().x < 0) 
                 {
+                    //mettre sprite à droite
                     sprite.setScale(std::abs(sprite.getScale().x), sprite.getScale().y);
                 }
             }
