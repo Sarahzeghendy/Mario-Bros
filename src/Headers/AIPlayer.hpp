@@ -13,7 +13,6 @@ public:
     void update(const std::vector<sf::Sprite>& groundTiles, const std::vector<sf::Sprite>& pipes, const sf::Sprite& flag);
     void updateEnemyReferences(std::vector<std::unique_ptr<Enemy>>& newEnemies);
     
-    // Getter methods with clear names
     bool shouldMoveRight() const { return m_shouldMoveRight; }
     bool shouldMoveLeft() const { return m_shouldMoveLeft; }
     bool shouldJump() const { return m_shouldJump; }
@@ -38,8 +37,7 @@ private:
     std::string currentAction;
     int actionDuration;
     float jumpTimer;
-
-    // Renamed member variables with m_ prefix to avoid conflicts
+    
     bool m_shouldJump;
     bool m_shouldMoveRight;
     bool m_shouldMoveLeft;
