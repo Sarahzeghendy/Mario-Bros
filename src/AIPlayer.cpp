@@ -2,9 +2,10 @@
 #include <iostream>
 #include <cmath>
 #include <algorithm>
+
 /**
  * @brief Constructeur de la classe AIPlayer
- * @param character Pointeur vers le joueur contrôlé par l'IA
+ * @param character Pointeur vers le joueur controle par l'IA
  * @param enemies Vector contenant les pointeurs vers les ennemis du jeu
  */
 AIPlayer::AIPlayer(Player *character, const std::vector<std::unique_ptr<Enemy>> &enemies)
@@ -17,60 +18,73 @@ AIPlayer::AIPlayer(Player *character, const std::vector<std::unique_ptr<Enemy>> 
       m_shouldMoveRight(true),
       m_shouldMoveLeft(false),
       m_shouldShootFireball(false)
-
-{ // Ajout de la référence aux ennemis
+{
+    // Copie des references aux ennemis
     for (const auto &enemy : enemies)
     {
         this->enemies.push_back(enemy.get());
     }
 
+    // Initialisation du generateur de nombres aleatoires avec une seed vraiment aleatoire
+    // pour garantir un comportement different a chaque execution
     std::random_device rd;
     rng = std::mt19937(rd());
 }
+
 /**
- * @brief Met à jour les actions de l'IA en fonction de l'état du jeu
+ * @brief Met a jour les actions de l'IA en fonction de letat du jeu
  * @param groundTiles Vector contenant les sprites des blocs de sol
  * @param pipes Vector contenant les sprites des tuyaux
  * @param flag Sprite du drapeau de fin de niveau
- * @details Cette méthode est appelée à chaque frame pour mettre à jour les actions de l'IA
- * en fonction de l etat du jeu L'IA prend des decisions aleatoires pour déterminer ses actions et peut sauter
- * pour eviter les obstacles et les ennemis elle peut également tirer des boules de feu si
- * elle possède le pouvoir de feu
+ * @details
+ * 1. Gestion du temps de refroidissement des decisions
+ * 2. Prise de decision si necessaire
+ * 3. Traitement des situations specifiques dans cet ordre de priorite:
+ *    - Eviter les ennemis (priorite haute)
+ *    - Eviter les obstacles (priorite moyenne)
+ *    - Se diriger vers le drapeau (priorite basse)
+ *    - Detecter et eviter les trous (priorite tres haute)
+ * 4. Execution des actions decidees
  */
 void AIPlayer::update(const std::vector<sf::Sprite> &groundTiles,
                       const std::vector<sf::Sprite> &pipes,
                       const sf::Sprite &flag)
 {
-
+    // Decrementation du compte a rebours avant la prochaine decision
     if (decisionCooldown > 0)
     {
         decisionCooldown--;
     }
 
+    // Si le temps de refroidissement est ecoule prendre une nouvelle decision
     if (decisionCooldown <= 0)
     {
         makeDecision();
     }
 
-    avoidEnemies();
-    avoidObstacles(groundTiles, pipes);
+    // Application des comportements reactifs avec ordre de priorite
+    avoidEnemies();           // Priorite 1: Survie en evitant les ennemis
+    avoidObstacles(groundTiles, pipes); // Priorite 2: Eviter les obstacles statiques
+    moveTowardsFlag(flag);    // Priorite 3: Progression vers l'objectif
 
-    moveTowardsFlag(flag);
-
+    // Detection des trous - priorite maximale qui ecrase les autres decisions
     if (detectGapAhead(groundTiles))
     {
         m_shouldJump = true;
-        m_shouldMoveRight = true;
+        m_shouldMoveRight = true; // Force le mouvement vers la droite pour franchir le trou
     }
 
+    // Application des decisions prises aux actions du personnage
     executeAction();
 
+    // Gestion du timer de saut pour eviter les sauts multiples
     if (jumpTimer > 0)
     {
         jumpTimer--;
         m_shouldJump = (jumpTimer > 0);
     }
 
+    // Utilisation occasionnelle du pouvoir de feu si disponible
     if (character->hasFirePowerActive() && std::bernoulli_distribution(0.01)(rng))
     {
         m_shouldShootFireball = true;
@@ -78,60 +92,49 @@ void AIPlayer::update(const std::vector<sf::Sprite> &groundTiles,
 }
 
 /**
- * @brief Prend une decision aleatoire pour laction a effectuer
- * @details Cette methode genere une action aleatoire a effectuer par lIA en fonction de
- * probabilites actions possibles sont move right move left jump et idle
- * Les probabilits de chaque action sont defins dans le vecteur weights
- * La dure de laction est egalement determinee aleatoirement entre minActionDuration et maxActionDuration
- * Une fois laction determinee les variables shouldMoveRight shouldMoveLeft shouldJump shouldShootFireball
- * sont mises a jour en consequence
+ * @brief Prend une decision aleatoire pour l'action a effectuer
+ * @details
+ * - 60% chance d'aller a droite (progression dans le niveau)
+ * - 10% chance d'aller a gauche (exploration/evitement)
+ * - 20% chance de sauter (franchissement d'obstacles)
+ * - 10% chance de rester immobile (pause/observation)
  */
 void AIPlayer::makeDecision()
 {
-
     std::vector<std::string> actions = {"move_right", "move_left", "jump", "idle"};
     std::vector<double> weights = {0.6, 0.1, 0.2, 0.1};
 
     std::discrete_distribution<> d(weights.begin(), weights.end());
     currentAction = actions[d(rng)];
 
+    // Duree aleatoire de l'action pour simuler un comportement humain
     actionDuration = std::uniform_int_distribution<>(minActionDuration, maxActionDuration)(rng);
     decisionCooldown = actionDuration;
 
+    // Conversion de la decision en drapeaux d'action
     m_shouldMoveRight = (currentAction == "move_right");
     m_shouldMoveLeft = (currentAction == "move_left");
     m_shouldJump = (currentAction == "jump");
-
-    std::cout << "AI Decision: " << currentAction << " for " << actionDuration << " frames" << std::endl;
 }
 
 /**
- * @brief Execute laction determinee par makeDecision
- * @details Cette methode met a jour les variables de daplacement et de saut du joueur en fonction de laction
- * determinee par makeDecision Si laction est de sauter le joueur saute et shouldJump est mis a faux
- * Si l action est de se deplacer a droite -> shouldMoveRight est mis a vrai et shouldMoveLeft a faux
- * Si l action est de se deplacer a gauche -> shouldMoveLeft est mis a vrai et shouldMoveRight a faux
- * Si l action est de tirer une boule de feu -> shouldShootFireball est mis a vrai
+ * @brief Execute l'action determinee par makeDecision
  */
 void AIPlayer::executeAction()
 {
-
+    // Execution du saut si necessaire et possible
     if (m_shouldJump && !character->isInAir())
     {
         character->jump();
-        std::cout << "Luigi AI executed jump!" << std::endl;
         jumpTimer = jumpTimer > 0 ? jumpTimer : 10;
     }
 
+    // Application des mouvements lateraux
     character->setMovingRight(m_shouldMoveRight);
     character->setMovingLeft(m_shouldMoveLeft);
 
-    std::cout << "Luigi position: (" << character->getPosition().x << ", "
-              << character->getPosition().y << ") right="
-              << (m_shouldMoveRight ? "true" : "false")
-              << " left=" << (m_shouldMoveLeft ? "true" : "false")
-              << std::endl;
-
+    // Tir de boule de feu et reinitialisation immediate du drapeau
+    // pour eviter de tirer en continu
     if (m_shouldShootFireball)
     {
         character->shootFireball();
@@ -141,11 +144,14 @@ void AIPlayer::executeAction()
 
 /**
  * @brief Evite les ennemis en sautant ou en se deplacant
- * @details Cette methode verifie si un ennemi est proche du joueur et ajuste ses actions en consequence
- * Si un ennemi est detecte a une certaine distance le joueur saute ou se deplace pour eviter l ennemi
- * Si l ennemi est proche le joueur saute et se deplace pour eviter la collision
- * Si le joueur est en dehors de l ecran en y il est replace a sa position initiale
- * Si le joueur est transparent il est rendu opaque
+ * 
+ * @details
+ * 1. Calcul d'une portee de detection variable selon la taille du joueur
+ * 2. Pour chaque ennemi dans cette portee:
+ *    - Si ennemi a droite et proche: tenter un saut ou reculer
+ *    - Si ennemi a gauche et proche: avancer et sauter si necessaire
+ *    - Si ennemi tres proche: sauter et s'eloigner
+ * 3. Ajout d'un comportement aleatoire pour eviter la predictibilite
  */
 void AIPlayer::avoidEnemies()
 {
@@ -154,6 +160,7 @@ void AIPlayer::avoidEnemies()
     sf::Vector2f originalPosition = character->getPosition();
     sf::FloatRect characterBounds = character->getbounds();
 
+    // Distance de detection augmentee si le joueur est petit 
     float detectionRange = character->isSmall() ? enemyDetectionRange * 1.5f : enemyDetectionRange;
 
     for (const auto enemy : enemies)
@@ -166,27 +173,30 @@ void AIPlayer::avoidEnemies()
         float distanceY = enemyBounds.top - characterBounds.top;
         float distance = std::sqrt(distanceX * distanceX + distanceY * distanceY);
 
+        // Ennemi dans la zone de detection
         if (distance < detectionRange)
         {
             enemyDetected = true;
 
+            // Ennemi a droite et proche
             if (distanceX > 0 && distanceX < 150)
             {
-
-                if (std::abs(distanceY) < 80)
+                if (std::abs(distanceY) < 80) // A peu pres au meme niveau
                 {
-
+                    // Sauter si tres proche
                     if (distanceX < 80 && !character->isInAir() && jumpTimer <= 0)
                     {
                         m_shouldJump = true;
                         jumpTimer = 20;
                     }
 
+                    // Utiliser boule de feu si possible
                     if (character->hasFirePowerActive())
                     {
                         m_shouldShootFireball = true;
                     }
 
+                    // 40% de chance de reculer 
                     if (std::bernoulli_distribution(0.4)(rng))
                     {
                         m_shouldMoveLeft = true;
@@ -194,22 +204,23 @@ void AIPlayer::avoidEnemies()
                     }
                 }
             }
-
+            // Ennemi a gauche et proche
             else if (distanceX < 0 && distanceX > -150)
             {
-
-                if (std::abs(distanceY) < 80)
+                if (std::abs(distanceY) < 80) // A peu pres au meme niveau
                 {
-
+                    // Sauter si tres proche
                     if (distanceX > -80 && !character->isInAir() && jumpTimer <= 0)
                     {
                         m_shouldJump = true;
                         jumpTimer = 20;
                     }
 
+                    // Avancer pour esquiver 
                     m_shouldMoveRight = true;
                     m_shouldMoveLeft = false;
 
+                    // Utiliser boule de feu si possible
                     if (character->hasFirePowerActive())
                     {
                         m_shouldShootFireball = true;
@@ -217,16 +228,19 @@ void AIPlayer::avoidEnemies()
                 }
             }
 
+            // Ennemi extremement proche: reaction d'urgence - saut et eloignement
             if (distance < 50 && !character->isInAir())
             {
                 m_shouldJump = true;
                 jumpTimer = 25;
 
+                // S'eloigner de l'ennemi
                 m_shouldMoveRight = (distanceX < 0);
                 m_shouldMoveLeft = (distanceX > 0);
             }
         }
     }
+
 
     if (enemyDetected && !character->isInAir() && std::bernoulli_distribution(0.3)(rng))
     {
@@ -234,12 +248,13 @@ void AIPlayer::avoidEnemies()
         jumpTimer = 15;
     }
 
+    // Correction de position si le joueur sort de l'ecran verticalement
     if (character->getPosition().y > 600 || character->getPosition().y < 0)
     {
-
         character->setPosition(character->getPosition().x, originalPosition.y);
     }
 
+    // Correction de l'opacite pour eviter les problemes d'affichage
     sf::Color currentColor = character->getSprite().getColor();
     if (currentColor.a < 255)
     {
@@ -248,21 +263,26 @@ void AIPlayer::avoidEnemies()
         character->getSprite().setColor(newColor);
     }
 }
+
 /**
  * @brief Evite les obstacles en sautant
  * @param obstacles Vector contenant les sprites des obstacles
  * @param pipes Vector contenant les sprites des tuyaux
- * @details Cette methode verifie si un obstacle est proche du joueur et ajuste ses actions en consequence
- * Si un obstacle est detecte a une certaine distance le joueur saute pour eviter l obstacle
- * Si un tuyau est detecte a une certaine distance le joueur saute pour eviter le tuyau
+ * 
+ * @details 
+ * - Creation d'une zone "virtuelle" devant le joueur
+ * - Verification des collisions potentielles avec cette zone
+ * - Declenchement du saut avant la collision reelle
  */
 void AIPlayer::avoidObstacles(const std::vector<sf::Sprite> &obstacles, const std::vector<sf::Sprite> &pipes)
 {
     sf::FloatRect characterBounds = character->getbounds();
 
+    // Creation d'une zone de detection devant le joueur
     sf::FloatRect aheadBounds = characterBounds;
     aheadBounds.left += (m_shouldMoveRight ? 50.0f : -50.0f);
 
+    // Verification des collisions avec les obstacles standard
     for (const auto &obstacle : obstacles)
     {
         if (aheadBounds.intersects(obstacle.getGlobalBounds()))
@@ -273,6 +293,7 @@ void AIPlayer::avoidObstacles(const std::vector<sf::Sprite> &obstacles, const st
         }
     }
 
+    // Verification des collisions avec les tuyaux
     for (const auto &pipe : pipes)
     {
         if (aheadBounds.intersects(pipe.getGlobalBounds()))
@@ -288,9 +309,11 @@ void AIPlayer::avoidObstacles(const std::vector<sf::Sprite> &obstacles, const st
  * @brief Detecte un trou devant le joueur
  * @param groundTiles Vector contenant les sprites des blocs de sol
  * @return true si un trou est detecte devant le joueur
- * @details Cette methode verifie si un trou est detecte devant le joueur en regardant si un bloc de sol est present
- * a une certaine distance devant le joueur Si aucun bloc de sol nest detecte le joueur saute pour eviter le trou
- * et shouldJump est mis a vrai
+ * 
+ * @details 
+ * 1. Calcul d'un point de verification a une certaine distance devant le joueur
+ * 2. Verification de la presence de blocs de sol a ce point
+ * 3. Si aucun bloc n'est trouve, c'est qu'il y a un trou
  */
 bool AIPlayer::detectGapAhead(const std::vector<sf::Sprite> &groundTiles)
 {
@@ -298,8 +321,11 @@ bool AIPlayer::detectGapAhead(const std::vector<sf::Sprite> &groundTiles)
     float charBottom = pos.y + character->getbounds().height;
     float checkDistance = gapDetectionRange;
 
+    // Calcul du point de verification en fonction de la direction
     sf::Vector2f checkPoint(pos.x + (m_shouldMoveRight ? checkDistance : -checkDistance), charBottom + 30);
     bool groundFound = false;
+    
+    // Recherche d'une tuile de sol a la position de verification
     for (const auto &tile : groundTiles)
     {
         sf::FloatRect tileBounds = tile.getGlobalBounds();
@@ -311,6 +337,7 @@ bool AIPlayer::detectGapAhead(const std::vector<sf::Sprite> &groundTiles)
         }
     }
 
+    // Si aucun sol n'est trouve, c'est un trou
     if (!groundFound)
     {
         std::cout << "Gap detected ahead! Jumping!" << std::endl;
@@ -324,11 +351,8 @@ bool AIPlayer::detectGapAhead(const std::vector<sf::Sprite> &groundTiles)
  * @brief Verifie si un ennemi est proche du joueur
  * @param distance Distance maximale a laquelle un ennemi est considere proche
  * @return true si un ennemi est proche du joueur
- * @details Cette methode verifie si un ennemi est proche du joueur a une certaine distance
- * Si un ennemi est detecte a une distance inferieure a la distance specifiee la methode retourne vrai
- * Sinon elle retourne faux
- * Cette methode est utilisee pour determiner si le joueur doit eviter les ennemis
- * ou si lIA doit attaquer les ennemis
+ * @details de verifier rapidement la proximite d'ennemis sans calculer toutes les distances.
+ * Utilisee pour des decisions rapides.
  */
 bool AIPlayer::isEnemyNearby(float distance)
 {
@@ -349,21 +373,19 @@ bool AIPlayer::isEnemyNearby(float distance)
 /**
  * @brief Deplace le joueur vers le drapeau de fin de niveau
  * @param flag Sprite du drapeau de fin de niveau
- * @details Cette methode deplace le joueur vers le drapeau de fin de niveau
- * en ajustant ses actions en fonction de la position du drapeau
- * Si le drapeau est a droite du joueur lIA a 80% de chances de se deplacer a droite
- * Si le drapeau est a gauche du joueur lIA a 80% de chances de se deplacer a gauche
- * Si le drapeau est a la meme position que le joueur aucune action nest effectuee
+ * @details
+ * - Si le drapeau est a droite, 80% de chance d'aller vers la droite
+ * - Les 20% restants permettent d'autres actions comme sauter ou eviter des obstacles
  */
 void AIPlayer::moveTowardsFlag(const sf::Sprite &flag)
 {
-
     float flagX = flag.getPosition().x;
     float characterX = character->getPosition().x;
     float distanceToFlag = flagX - characterX;
 
     if (distanceToFlag > 0)
     {
+        // 80% de chance d'aller vers le drapeau
         if (std::bernoulli_distribution(0.8)(rng))
         {
             m_shouldMoveRight = true;
@@ -375,16 +397,13 @@ void AIPlayer::moveTowardsFlag(const sf::Sprite &flag)
 /**
  * @brief Met a jour les references des ennemis
  * @param newEnemies Vector contenant les pointeurs vers les ennemis du jeu
- * @details Cette methode met a jour les references des ennemis en vidant le vecteur enemies
- * et en ajoutant les nouveaux ennemis au vecteur
- * Cette methode est appelee a chaque fois quun ennemi est ajoute ou supprime du jeu
- * pour mettre a jour les actions de lIA
  */
 void AIPlayer::updateEnemyReferences(std::vector<std::unique_ptr<Enemy>> &newEnemies)
 {
-
+    // Reinitialisation complete de la liste d'ennemis
     enemies.clear();
 
+    // Copie des nouvelles references
     for (const auto &enemy : newEnemies)
     {
         enemies.push_back(enemy.get());
