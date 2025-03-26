@@ -21,8 +21,8 @@ public:
     void moveRight();
     void moveLeft();
     void jump();
-    void applyGravity(const std::vector<sf::Sprite> &blocks, const std::vector<sf::Sprite> &pipes, const std::vector<sf::Sprite> &questionBlocks);                      // Updated
-    std::pair<bool, bool> blockMovement(const std::vector<sf::Sprite> &obstacles, const std::vector<sf::Sprite> &pipes, const std::vector<sf::Sprite> &questionBlocks); // Updated
+    void applyGravity(const std::vector<sf::Sprite> &blocks, const std::vector<sf::Sprite> &pipes, const std::vector<sf::Sprite> &questionBlocks);                      
+    std::pair<bool, bool> blockMovement(const std::vector<sf::Sprite> &obstacles, const std::vector<sf::Sprite> &pipes, const std::vector<sf::Sprite> &questionBlocks); 
     void checkForGaps(const std::vector<sf::FloatRect> &gaps);
     void setSpeed(float newSpeed)
     {

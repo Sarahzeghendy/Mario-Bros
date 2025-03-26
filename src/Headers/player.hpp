@@ -48,9 +48,9 @@ public:
     Player(const std::string &texturePath, const std::string &name, float x, float y, float speed,
            sf::Keyboard::Key right, sf::Keyboard::Key left, sf::Keyboard::Key jump);
 
-    void update(const std::vector<sf::Sprite> &blocks, const std::vector<sf::Sprite> &pipes, const std::vector<sf::Sprite> &questionBlocks); // Updated
+    void update(const std::vector<sf::Sprite> &blocks, const std::vector<sf::Sprite> &pipes, const std::vector<sf::Sprite> &questionBlocks); 
     void jump();
-    void applyGravity(const std::vector<sf::Sprite> &blocks, const std::vector<sf::Sprite> &pipes, const std::vector<sf::Sprite> &questionBlocks); // Updated
+    void applyGravity(const std::vector<sf::Sprite> &blocks, const std::vector<sf::Sprite> &pipes, const std::vector<sf::Sprite> &questionBlocks); 
     void draw(sf::RenderWindow &window);
     void animate();
 

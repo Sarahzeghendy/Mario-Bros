@@ -7,7 +7,7 @@
  */
 Camera::Camera(float width, float height) : 
     defaultWidth(width), defaultHeight(height),
-    minX(width / 2), maxX(8400), // Limites horizontales en fonction de la taille du niveau
+    minX(width / 2), maxX(8420), // Limites horizontales en fonction de la taille du niveau
     minY(height / 2), maxY(600)  // Limites verticales pour garder la vue centree
 {
     view.setSize(width, height);                 
